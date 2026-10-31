@@ -28,6 +28,7 @@ from tax_engine.domain.form import FormComposition
 from tax_engine.domain.jurisdiction_code import JurisdictionCode
 from tax_engine.domain.manifest import Form, Manifest
 from tests.jurisdictions.ca_on.manifest_families import t2205 as family
+from tests.jurisdictions.ca_on.manifest_support import input_names
 
 CA_ON = JurisdictionCode("CA-ON")
 MANIFESTS = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1"
@@ -180,14 +181,14 @@ def test_the_t929_copies_route_the_exports_as_the_return_does_and_add_them_to_to
 
 
 def test_the_inputs_part_declares_the_twelve_amounts_of_the_form() -> None:
-    declared = yaml.safe_load(INPUTS_PART.read_text())["inputs"]
+    declared = input_names(yaml.safe_load(INPUTS_PART.read_text()))
 
     assert set(declared) == family.INPUTS
-    assert family.INPUTS <= manifest().inputs
+    assert family.INPUTS <= manifest().inputs.keys()
 
 
 def test_the_form_s_exports_are_not_inputs_of_the_return() -> None:
-    assert family.EXPORTS.isdisjoint(manifest().inputs)
+    assert family.EXPORTS.isdisjoint(manifest().inputs.keys())
     assert family.EXPORTS.isdisjoint(family.INPUTS)
 
 

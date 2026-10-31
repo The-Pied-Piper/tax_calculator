@@ -18,5 +18,6 @@
 # read.
 form:
   name: ca/security_options_boxes_39_and_91
+  required: true
   exports:
     - ca/t4_security_options_boxes_39_and_91

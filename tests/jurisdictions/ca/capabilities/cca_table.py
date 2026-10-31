@@ -59,6 +59,7 @@ from tax_engine.jurisdictions.ca.catalog import (
     CCA_UCC_AT_START,
     NON_COMPLIANT_CCA,
 )
+from tests.manifest_support import required_inputs
 
 D = Decimal
 F = Fraction
@@ -232,9 +233,10 @@ def service(
         jurisdiction=code,
         version=1,
         valid_from_tax_year=2025,
-        inputs=inputs,
+        inputs=required_inputs(inputs),
         forms=(
             Form(
+                required=True,
                 name=code.namespace.identifier("return"),
                 instances=None,
                 exports=(output.identifier,),

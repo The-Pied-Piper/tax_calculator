@@ -49,6 +49,7 @@ from tax_engine.domain.parameters.rounding import (
 )
 from tax_engine.domain.trace import LesserOfWithMaximumLine
 from tax_engine.jurisdictions.ca.capabilities.lesser_of_with_maximum import LesserOfWithMaximum
+from tests.manifest_support import required_inputs
 
 D = Decimal
 CENT = RoundTo(D("0.01"), RoundingMode.HALF_UP)
@@ -445,9 +446,10 @@ def service(dataset: ParameterDataset[Amount] | None = None) -> TaxComputationSe
         jurisdiction=code,
         version=1,
         valid_from_tax_year=2025,
-        inputs=frozenset({"ex/part_one", "ex/part_two"}),
+        inputs=required_inputs(frozenset({"ex/part_one", "ex/part_two"})),
         forms=(
             Form(
+                required=True,
                 name=code.namespace.identifier("return"),
                 instances=None,
                 exports=("ex/out",),

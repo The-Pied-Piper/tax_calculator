@@ -4,4 +4,5 @@ inputs:
   # form's table has four entries and says to use a separate sheet for more), holding the months
   # resident, the amount paid and the long-term care tick. The address, postal code and name
   # columns are text that feeds no calculation. Read by the form (28a_on_ben_residences.yaml).
-  - ca-on/on_ben_residence_rows
+  - name: ca-on/on_ben_residence_rows
+    required: true

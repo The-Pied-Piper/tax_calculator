@@ -3,52 +3,66 @@ inputs:
   # calculated on line 8 of the transferring spouse's or common-law partner's Federal Worksheet for
   # line 31400", and "Line 2 and line 68025: Enter the amount from box 128 of the transferring spouse's
   # or common-law partner's T4A slip": the caller's figures as the form takes them.
-  - ca/t1032_eligible_pension_income
-  - ca/t1032_t4a_box_128
+  - name: ca/t1032_eligible_pension_income
+    required: true
+  - name: ca/t1032_t4a_box_128
+    required: true
   # Form T1032 Step 2 "Line 4 and line 68026: Enter the amount from box 17 of the transferring spouse's
   # or common-law partner's T4A-RCA slips", and the RCA paragraph "If the transferring spouse or
   # common-law partner received life annuity payments from an RCA and was 65 years of age or older on
   # December 31, 2025 (or on the date of death), complete lines 4 to 8. Otherwise, enter "0" on line 8":
   # the caller's figure and the answer, 1 for yes and 0 for no.
-  - ca/t1032_t4a_rca_box_17
-  - ca/t1032_rca_payments_qualify
+  - name: ca/t1032_t4a_rca_box_17
+    required: true
+  - name: ca/t1032_rca_payments_qualify
+    required: true
   # Form T1032 Step 2 "Adjustment for marital status change during the tax year": "If your marital status
   # changed during the year, use line 18 to calculate the eligible pension income to enter at line 19",
   # the answer, 1 for yes and 0 for no.
-  - ca/t1032_marital_status_changed
+  - name: ca/t1032_marital_status_changed
+    required: true
   # Form T1032 Step 3 "Enter this amount on line 21000 of the transferring spouse's or common-law partner's
   # return and on line 11600 of the receiving spouse's or common-law partner's return": the answer, 1 when
   # this return is the transferring spouse's (its elected amount is on line 21000) and 0 when it is the
   # receiving spouse's (line 11600).
-  - ca/t1032_filer_is_transferring_spouse
+  - name: ca/t1032_filer_is_transferring_spouse
+    required: true
   # Form T1032 "Line 22: Enter the amount that you and your spouse or common-law partner decide to jointly
   # elect to be your split-pension amount for the year" and "Enter this amount on line 21000 of the
   # transferring spouse's ... return and on line 11600 of the receiving spouse's ... return": the one
   # amount, entered once; the return carries it on line 21000 or line 11600 by the answer above.
-  - ca/t1032_line_22
+  - name: ca/t1032_line_22
+    required: true
   # Form T1032 Step 2 "Line 18: Number of months married or living common-law Line 68030" and "Divided by
   # Number of months in the tax year (12) (Note 1)", the months the caller enters (12 unless the
   # transferring spouse died in the year, Note 1).
-  - ca/t1032_months_married
+  - name: ca/t1032_months_married
+    required: true
   # Form T1032 page 1 "You must meet all of the following conditions: You and your spouse or common-law
   # partner were not living separate and apart from each other, because of a breakdown in your marriage
   # or common-law relationship, for a continuous period of 90 days or more which includes December 31,
   # 2025" and "were residents of Canada on December 31, 2025 (or on the date of death)": the two answers,
   # 1 when the condition is met and 0 when it is not.
-  - ca/t1032_not_separated_90_days
-  - ca/t1032_residents_of_canada
-  - ca/t1032_months_in_tax_year
+  - name: ca/t1032_not_separated_90_days
+    required: true
+  - name: ca/t1032_residents_of_canada
+    required: true
+  - name: ca/t1032_months_in_tax_year
+    required: true
   # Form T1032 Note 1 "If the transferring spouse or common-law partner is deceased, replace the "12"
   # with the number of months up to and including the month of death": the answer, 1 for yes and 0 for
   # no.
-  - ca/t1032_transferring_spouse_died
+  - name: ca/t1032_transferring_spouse_died
+    required: true
   # Form T1032 Step 4 "Line 32: If there is an amount on line 11500 or line 12900 of the receiving spouse's
   # or common-law partner's return, enter the amount from line 8 of their Federal Worksheet for line
   # 31400. Otherwise, enter "0"": the caller's figure.
-  - ca/t1032_receiving_spouse_pension_amount
+  - name: ca/t1032_receiving_spouse_pension_amount
+    required: true
   # Form T1032 Step 5 "Line 35 and line 68040: Enter the total tax deducted from the transferring spouse's
   # or common-law partner's pension income entered on line 17", the caller's figure.
-  - ca/t1032_income_tax_deducted_on_pension
+  - name: ca/t1032_income_tax_deducted_on_pension
+    required: true
   # Form T1032 Step 5 "Line 37: Total tax deducted from all of the transferring spouse's or common-law
   # partner's slips. Enter the amount that you would have entered on line 43700 of your return if you
   # did not choose to split your eligible pension income" and "Line 40" (the same for the receiving
@@ -62,11 +76,15 @@ inputs:
   # life deferred annuity payments e) eligible veterans benefits": the two answers, 1 for yes and 0 for
   # no, and the total of the amounts a) to d) the transferring spouse received. Item e) is the box 128
   # amount already entered above for line 2, not entered again.
-  - ca/t1032_receiving_spouse_under_65
-  - ca/t1032_transferring_spouse_65_or_older
-  - ca/t1032_note_1_payments_a_to_d
+  - name: ca/t1032_receiving_spouse_under_65
+    required: true
+  - name: ca/t1032_transferring_spouse_65_or_older
+    required: true
+  - name: ca/t1032_note_1_payments_a_to_d
+    required: true
   # Form T1032 Note 1 "The receiving spouse or common-law partner does not need to remove those payments
   # from line 1 if the transferring spouse or common-law partner has received those payments as a
   # consequence of the death of a spouse or common-law partner in the year": the total of the amounts
   # a) to e) that were.
-  - ca/t1032_note_1_payments_due_to_death
+  - name: ca/t1032_note_1_payments_due_to_death
+    required: true

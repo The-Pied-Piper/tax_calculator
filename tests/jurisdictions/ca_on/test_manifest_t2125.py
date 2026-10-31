@@ -29,9 +29,18 @@ from tax_engine.domain.manifest import CapabilitySelection, Form, Manifest
 from tax_engine.domain.record_list import RecordListKind
 from tax_engine.jurisdictions.ca.catalog import NET_ON_BUSINESS_LINE, T2125_STATEMENTS
 from tests.jurisdictions.ca_on.manifest_families import t2125
+from tests.jurisdictions.ca_on.manifest_support import (
+    INPUTS_PARTS,
+    capabilities_of,
+    instance_fields,
+    lists,
+    required_entries,
+)
 
 CA_ON = JurisdictionCode("CA-ON")
 PART = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1" / "03b_t2125.yaml"
+# The part is split in two to stay under 30 KB: the second holds the later steps.
+PART_2 = PART.with_name("03b_t2125_2.yaml")
 INCOME_PART = PART.with_name("03_income.yaml")
 INPUTS_PART = PART.with_name("01_inputs.yaml")
 VEHICLE_CONSTANTS = frozenset(
@@ -67,6 +76,8 @@ def test_the_t2125_part_declares_the_form_ca_t2125_with_its_instances_and_export
 
     assert declared == {
         "name": "ca/t2125",
+        "required": True,
+        "fields": required_entries(instance_fields("ca/t2125")),
         "instances": "ca/t2125_statements",
         "exports": list(t2125.FORM_EXPORTS),
     }
@@ -133,17 +144,18 @@ def test_the_form_has_no_step_of_its_own_for_the_chart_lines_or_the_constants() 
 
 def test_the_t2125_part_is_not_over_30_kb_and_the_other_parts_hold_no_t2125_input() -> None:
     assert PART.stat().st_size <= 30 * 1024
-    for other in (INCOME_PART, INPUTS_PART):
+    assert PART_2.stat().st_size <= 30 * 1024
+    for other in INPUTS_PARTS:
         text = other.read_text()
         for identifier in t2125.FORM_INPUTS:
-            assert f"- {identifier}\n" not in text, (other.name, identifier)
+            assert not lists(text, identifier), (other.name, identifier)
 
 
 # --- the instances input -------------------------------------------------------------------------
 
 
 def test_the_instances_are_the_one_input_of_the_manifest_in_place_of_the_t2125_inputs() -> None:
-    inputs = manifest().inputs
+    inputs = manifest().inputs.keys()
 
     assert t2125.INPUTS <= inputs
     assert inputs.isdisjoint(t2125.FORM_INPUTS)
@@ -328,6 +340,7 @@ def test_the_return_declares_the_three_grosses_as_outputs_and_exports_the_routed
 
 def test_the_manifest_part_for_t2125_stays_under_30_kilobytes() -> None:
     assert PART.stat().st_size <= 30 * 1024
+    assert PART_2.stat().st_size <= 30 * 1024
 
 
 # The Class 10.1 vehicle additions check, in `03q_t2125_vehicle_additions_check.yaml`:
@@ -354,7 +367,7 @@ def test_the_checks_part_declares_only_its_form_and_the_vehicle_additions_check(
 
 
 def test_the_proceeds_step_reads_the_checked_list_and_produces_the_adjusted_one() -> None:
-    steps = yaml.safe_load(PART.read_text())["capabilities"]
+    steps = capabilities_of(PART, PART_2)
     (proceeds,) = [step for step in steps if step["name"] == "ca/cca_vehicle_proceeds"]
 
     assert proceeds["consumes"] == {
@@ -385,7 +398,7 @@ def test_the_partner_checks_part_declares_only_the_form_ca_t2125_and_its_one_che
 def test_the_business_choose_by_count_reads_the_checked_partner_answer() -> None:
     # Part 5 "Your share of line 9369 or the amount from your T5013 slip": the choice reads the
     # partner answer checked to be 0 or 1 (the step above), as the farm and fish choices do.
-    declared = yaml.safe_load(PART.read_text())["capabilities"]
+    declared = capabilities_of(PART, PART_2)
     (choice,) = [
         step
         for step in declared

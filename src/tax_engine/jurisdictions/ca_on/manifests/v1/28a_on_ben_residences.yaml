@@ -7,11 +7,19 @@
 # paid to different payees takes a row for each, each with the same months.
 form:
   name: ca-on/on_ben_residences
+  required: true
   instances: ca-on/on_ben_residence_rows
   exports:
     - ca-on/on_ben_residence_months_checked
     - ca-on/on_ben_residence_amount
     - ca-on/on_ben_residence_long_term_care_checked
+  fields:
+    - name: ca-on/on_ben_residence_months
+      required: true
+    - name: ca-on/on_ben_residence_amount
+      required: true
+    - name: ca-on/on_ben_residence_long_term_care
+      required: true
 capabilities:
   # Part B column 5 "Tick this box if it is a long-term care home": a tick box, a count of 1 or 0,
   # checked before it is exported. A count of 2 or more is refused, not capped.

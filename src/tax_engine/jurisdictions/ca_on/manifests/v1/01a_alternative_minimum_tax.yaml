@@ -3,13 +3,17 @@ inputs:
   # "you are a non-resident or deemed resident", and line 12 "Investment tax credit amount up to, but
   # not more than the amount I of Form T2038(IND)": the caller's figures, entered as the form takes
   # them. The bound, amount I, is read from the investment tax credit family, not entered here.
-  - ca/amt_t2203_column_5_percentage
-  - ca/amt_non_resident_or_deemed_resident
+  - name: ca/amt_t2203_column_5_percentage
+    required: true
+  - name: ca/amt_non_resident_or_deemed_resident
+    required: true
   # Form T2203 Part 2 "If you are subject to minimum tax, do not complete lines 4 to 10." and T1
   # line 127: the caller's choice, 1 when you are subject to minimum tax (Form T691 Part 3 line 4
   # is then the surtax), else 0.
-  - ca/amt_subject_to_minimum_tax
-  - ca/amt_investment_tax_credit_claim
+  - name: ca/amt_subject_to_minimum_tax
+    required: true
+  - name: ca/amt_investment_tax_credit_claim
+    required: true
   # Form T691 Part 4 line 1 "(i) Foreign business income" and line 3 "Non-taxable part of foreign
   # capital gains included in adjusted taxable income": the caller's figures, as the form takes
   # them. Line 1 stays an input although the country records hold business income too: it is net
@@ -17,8 +21,11 @@ inputs:
   # line 5 is never negative and is not the same figure.
   # Lines 2, 7 and 8 are totals over the foreign tax countries, read from ca/foreign_tax_countries
   # (manifest part 20g), not entered here.
-  - ca/amt_foreign_business_income
-  - ca/amt_foreign_capital_gains_non_taxable_claim
+  - name: ca/amt_foreign_business_income
+    required: true
+  - name: ca/amt_foreign_capital_gains_non_taxable_claim
+    required: true
   # Form T691 Part 8 line 16 "Unapplied 2018 minimum tax carryover": the caller's figure from an
   # earlier return, entered as the form takes it.
-  - ca/amt_unapplied_2018_carryover
+  - name: ca/amt_unapplied_2018_carryover
+    required: true

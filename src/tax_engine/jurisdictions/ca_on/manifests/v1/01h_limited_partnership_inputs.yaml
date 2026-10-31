@@ -2,4 +2,5 @@ inputs:
   # Guide 5000-G line 25100 "You can only deduct this loss if there is an amount in box 105": the
   # total of the limited partner's at-risk amount, T5013 box 105, over the filer's slips; the claim
   # on line 25100 is checked against it in 06h_limited_partnership_losses_of_other_years.yaml.
-  - ca/limited_partnership_at_risk_amount
+  - name: ca/limited_partnership_at_risk_amount
+    required: true

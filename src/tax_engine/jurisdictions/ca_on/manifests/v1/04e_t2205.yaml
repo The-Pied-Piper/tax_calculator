@@ -8,6 +8,7 @@
 # which nothing reads. The return selects none of these steps.
 form:
   name: ca/t2205
+  required: true
   exports:
     - ca/t2205_line_11_rrsp_part
     - ca/t2205_line_11_spp_part_checked

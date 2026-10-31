@@ -4,10 +4,50 @@
 # T1 line 21900 adds over the moves, and its line 30, which nothing on the return reads.
 form:
   name: ca/t1_m
+  required: true
   instances: ca/t1_m_moves
   exports:
     - ca/moving_expenses_claim
     - ca/moving_unused_expenses
+  fields:
+    - name: ca/moving_old_home_distance
+      required: true
+    - name: ca/moving_new_home_distance
+      required: true
+    - name: ca/moving_transportation_and_storage
+      required: true
+    - name: ca/moving_travel_expenses
+      required: true
+    - name: ca/moving_accommodation_expenses
+      required: true
+    - name: ca/moving_meal_expenses
+      required: true
+    - name: ca/moving_temporary_lodging
+      required: true
+    - name: ca/moving_temporary_meals
+      required: true
+    - name: ca/moving_lease_cancellation
+      required: true
+    - name: ca/moving_incidental_costs
+      required: true
+    - name: ca/moving_old_home_maintenance
+      required: true
+    - name: ca/moving_selling_commission
+      required: true
+    - name: ca/moving_selling_legal_fees
+      required: true
+    - name: ca/moving_selling_advertising
+      required: true
+    - name: ca/moving_selling_other_costs
+      required: true
+    - name: ca/moving_buying_legal_fees
+      required: true
+    - name: ca/moving_buying_taxes
+      required: true
+    - name: ca/moving_reimbursement
+      required: true
+    - name: ca/moving_net_eligible_income
+      required: true
 capabilities:
   # T1-M Part 2 "Line 1 minus line 2" (line 3): the old home distance less the new one. The form
   # prints no floor, so the difference is signed.

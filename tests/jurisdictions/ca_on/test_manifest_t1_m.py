@@ -39,6 +39,12 @@ from tests.jurisdictions.ca_on.manifest_families.t1139 import (
     FISHING_PROFIT_ON_RETURN_LINES,
     PROFESSIONAL_PROFIT_ON_RETURN_LINES,
 )
+from tests.jurisdictions.ca_on.manifest_support import (
+    INPUTS_PARTS,
+    instance_fields,
+    lists,
+    required_entries,
+)
 
 CA_ON = JurisdictionCode("CA-ON")
 PART = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1" / "05k_t1_m.yaml"
@@ -73,6 +79,8 @@ def test_the_t1_m_part_declares_the_form_ca_t1_m_with_its_instances_and_exports(
 
     assert declared == {
         "name": "ca/t1_m",
+        "required": True,
+        "fields": required_entries(instance_fields("ca/t1_m")),
         "instances": "ca/t1_m_moves",
         "exports": list(t1_m.FORM_EXPORTS),
     }
@@ -145,17 +153,17 @@ def test_the_form_selects_the_40_kilometre_test_and_the_5000_maximum_from_their_
 
 def test_the_t1_m_part_is_not_over_30_kb_and_the_other_parts_hold_no_t1_m_input() -> None:
     assert PART.stat().st_size <= 30 * 1024
-    for other in (INCOME_PART, DEDUCTIONS_PART, AMT_PART):
+    for other in (*INPUTS_PARTS, DEDUCTIONS_PART, AMT_PART):
         text = other.read_text()
         for identifier in t1_m.FORM_INPUTS:
-            assert f"- {identifier}\n" not in text, (other.name, identifier)
+            assert not lists(text, identifier), (other.name, identifier)
 
 
 # --- the instances input -------------------------------------------------------------------------
 
 
 def test_the_instances_are_the_one_input_of_the_manifest_in_place_of_the_t1_m_inputs() -> None:
-    inputs = manifest().inputs
+    inputs = manifest().inputs.keys()
 
     assert t1_m.INPUTS <= inputs
     assert inputs.isdisjoint(t1_m.FORM_INPUTS)

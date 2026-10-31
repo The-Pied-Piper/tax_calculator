@@ -1174,6 +1174,7 @@ def rentals() -> ArtifactRegistry:
 
 def rental_form() -> Form:
     return Form(
+        required=True,
         name="ex/rental",
         instances="ex/rentals",
         exports=("ex/net_income",),
@@ -1190,12 +1191,17 @@ def rental_form() -> Form:
 
 def return_form() -> Form:
     return Form(
-        name="ca-on/return", instances=None, exports=("ex/total_net_income",), capabilities=()
+        required=True,
+        name="ca-on/return",
+        instances=None,
+        exports=("ex/total_net_income",),
+        capabilities=(),
     )
 
 
 def business_form() -> Form:
     return Form(
+        required=True,
         name="ex/business",
         instances="ex/businesses",
         exports=("ex/profit",),
@@ -1212,7 +1218,11 @@ def test_a_form_whose_instances_nothing_registers_fails_naming_the_file(
 ) -> None:
     worked = per_instance(tmp_path, lines)
     lost = Form(
-        name="ex/rental", instances="ex/nowhere", exports=("ex/net_income",), capabilities=()
+        required=True,
+        name="ex/rental",
+        instances="ex/nowhere",
+        exports=("ex/net_income",),
+        capabilities=(),
     )
 
     with pytest.raises(WorkedReturnError, match=r"per\.yaml: .*'ex/nowhere'"):
@@ -1224,6 +1234,7 @@ def test_a_form_whose_instances_is_not_a_record_list_fails_naming_the_file(
 ) -> None:
     worked = per_instance(tmp_path, lines)
     wrong = Form(
+        required=True,
         name="ex/rental",
         instances="ex/gross_rent",
         exports=("ex/net_income",),

@@ -21,6 +21,7 @@ from typing import Any
 import yaml
 
 import tax_engine.jurisdictions.ca_on
+from tests.jurisdictions.ca_on.manifest_support import inputs_text, lists, required_entries
 
 PARTS = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1"
 INPUTS_PART = PARTS / "01d_t1436_inputs.yaml"
@@ -71,19 +72,19 @@ def outputs(path: Path) -> list[str]:
 def test_the_inputs_part_declares_the_two_schedule_3_inputs_in_t1436_order() -> None:
     declared = yaml.safe_load(INPUTS_PART.read_text())
 
-    assert declared == {"inputs": list(SCHEDULE_3_INPUTS)}
+    assert declared == {"inputs": required_entries(SCHEDULE_3_INPUTS)}
 
 
 def test_the_schedule_3_inputs_are_not_in_the_full_inputs_part() -> None:
     # 01_inputs.yaml is at its size cap: the two new inputs live in their own part.
-    text = (PARTS / "01_inputs.yaml").read_text()
+    text = inputs_text()
 
     for identifier in SCHEDULE_3_INPUTS:
-        assert f"  - {identifier}\n" not in text, identifier
+        assert not lists(text, identifier, indent="  "), identifier
 
 
 def test_the_six_capital_gains_deductions_inputs_stay_in_the_full_inputs_part() -> None:
-    text = (PARTS / "01_inputs.yaml").read_text()
+    text = inputs_text()
 
     for identifier in (
         "ca/capital_gains_deductions_1985_to_1987",
@@ -93,7 +94,7 @@ def test_the_six_capital_gains_deductions_inputs_stay_in_the_full_inputs_part() 
         "ca/capital_gains_deductions_2000",
         "ca/capital_gains_deductions_2001_to_2024",
     ):
-        assert f"  - {identifier}\n" in text, identifier
+        assert f"  - name: {identifier}\n" in text, identifier
 
 
 def test_the_return_part_is_the_default_form_with_the_steps_of_lines_1_to_7() -> None:

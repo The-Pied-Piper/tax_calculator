@@ -12,6 +12,7 @@
 # 22d_t1032_line_33_note_1.yaml.
 form:
   name: ca/t1032
+  required: true
   exports:
     - ca/t1032_line_21
     - ca/t1032_filer_is_transferring_spouse_checked

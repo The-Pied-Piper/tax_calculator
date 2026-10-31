@@ -85,7 +85,9 @@ def load(
         )
     default = worked.jurisdiction.namespace.identifier("return")
     (default_form,) = (form for form in manifest.forms if form.name == default)
-    worked = worked.with_blanks(manifest.inputs, frozenset(default_form.exports), artifacts)
+    worked = worked.with_blanks(
+        frozenset(manifest.inputs), frozenset(default_form.exports), artifacts
+    )
     worked.check_forms(manifest.forms, artifacts)
     return worked
 

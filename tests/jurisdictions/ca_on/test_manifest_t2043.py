@@ -25,12 +25,12 @@ from tax_engine.domain.form import FormComposition
 from tax_engine.domain.jurisdiction_code import JurisdictionCode
 from tax_engine.domain.manifest import Form, Manifest
 from tests.jurisdictions.ca_on.manifest_families import t2042, t2043
+from tests.jurisdictions.ca_on.manifest_support import inputs_text
 
 CA_ON = JurisdictionCode("CA-ON")
 PART = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1" / "03i_t2043.yaml"
 CHART_A_PART = PART.with_name("03h_t2043_chart_a.yaml")
 REFUND_PART = PART.with_name("14_refund.yaml")
-INPUTS_PART = PART.with_name("01_inputs.yaml")
 PARTNERSHIP_INPUTS = frozenset(
     {
         "ca/fuel_charge_partnership_credit_on",
@@ -72,6 +72,7 @@ def test_the_t2043_part_declares_the_form_ca_t2043_with_no_instances_and_its_exp
     # No `instances`: the form has no list of copies and runs once.
     assert declared == {
         "name": "ca/t2043",
+        "required": True,
         "exports": list(t2043.FORM_EXPORTS),
     }
 
@@ -210,10 +211,10 @@ def test_the_t2043_parts_are_not_over_30_kb() -> None:
 
 def test_the_eight_partnership_credits_are_manifest_inputs_declared_in_the_inputs_part() -> None:
     assert t2043.INPUTS == PARTNERSHIP_INPUTS
-    assert t2043.INPUTS <= manifest().inputs
-    text = INPUTS_PART.read_text()
+    assert t2043.INPUTS <= manifest().inputs.keys()
+    text = inputs_text()
     for identifier in sorted(t2043.INPUTS):
-        assert f"- {identifier}\n" in text, identifier
+        assert f"- name: {identifier}\n" in text, identifier
 
 
 def test_the_t2043_part_declares_no_input_of_its_own() -> None:

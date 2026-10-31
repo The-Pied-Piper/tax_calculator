@@ -190,6 +190,15 @@ class YamlNode:
             raise YamlShapeError(f"{self._where} must be an integer, got {self._type_name()}")
         return self._value
 
+    def require_boolean(self) -> bool:
+        """This node's value, which must be a YAML boolean (`true` or `false`).
+
+        Raises YamlShapeError otherwise, naming the type found; text such as "yes" is not one.
+        """
+        if not isinstance(self._value, bool):
+            raise YamlShapeError(f"{self._where} must be true or false, got {self._type_name()}")
+        return self._value
+
     def parse_decimal(self) -> Decimal:
         """This node's value as an exact Decimal, parsed from a YAML string such as "0.145".
 

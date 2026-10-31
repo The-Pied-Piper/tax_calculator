@@ -26,8 +26,15 @@ from tax_engine.adapters.outbound.yaml_jurisdictions import YamlJurisdictionSour
 from tax_engine.domain.errors import InvalidManifestError, NotFoundError
 from tax_engine.domain.jurisdiction import Jurisdiction
 from tax_engine.domain.jurisdiction_code import JurisdictionCode
-from tax_engine.domain.manifest import CapabilitySelection, Form, Manifest
+from tax_engine.domain.manifest import (
+    CapabilitySelection,
+    Default,
+    Form,
+    InputDeclaration,
+    Manifest,
+)
 from tax_engine.domain.registry import Namespace
+from tests.manifest_support import required_inputs
 
 EX_ON = JurisdictionCode("EX-ON")
 
@@ -36,8 +43,8 @@ jurisdiction: EX-ON
 version: 1
 valid_from_tax_year: 2025
 inputs:
-  - ex/gross_income
-  - ex/taxable_base
+  - {name: ex/gross_income, required: true}
+  - {name: ex/taxable_base, required: true}
 outputs:
   - ex/savings_deduction
   - ex-on/levy
@@ -64,7 +71,7 @@ HEADER = """\
 jurisdiction: EX-ON
 version: 1
 valid_from_tax_year: 2025
-inputs: [ex/x]
+inputs: [{name: ex/x, required: true}]
 outputs: [ex/y]
 """
 
@@ -108,9 +115,10 @@ def test_parses_manifest_into_domain_objects(tmp_path: Path) -> None:
                 jurisdiction=EX_ON,
                 version=1,
                 valid_from_tax_year=2025,
-                inputs=frozenset({"ex/gross_income", "ex/taxable_base"}),
+                inputs=required_inputs(frozenset({"ex/gross_income", "ex/taxable_base"})),
                 forms=(
                     Form(
+                        required=True,
                         name="ex-on/return",
                         instances=None,
                         exports=("ex-on/levy", "ex/savings_deduction"),
@@ -143,7 +151,7 @@ def test_preserves_authored_capability_order(tmp_path: Path) -> None:
         jurisdiction: EX-ON
         version: 1
         valid_from_tax_year: 2025
-        inputs: [ex/x]
+        inputs: [{name: ex/x, required: true}]
         outputs: [ex/y]
         capabilities:
           - {name: ex/c, produces: {output: ex/c}}
@@ -165,7 +173,7 @@ def test_allows_same_capability_with_different_bindings(tmp_path: Path) -> None:
         jurisdiction: EX-ON
         version: 1
         valid_from_tax_year: 2025
-        inputs: [ex/x]
+        inputs: [{name: ex/x, required: true}]
         outputs: [ex/y]
         capabilities:
           - name: ex/progressive_tax
@@ -199,7 +207,7 @@ def test_params_and_consumes_may_be_omitted(tmp_path: Path) -> None:
         jurisdiction: EX-ON
         version: 1
         valid_from_tax_year: 2025
-        inputs: [ex/x]
+        inputs: [{name: ex/x, required: true}]
         outputs: [ex/y]
         capabilities:
           - name: ex/flat_grant
@@ -561,7 +569,11 @@ def test_one_bad_file_fails_the_whole_load(tmp_path: Path) -> None:
             id="capability-name-int",
         ),
         pytest.param(
-            EX_ON_V1.replace("inputs:\n  - ex/gross_income\n  - ex/taxable_base\n", ""),
+            EX_ON_V1.replace(
+                "inputs:\n  - {name: ex/gross_income, required: true}\n"
+                "  - {name: ex/taxable_base, required: true}\n",
+                "",
+            ),
             r"missing keys \['inputs'\]",
             id="missing-inputs",
         ),
@@ -572,7 +584,9 @@ def test_one_bad_file_fails_the_whole_load(tmp_path: Path) -> None:
         ),
         pytest.param(
             EX_ON_V1.replace(
-                "inputs:\n  - ex/gross_income\n  - ex/taxable_base\n", "inputs: ex/gross_income\n"
+                "inputs:\n  - {name: ex/gross_income, required: true}\n"
+                "  - {name: ex/taxable_base, required: true}\n",
+                "inputs: ex/gross_income\n",
             ),
             "inputs must be a list",
             id="inputs-not-list",
@@ -585,7 +599,11 @@ def test_one_bad_file_fails_the_whole_load(tmp_path: Path) -> None:
             id="outputs-not-list",
         ),
         pytest.param(
-            EX_ON_V1.replace("inputs:\n  - ex/gross_income\n  - ex/taxable_base\n", "inputs: []\n"),
+            EX_ON_V1.replace(
+                "inputs:\n  - {name: ex/gross_income, required: true}\n"
+                "  - {name: ex/taxable_base, required: true}\n",
+                "inputs: []\n",
+            ),
             "inputs must name at least one artifact",
             id="inputs-empty",
         ),
@@ -597,8 +615,10 @@ def test_one_bad_file_fails_the_whole_load(tmp_path: Path) -> None:
             id="outputs-empty",
         ),
         pytest.param(
-            EX_ON_V1.replace("inputs:\n  - ex/gross_income\n", "inputs:\n  - 7\n"),
-            r"inputs\[0\] must be a string, got int",
+            EX_ON_V1.replace(
+                "inputs:\n  - {name: ex/gross_income, required: true}\n", "inputs:\n  - 7\n"
+            ),
+            r"inputs\[0\] must be a mapping",
             id="input-int",
         ),
         pytest.param(
@@ -607,12 +627,18 @@ def test_one_bad_file_fails_the_whole_load(tmp_path: Path) -> None:
             id="output-null",
         ),
         pytest.param(
-            EX_ON_V1.replace("inputs:\n  - ex/gross_income\n", 'inputs:\n  - ""\n'),
-            r"inputs\[0\] must not be empty",
+            EX_ON_V1.replace(
+                "inputs:\n  - {name: ex/gross_income, required: true}\n",
+                'inputs:\n  - {name: "", required: true}\n',
+            ),
+            r"inputs\[0\].name must not be empty",
             id="input-empty-string",
         ),
         pytest.param(
-            EX_ON_V1.replace("  - ex/taxable_base\n", "  - ex/gross_income\n"),
+            EX_ON_V1.replace(
+                "  - {name: ex/taxable_base, required: true}\n",
+                "  - {name: ex/gross_income, required: true}\n",
+            ),
             r"inputs\[1\]: 'ex/gross_income' is listed more than once",
             id="input-duplicate",
         ),
@@ -643,7 +669,7 @@ def test_an_identifier_listed_as_both_input_and_output_is_carried_by_the_manifes
 
     manifest = source(tmp_path).get_jurisdiction(EX_ON).manifests[0]
 
-    assert manifest.inputs == frozenset({"ex/gross_income", "ex/taxable_base"})
+    assert manifest.inputs.keys() == frozenset({"ex/gross_income", "ex/taxable_base"})
     assert frozenset(returned(manifest).exports) == frozenset(
         {"ex/savings_deduction", "ex-on/levy", "ex/taxable_base"}
     )
@@ -665,7 +691,7 @@ valid_from_tax_year: 2025
 """
 
 INPUTS = """\
-inputs: [ex/x]
+inputs: [{name: ex/x, required: true}]
 """
 
 OUTPUTS = """\
@@ -710,9 +736,10 @@ def test_a_folder_is_one_manifest_merged_from_its_parts(tmp_path: Path) -> None:
         jurisdiction=EX_ON,
         version=1,
         valid_from_tax_year=2025,
-        inputs=frozenset({"ex/x"}),
+        inputs=required_inputs(frozenset({"ex/x"})),
         forms=(
             Form(
+                required=True,
                 name="ex-on/return",
                 instances=None,
                 exports=("ex/y",),
@@ -788,14 +815,16 @@ def test_inputs_and_outputs_are_concatenated_across_parts(tmp_path: Path) -> Non
         tmp_path,
         {
             "00-header.yaml": SCALARS,
-            "01-a.yaml": "inputs: [ex/x1]\noutputs: [ex/y1]\n",
-            "02-b.yaml": "inputs: [ex/x2]\noutputs: [ex/y2]\ncapabilities: []\n",
+            "01-a.yaml": "inputs: [{name: ex/x1, required: true}]\noutputs: [ex/y1]\n",
+            "02-b.yaml": (
+                "inputs: [{name: ex/x2, required: true}]\noutputs: [ex/y2]\ncapabilities: []\n"
+            ),
         },
     )
 
     manifest = only_manifest(tmp_path)
 
-    assert manifest.inputs == frozenset({"ex/x1", "ex/x2"})
+    assert manifest.inputs.keys() == frozenset({"ex/x1", "ex/x2"})
     assert frozenset(returned(manifest).exports) == frozenset({"ex/y1", "ex/y2"})
 
 
@@ -804,7 +833,7 @@ def test_a_part_may_carry_any_subset_of_the_keys(tmp_path: Path) -> None:
         tmp_path,
         {
             "00-version.yaml": "version: 1\n",
-            "01-jurisdiction.yaml": "jurisdiction: EX-ON\ninputs: [ex/x]\n",
+            "01-jurisdiction.yaml": "jurisdiction: EX-ON\ninputs: [{name: ex/x, required: true}]\n",
             "02-year-and-outputs.yaml": "valid_from_tax_year: 2025\noutputs: [ex/y]\n",
             "03-a.yaml": CAPABILITIES_A,
         },
@@ -817,7 +846,7 @@ def test_a_part_may_carry_any_subset_of_the_keys(tmp_path: Path) -> None:
         1,
         2025,
     )
-    assert manifest.inputs == frozenset({"ex/x"})
+    assert manifest.inputs.keys() == frozenset({"ex/x"})
     assert [c.name for c in returned(manifest).capabilities] == ["ex/a", "ex/b"]
 
 
@@ -870,7 +899,13 @@ def test_a_flat_file_and_a_folder_side_by_side_are_two_manifests(tmp_path: Path)
             id="part-is-a-list",
         ),
         pytest.param(
-            {"00-header.yaml": SCALARS, "01-bad.yaml": "inputs: [ex/x]\ninputs: [ex/z]\n"},
+            {
+                "00-header.yaml": SCALARS,
+                "01-bad.yaml": (
+                    "inputs: [{name: ex/x, required: true}]\n"
+                    "inputs: [{name: ex/z, required: true}]\n"
+                ),
+            },
             "duplicate key 'inputs'",
             id="duplicate-key-inside-one-part",
         ),
@@ -908,8 +943,11 @@ def test_a_flat_file_and_a_folder_side_by_side_are_two_manifests(tmp_path: Path)
             id="scalar-wrong-type",
         ),
         pytest.param(
-            {"00-header.yaml": SCALARS, "01-bad.yaml": "inputs: [ex/x, 7]\n"},
-            r"inputs\[1\] must be a string, got int",
+            {
+                "00-header.yaml": SCALARS,
+                "01-bad.yaml": "inputs: [{name: ex/x, required: true}, 7]\n",
+            },
+            r"inputs\[1\] must be a mapping",
             id="input-element-wrong-type",
         ),
         pytest.param(
@@ -918,12 +956,17 @@ def test_a_flat_file_and_a_folder_side_by_side_are_two_manifests(tmp_path: Path)
             id="capability-missing-produces",
         ),
         pytest.param(
-            {"00-header.yaml": SCALARS, "01-bad.yaml": "inputs: ['']\n"},
-            r"inputs\[0\] must not be empty",
+            {"00-header.yaml": SCALARS, "01-bad.yaml": "inputs: [{name: '', required: true}]\n"},
+            r"inputs\[0\].name must not be empty",
             id="input-empty-string",
         ),
         pytest.param(
-            {"00-header.yaml": SCALARS, "01-bad.yaml": "inputs: [ex/x, ex/x]\n"},
+            {
+                "00-header.yaml": SCALARS,
+                "01-bad.yaml": (
+                    "inputs: [{name: ex/x, required: true}, {name: ex/x, required: true}]\n"
+                ),
+            },
             r"inputs\[1\]: 'ex/x' is listed more than once",
             id="input-repeated-inside-one-part",
         ),
@@ -976,8 +1019,12 @@ def test_an_identifier_in_two_parts_is_rejected_naming_both_parts(tmp_path: Path
     write_parts(
         tmp_path,
         {
-            "00-header.yaml": SCALARS + "inputs: [ex/x]\noutputs: [ex/y]\n",
-            "01-again.yaml": f"{key}: [ex/other, ex/{'x' if key == 'inputs' else 'y'}]\n",
+            "00-header.yaml": SCALARS + "inputs: [{name: ex/x, required: true}]\noutputs: [ex/y]\n",
+            "01-again.yaml": (
+                "inputs: [{name: ex/other, required: true}, {name: ex/x, required: true}]\n"
+                if key == "inputs"
+                else "outputs: [ex/other, ex/y]\n"
+            ),
         },
     )
     folder = tmp_path / "ex-on" / "manifests" / "v1"
@@ -998,7 +1045,7 @@ def test_the_same_identifier_as_input_in_one_part_and_output_in_another_is_not_a
     write_parts(
         tmp_path,
         {
-            "00-header.yaml": SCALARS + "inputs: [ex/x]\noutputs: [ex/y]\n",
+            "00-header.yaml": SCALARS + "inputs: [{name: ex/x, required: true}]\noutputs: [ex/y]\n",
             "01-more.yaml": "outputs: [ex/x]\n",
             "02-caps.yaml": CAPABILITIES_A,
         },
@@ -1006,7 +1053,7 @@ def test_the_same_identifier_as_input_in_one_part_and_output_in_another_is_not_a
 
     manifest = only_manifest(tmp_path)
 
-    assert manifest.inputs == frozenset({"ex/x"})
+    assert manifest.inputs.keys() == frozenset({"ex/x"})
     assert frozenset(returned(manifest).exports) == frozenset({"ex/y", "ex/x"})
 
 
@@ -1080,6 +1127,7 @@ def test_a_subfolder_without_yaml_files_is_not_a_manifest(tmp_path: Path) -> Non
 FORM_RENTAL = """\
 form:
   name: ex/rental
+  required: true
   instances: ex/rentals
   exports: [ex/net_income, ex/unit_list]
 capabilities:
@@ -1096,6 +1144,7 @@ capabilities:
 FORM_BUSINESS = """\
 form:
   name: ex/business
+  required: true
   instances: ex/businesses
   exports: [ex/profit]
 capabilities:
@@ -1140,6 +1189,7 @@ def test_a_part_with_a_form_key_gives_the_form_all_the_capabilities_of_that_part
 
     assert others(manifest) == (
         Form(
+            required=True,
             name="ex/rental",
             instances="ex/rentals",
             exports=("ex/net_income", "ex/unit_list"),
@@ -1223,7 +1273,9 @@ def test_several_forms_are_kept_in_the_order_their_names_first_appear(tmp_path: 
     assert [c.name for c in business.capabilities] == ["ex/c", "ex/d"]
 
 
-@pytest.mark.parametrize("extra", ["inputs: [ex/rentals]\n", "outputs: [ex/y]\n"])
+@pytest.mark.parametrize(
+    "extra", ["inputs: [{name: ex/rentals, required: true}]\n", "outputs: [ex/y]\n"]
+)
 def test_a_form_part_with_inputs_or_outputs_is_rejected_naming_the_part(
     tmp_path: Path, extra: str
 ) -> None:
@@ -1257,7 +1309,8 @@ def test_a_form_part_with_no_capabilities_is_allowed(tmp_path: Path) -> None:
     ("form_text", "message"),
     [
         pytest.param(
-            "form: {name: ex/rental, instances: ex/rentals, exports: [ex/n], extra: 1}\n",
+            "form: {name: ex/rental, required: true, instances: ex/rentals, exports: [ex/n], "
+            "extra: 1}\n",
             r"unknown keys \['extra'\]",
             id="unknown-key",
         ),
@@ -1270,57 +1323,60 @@ def test_a_form_part_with_no_capabilities_is_allowed(tmp_path: Path) -> None:
         pytest.param("form: {name: 7}\n", "name must be a string, got int", id="name-not-text"),
         pytest.param("form: {name: ''}\n", "name must not be empty", id="name-empty"),
         pytest.param(
-            "form: {name: Rental, instances: ex/rentals, exports: [ex/n]}\n",
+            "form: {name: Rental, required: true, instances: ex/rentals, exports: [ex/n]}\n",
             "Rental",
             id="name-not-an-identifier",
         ),
         pytest.param(
-            "form: {name: ex/rental.n, instances: ex/rentals, exports: [ex/n]}\n",
+            "form: {name: ex/rental.n, required: true, instances: ex/rentals, exports: [ex/n]}\n",
             r"ex/rental\.n",
             id="name-dotted",
         ),
         pytest.param(
-            "form: {name: ex/rental, instances: [ex/rentals], exports: [ex/n]}\n",
+            "form: {name: ex/rental, required: true, instances: [ex/rentals], exports: [ex/n]}\n",
             "instances must be a string, got list",
             id="instances-a-list",
         ),
         pytest.param(
-            "form: {name: ex/rental, instances: ex/Rentals, exports: [ex/n]}\n",
+            "form: {name: ex/rental, required: true, instances: ex/Rentals, exports: [ex/n]}\n",
             "ex/Rentals",
             id="instances-not-an-identifier",
         ),
         pytest.param(
-            "form: {name: ex/rental, instances: ex/rentals, exports: ex/n}\n",
+            "form: {name: ex/rental, required: true, instances: ex/rentals, exports: ex/n}\n",
             "exports must be a list",
             id="exports-not-a-list",
         ),
         pytest.param(
-            "form: {name: ex/rental, instances: ex/rentals, exports: [ex/n, 7]}\n",
+            "form: {name: ex/rental, required: true, instances: ex/rentals, exports: [ex/n, 7]}\n",
             r"exports\[1\] must be a string, got int",
             id="export-element-wrong-type",
         ),
         pytest.param(
-            "form: {name: ex/rental, instances: ex/rentals, exports: ['']}\n",
+            "form: {name: ex/rental, required: true, instances: ex/rentals, exports: ['']}\n",
             r"exports\[0\] must not be empty",
             id="export-empty",
         ),
         pytest.param(
-            "form: {name: ex/rental, instances: ex/rentals, exports: [ex/n, ex/n]}\n",
+            "form: {name: ex/rental, required: true, instances: ex/rentals, exports: [ex/n, "
+            "ex/n]}\n",
             r"exports\[1\]: 'ex/n' is listed more than once",
             id="export-repeated",
         ),
         pytest.param(
-            "form: {name: ex/rental, instances: ex/rentals, exports: [ex/n, ca/n]}\n",
+            "form: {name: ex/rental, required: true, instances: ex/rentals, exports: [ex/n, "
+            "ca/n]}\n",
             "more than once",
             id="two-exports-of-one-local-id",
         ),
         pytest.param(
-            "form: {name: ex/rental, instances: ex/rentals, exports: [ex/rental.n]}\n",
+            "form: {name: ex/rental, required: true, instances: ex/rentals, "
+            "exports: [ex/rental.n]}\n",
             r"ex/rental\.n",
             id="export-dotted",
         ),
         pytest.param(
-            "form: {name: ex/rental, instances: ex/rentals, exports: []}\n",
+            "form: {name: ex/rental, required: true, instances: ex/rentals, exports: []}\n",
             "exports must name at least one artifact",
             id="no-exports",
         ),
@@ -1345,8 +1401,8 @@ def test_a_bad_form_key_is_rejected_naming_the_part_file(
 @pytest.mark.parametrize(
     "repeat",
     [
-        "form: {name: ex/rental, instances: ex/rentals, exports: [ex/n]}\n",
-        "form: {name: ex/rental, instances: ex/other, exports: [ex/m]}\n",
+        "form: {name: ex/rental, required: true, instances: ex/rentals, exports: [ex/n]}\n",
+        "form: {name: ex/rental, required: true, instances: ex/other, exports: [ex/m]}\n",
     ],
     ids=["same-declaration", "another-declaration"],
 )
@@ -1418,7 +1474,7 @@ def test_a_part_with_two_form_keys_is_rejected_naming_the_part_file(tmp_path: Pa
 
 def test_a_bad_selection_in_a_form_part_names_the_part_file(tmp_path: Path) -> None:
     bad = (
-        "form: {name: ex/rental, instances: ex/rentals, exports: [ex/n]}\n"
+        "form: {name: ex/rental, required: true, instances: ex/rentals, exports: [ex/n]}\n"
         "capabilities:\n  - {name: ex/a}\n"
     )
     write_parts(tmp_path, {"00-header.yaml": HEADER_PART, "01-rental.yaml": bad})
@@ -1459,7 +1515,7 @@ def test_two_outputs_with_one_local_id_are_refused_as_outputs_not_exports(tmp_pa
 
 def limited(extra: str) -> str:
     return (
-        "form:\n  name: ex/rental\n  instances: ex/rentals\n  exports: [ex/n]\n"
+        "form:\n  name: ex/rental\n  required: true\n  instances: ex/rentals\n  exports: [ex/n]\n"
         f"{extra}capabilities:\n  - {{name: ex/a, produces: {{output: ex/n}}}}\n"
     )
 
@@ -1608,7 +1664,7 @@ def test_a_bad_limit_is_rejected_naming_the_part_file(
 
 def test_a_minimum_above_one_without_instances_is_rejected_naming_the_part(tmp_path: Path) -> None:
     text = (
-        "form:\n  name: ex/rental\n  exports: [ex/n]\n  min_instances: 2\n"
+        "form:\n  name: ex/rental\n  required: true\n  exports: [ex/n]\n  min_instances: 2\n"
         "capabilities:\n  - {name: ex/a, produces: {output: ex/n}}\n"
     )
     write_parts(tmp_path, {"00-header.yaml": HEADER_PART, "01-bad.yaml": text})
@@ -1658,7 +1714,8 @@ def test_exactly_one_instance_is_a_minimum_and_maximum_of_one(tmp_path: Path) ->
 
 def test_limits_are_accepted_on_a_form_without_instances(tmp_path: Path) -> None:
     text = (
-        "form:\n  name: ex/rental\n  exports: [ex/n]\n  min_instances: 1\n  max_instances: 1\n"
+        "form:\n  name: ex/rental\n  required: true\n  exports: [ex/n]\n  min_instances: 1\n"
+        "  max_instances: 1\n"
         "  exclusive_group: ex/either\n"
         "capabilities:\n  - {name: ex/a, produces: {output: ex/n}}\n"
     )
@@ -1701,7 +1758,10 @@ def test_a_limit_in_a_part_that_does_not_declare_exports_is_rejected(
 def test_a_second_part_repeating_a_limit_is_rejected_like_a_repeated_declaration(
     tmp_path: Path, key: str
 ) -> None:
-    again = f"form:\n  name: ex/rental\n  instances: ex/rentals\n  exports: [ex/n]\n  {key}\n"
+    again = (
+        "form:\n  name: ex/rental\n  required: true\n  instances: ex/rentals\n  exports: [ex/n]\n"
+        f"  {key}\n"
+    )
     write_parts(
         tmp_path,
         {
@@ -1732,7 +1792,7 @@ def test_parses_the_blank_rules_of_a_selection(tmp_path: Path) -> None:
         jurisdiction: EX-ON
         version: 1
         valid_from_tax_year: 2025
-        inputs: [ex/income, ex/deduction]
+        inputs: [{name: ex/income, required: true}, {name: ex/deduction, required: true}]
         outputs: [ex/net]
         capabilities:
           - name: ex/subtract
@@ -1777,3 +1837,288 @@ capabilities:
 
     with pytest.raises(InvalidManifestError, match="blank"):
         source(tmp_path).get_jurisdiction(EX_ON)
+
+
+# --- required, defaults, predicates and fields ---------------------------------------------------
+#
+# Every input, form and field of a form's instances says `required: true` or `required: false`;
+# nothing is implicit. An optional input or field also has a `default:` written as the value (`null`
+# for blank, a quoted figure, `[]`, `""`) and a `basis:` quoting the form. An optional form has a
+# `required_when:` naming a yes/no and a `basis:`; a required form has neither. These belong to the
+# part that declares the form's exports.
+
+OPTIONAL_FORM = """\
+form:
+  name: ex/relief
+  required: false
+  required_when: ex/relief_applies
+  basis: "Complete this form if you claim relief"
+  exports: [ex/relief_amount]
+capabilities:
+  - {name: ex/a, produces: {output: ex/relief_amount}}
+"""
+
+PREDICATE_INPUT = """\
+inputs:
+  - {name: ex/relief_applies, required: true}
+"""
+
+
+def load_parts(directory: Path, parts: Mapping[str, str]) -> Manifest:
+    write_parts(directory, {"00-header.yaml": SCALARS + OUTPUTS + "capabilities: []\n", **parts})
+    return only_manifest(directory)
+
+
+def refused(directory: Path, parts: Mapping[str, str], message: str) -> str:
+    write_parts(directory, {"00-header.yaml": SCALARS + OUTPUTS + "capabilities: []\n", **parts})
+    with pytest.raises(InvalidManifestError, match=message) as excinfo:
+        source(directory).get_jurisdiction(EX_ON)
+    return str(excinfo.value)
+
+
+def test_an_input_declares_whether_it_is_required_and_optional_ones_a_default_and_a_basis(
+    tmp_path: Path,
+) -> None:
+    manifest = load_parts(
+        tmp_path,
+        {
+            "01-inputs.yaml": """\
+                inputs:
+                  - {name: ex/income, required: true}
+                  - {name: ex/credit, required: false, default: "0", basis: "Line 1"}
+                  - {name: ex/note, required: false, default: "", basis: "Line 2"}
+                  - {name: ex/rows, required: false, default: [], basis: "Line 3"}
+                  - {name: ex/box, required: false, default: null, basis: "Line 4"}
+                """.replace("                ", "")
+        },
+    )
+
+    assert manifest.inputs == {
+        "ex/income": InputDeclaration(name="ex/income", required=True),
+        "ex/credit": InputDeclaration("ex/credit", False, Default("0"), "Line 1"),
+        "ex/note": InputDeclaration("ex/note", False, Default(""), "Line 2"),
+        "ex/rows": InputDeclaration("ex/rows", False, Default(()), "Line 3"),
+        "ex/box": InputDeclaration("ex/box", False, Default(None), "Line 4"),
+    }
+
+
+def test_an_input_that_omits_required_is_refused_naming_it_and_the_part(tmp_path: Path) -> None:
+    message = refused(tmp_path, {"01-inputs.yaml": "inputs:\n  - {name: ex/income}\n"}, "ex/income")
+
+    assert "input 'ex/income': required must be declared true or false" in message
+    assert str(part_path(tmp_path, "01-inputs.yaml")) in message
+
+
+def test_an_input_written_as_a_bare_identifier_is_refused(tmp_path: Path) -> None:
+    refused(tmp_path, {"01-inputs.yaml": "inputs: [ex/income]\n"}, r"inputs\[0\] must be a mapping")
+
+
+@pytest.mark.parametrize(
+    ("entry", "message"),
+    [
+        ("{name: ex/c, required: false, basis: 'Line 1'}", "input 'ex/c': .* needs a default"),
+        ("{name: ex/c, required: false, default: '0'}", "input 'ex/c': .* needs a basis"),
+        ("{name: ex/c, required: true, default: '0'}", "input 'ex/c': a required input takes no"),
+        (
+            "{name: ex/c, required: true, basis: 'Line 1'}",
+            "input 'ex/c': a required input takes no",
+        ),
+        ("{name: ex/c, required: maybe}", r"inputs\[0\].required must be true or false"),
+        ("{name: ex/c, required: 'true'}", r"inputs\[0\].required must be true or false"),
+        (
+            "{name: ex/c, required: false, default: 0, basis: 'L'}",
+            r"default must be null, a quoted",
+        ),
+        (
+            "{name: ex/c, required: false, default: [1], basis: 'L'}",
+            r"default must be null, a quoted",
+        ),
+        ("{name: ex/c, required: false, default: '0', basis: ''}", r"basis must not be empty"),
+        ("{name: ex/c, required: true, extra: 1}", r"unknown keys \['extra'\]"),
+        ("{required: true}", r"missing keys \['name'\]"),
+    ],
+)
+def test_a_contradictory_or_malformed_input_declaration_is_refused(
+    tmp_path: Path, entry: str, message: str
+) -> None:
+    refused(tmp_path, {"01-inputs.yaml": f"inputs:\n  - {entry}\n"}, message)
+
+
+def test_an_input_declared_in_two_parts_is_still_refused(tmp_path: Path) -> None:
+    parts = {"01-a.yaml": PREDICATE_INPUT, "02-b.yaml": PREDICATE_INPUT}
+
+    refused(tmp_path, parts, "'ex/relief_applies' is already listed in")
+
+
+def test_an_optional_form_declares_its_predicate_and_its_basis(tmp_path: Path) -> None:
+    manifest = load_parts(
+        tmp_path, {"01-inputs.yaml": PREDICATE_INPUT, "02-form.yaml": OPTIONAL_FORM}
+    )
+
+    (found,) = others(manifest)
+    assert (found.required, found.required_when) == (False, "ex/relief_applies")
+    assert found.basis == "Complete this form if you claim relief"
+
+
+def test_the_default_form_is_required(tmp_path: Path) -> None:
+    manifest = load_parts(tmp_path, {"01-inputs.yaml": INPUTS, "02-a.yaml": CAPABILITIES_A})
+
+    assert returned(manifest).required is True
+    assert (returned(manifest).required_when, returned(manifest).fields) == (None, ())
+
+
+def test_a_form_that_omits_required_is_refused_naming_it_and_the_part(tmp_path: Path) -> None:
+    text = OPTIONAL_FORM.replace("  required: false\n", "")
+
+    message = refused(
+        tmp_path, {"01-inputs.yaml": PREDICATE_INPUT, "02-form.yaml": text}, "ex/relief"
+    )
+
+    assert "form 'ex/relief': required must be declared true or false" in message
+    assert str(part_path(tmp_path, "02-form.yaml")) in message
+
+
+@pytest.mark.parametrize(
+    ("change", "message"),
+    [
+        (
+            ("  required_when: ex/relief_applies\n", ""),
+            "form 'ex/relief': .* needs a required_when",
+        ),
+        (
+            ('  basis: "Complete this form if you claim relief"\n', ""),
+            "form 'ex/relief': .* needs a basis",
+        ),
+        (("required: false", "required: true"), "form 'ex/relief': a required form takes no"),
+        (("required: false", "required: 0"), r"required must be true or false"),
+        (
+            ("required_when: ex/relief_applies", "required_when: ex/relief_amount"),
+            "is one of its own exports",
+        ),
+        (
+            ("required_when: ex/relief_applies", "required_when: ex/unknown"),
+            "form 'ex/relief': required_when 'ex/unknown' is not a required input",
+        ),
+        (("required_when: ex/relief_applies", "required_when: ''"), "must not be empty"),
+    ],
+)
+def test_a_contradictory_or_unknown_form_requirement_is_refused(
+    tmp_path: Path, change: tuple[str, str], message: str
+) -> None:
+    text = OPTIONAL_FORM.replace(*change)
+
+    refused(tmp_path, {"01-inputs.yaml": PREDICATE_INPUT, "02-form.yaml": text}, message)
+
+
+def test_a_predicate_that_is_an_optional_input_is_refused(tmp_path: Path) -> None:
+    optional_input = (
+        "inputs:\n  - {name: ex/relief_applies, required: false, default: '0', basis: 'Line 1'}\n"
+    )
+
+    refused(
+        tmp_path,
+        {"01-inputs.yaml": optional_input, "02-form.yaml": OPTIONAL_FORM},
+        "'ex/relief_applies' is an optional input",
+    )
+
+
+def test_a_predicate_may_be_produced_by_a_selection(tmp_path: Path) -> None:
+    answers = """\
+form:
+  name: ex/answers
+  required: true
+  exports: [ex/relief_applies]
+capabilities:
+  - {name: ex/answer, produces: {output: ex/relief_applies}}
+"""
+
+    manifest = load_parts(
+        tmp_path,
+        {"01-inputs.yaml": INPUTS, "02-answers.yaml": answers, "03-form.yaml": OPTIONAL_FORM},
+    )
+
+    assert [form.required_when for form in others(manifest)] == [None, "ex/relief_applies"]
+
+
+@pytest.mark.parametrize("key", ["required", "required_when", "basis", "fields"])
+def test_a_requirement_key_in_a_part_that_does_not_declare_exports_is_rejected(
+    tmp_path: Path, key: str
+) -> None:
+    value = {
+        "required": "true",
+        "required_when": "ex/relief_applies",
+        "basis": "'Line 1'",
+        "fields": "[]",
+    }
+    declaring = OPTIONAL_FORM
+    beside = f"form:\n  name: ex/relief\n  {key}: {value[key]}\n"
+
+    message = refused(
+        tmp_path,
+        {"01-inputs.yaml": PREDICATE_INPUT, "02-form.yaml": declaring, "03-more.yaml": beside},
+        f"form 'ex/relief': {key} belongs to the part that declares exports",
+    )
+
+    assert str(part_path(tmp_path, "03-more.yaml")) in message
+
+
+def test_a_form_with_instances_declares_its_fields_like_inputs(tmp_path: Path) -> None:
+    text = """\
+form:
+  name: ex/rental
+  required: true
+  instances: ex/rentals
+  exports: [ex/n]
+  fields:
+    - {name: ex/gross_rent, required: true}
+    - {name: ex/expenses, required: false, default: "0", basis: "Line 2"}
+capabilities:
+  - {name: ex/a, produces: {output: ex/n}}
+"""
+
+    (found,) = others(load_parts(tmp_path, {"01-inputs.yaml": INPUTS, "02-form.yaml": text}))
+
+    assert found.fields == (
+        InputDeclaration(name="ex/gross_rent", required=True),
+        InputDeclaration("ex/expenses", False, Default("0"), "Line 2"),
+    )
+
+
+@pytest.mark.parametrize(
+    ("fields", "message"),
+    [
+        ("[{name: ex/gross_rent}]", "input 'ex/gross_rent': required must be declared"),
+        ("[{name: ex/g, required: false, basis: 'L'}]", "input 'ex/g': .* needs a default"),
+        (
+            "[{name: ex/g, required: true}, {name: ex/g, required: true}]",
+            r"fields\[1\]: 'ex/g' is listed more than once",
+        ),
+        ("ex/gross_rent", "fields must be a list"),
+    ],
+)
+def test_a_bad_field_declaration_is_refused(tmp_path: Path, fields: str, message: str) -> None:
+    text = f"""\
+form:
+  name: ex/rental
+  required: true
+  instances: ex/rentals
+  exports: [ex/n]
+  fields: {fields}
+capabilities:
+  - {{name: ex/a, produces: {{output: ex/n}}}}
+"""
+
+    refused(tmp_path, {"01-inputs.yaml": INPUTS, "02-form.yaml": text}, message)
+
+
+def test_fields_on_a_form_without_instances_are_refused(tmp_path: Path) -> None:
+    text = OPTIONAL_FORM.replace(
+        "  exports: [ex/relief_amount]\n",
+        "  exports: [ex/relief_amount]\n  fields: [{name: ex/x, required: true}]\n",
+    )
+
+    refused(
+        tmp_path,
+        {"01-inputs.yaml": PREDICATE_INPUT, "02-form.yaml": text},
+        "form 'ex/relief': fields belong to a form with instances",
+    )

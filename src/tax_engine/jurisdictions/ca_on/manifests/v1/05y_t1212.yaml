@@ -9,6 +9,7 @@
 # selects none of these steps.
 form:
   name: ca/t1212
+  required: true
   exports:
     - ca/t1212_line_3_closing_balance
     - ca/t1212_line_24900_amount

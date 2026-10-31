@@ -32,9 +32,26 @@ Each selection names a capability and fills its slots: `params` (slot -> family,
 optional, a slot not named refuses a blank) and `produces` (slot -> artifact identifier,
 required, at least one). Slot names, and whether a
 slot takes one identifier or a list, are not checked against capability classes here.
-The top-level `inputs` and `outputs` list the computation's starting artifacts and the default
-form's exports: both required, non-empty lists of non-empty strings without duplicates (an
-identifier in both is an input carried onto the return as entered).
+The top-level `outputs` list the default form's exports: a required, non-empty list of non-empty
+strings without duplicates (an identifier in both `inputs` and `outputs` is an input carried onto
+the return as entered).
+Every input says whether it is required: `inputs` is a required, non-empty list of mappings with
+`name` and `required` (`true` or `false`, nothing implicit; a bare identifier is rejected). An
+optional input also declares `default` and `basis`: `default` is written as the value the request
+is read as when it leaves the line out (`null` for blank, a quoted figure such as `"0"`, `[]`, or
+`""`), and must be present even when `null`; `basis` is the printed sentence of the form that
+justifies it, which the loader keeps but does not check. A required input takes neither.
+A `form:` block that declares `exports` also declares `required` (`true` or `false`) and, for an
+optional form, `required_when` (the identifier of the yes/no artifact that says when the form is
+needed: a required input or an artifact a selection produces, never one of its own exports) and
+`basis` (the printed "Complete this form if" sentence); a required form takes neither. A form with
+`instances` lists `fields`, one mapping per field of the instances kind, declared like inputs
+(`name`, `required`, and for an optional one `default` and `basis`); a form without `instances` has
+none. Which fields the instances kind has, that defaults suit their kinds and that a predicate is a
+yes/no count are checked when the manifest is composed (`Manifest.check_artifacts`), where the
+kinds are known.
+Any of these keys in a part that does not declare `exports` is rejected. The default form is
+always required.
 Parsing is strict because a manifest must stay selection plus slot bindings
 (design.md §4): unknown keys, duplicate keys and wrongly typed values are
 rejected with the offending file (for a folder, the offending part) named, never coerced or
@@ -57,7 +74,13 @@ from tax_engine.domain.errors import (
 )
 from tax_engine.domain.jurisdiction import Jurisdiction
 from tax_engine.domain.jurisdiction_code import JurisdictionCode
-from tax_engine.domain.manifest import CapabilitySelection, Form, Manifest
+from tax_engine.domain.manifest import (
+    CapabilitySelection,
+    Default,
+    Form,
+    InputDeclaration,
+    Manifest,
+)
 from tax_engine.domain.registry import Namespace
 
 _MANIFEST_KEYS = frozenset(
@@ -66,8 +89,19 @@ _MANIFEST_KEYS = frozenset(
 _PART_KEYS = _MANIFEST_KEYS | {"form"}
 _FORM_KEYS = frozenset({"name"})
 _OPTIONAL_FORM_KEYS = frozenset(
-    {"instances", "exports", "max_instances", "min_instances", "exclusive_group"}
+    {
+        "instances",
+        "exports",
+        "max_instances",
+        "min_instances",
+        "exclusive_group",
+        "required",
+        "required_when",
+        "basis",
+        "fields",
+    }
 )
+_OPTIONAL_INPUT_KEYS = frozenset({"default", "basis"})
 _DEFAULT_FORM = "return"
 _CAPABILITY_KEYS = frozenset({"name", "produces"})
 _OPTIONAL_CAPABILITY_KEYS = frozenset({"params", "consumes", "blank"})
@@ -84,6 +118,10 @@ class _Declaration(NamedTuple):
     max_instances: int | None
     min_instances: int | None
     exclusive_group: str | None
+    required: bool
+    required_when: str | None
+    basis: str | None
+    fields: tuple[InputDeclaration, ...]
 
     def form(self, name: str, selections: tuple[CapabilitySelection, ...]) -> Form:
         """The form `name` with this declaration and `selections`, which checks the declaration."""
@@ -95,6 +133,10 @@ class _Declaration(NamedTuple):
             max_instances=self.max_instances,
             min_instances=self.min_instances,
             exclusive_group=self.exclusive_group,
+            required=self.required,
+            required_when=self.required_when,
+            basis=self.basis,
+            fields=self.fields,
         )
 
 
@@ -258,6 +300,10 @@ class YamlJurisdictionSource:
         maximum = node.optional_field("max_instances")
         minimum = node.optional_field("min_instances")
         group = node.optional_field("exclusive_group")
+        required = node.optional_field("required")
+        required_when = node.optional_field("required_when")
+        basis = node.optional_field("basis")
+        fields = node.optional_field("fields")
         if exports is None:
             if instances is not None:
                 raise InvalidManifestError(
@@ -267,12 +313,18 @@ class YamlJurisdictionSource:
                 ("max_instances", maximum),
                 ("min_instances", minimum),
                 ("exclusive_group", group),
+                ("required", required),
+                ("required_when", required_when),
+                ("basis", basis),
+                ("fields", fields),
             ):
                 if limit is not None:
                     raise InvalidManifestError(
                         f"form {name!r}: {key} belongs to the part that declares exports"
                     )
             return name, None
+        if required is None:
+            raise InvalidManifestError(f"form {name!r}: required must be declared true or false")
         cls._identifiers(exports)
         declared = _Declaration(
             instances=None if instances is None else instances.require_non_empty_string(),
@@ -280,6 +332,12 @@ class YamlJurisdictionSource:
             max_instances=None if maximum is None else maximum.require_integer(),
             min_instances=None if minimum is None else minimum.require_integer(),
             exclusive_group=None if group is None else group.require_non_empty_string(),
+            required=required.require_boolean(),
+            required_when=None
+            if required_when is None
+            else required_when.require_non_empty_string(),
+            basis=None if basis is None else basis.require_non_empty_string(),
+            fields=() if fields is None else cls._declarations(fields),
         )
         # Built to check the declaration; the form's selections are added when the parts merge.
         declared.form(name, ())
@@ -298,9 +356,10 @@ class YamlJurisdictionSource:
             for key in ("version", "valid_from_tax_year"):
                 if key in contents:
                     contents[key].require_integer()
-            for key in _IDENTIFIER_LISTS:
-                if key in contents:
-                    cls._identifiers(contents[key])
+            if "inputs" in contents:
+                cls._declarations(contents["inputs"])
+            if "outputs" in contents:
+                cls._identifiers(contents["outputs"])
             if "capabilities" in contents:
                 for entry in contents["capabilities"].items():
                     cls._selection(entry)
@@ -314,7 +373,9 @@ class YamlJurisdictionSource:
         if key not in _IDENTIFIER_LISTS:
             return
         for index, item in enumerate(node.items()):
-            identifier = item.require_string()
+            identifier = (
+                item.field("name").require_string() if key == "inputs" else item.require_string()
+            )
             if identifier in owners:
                 raise InvalidManifestError(
                     f"{part}: {key}[{index}]: {identifier!r} is already listed in "
@@ -334,6 +395,7 @@ class YamlJurisdictionSource:
         """
         doc = document.require_mapping(_MANIFEST_KEYS)
         code = cls._code(doc.field("jurisdiction"))
+        inputs = cls._declarations(doc.field("inputs"))
         outputs = cls._identifiers(doc.field("outputs"))
         if not outputs:
             raise InvalidManifestError("outputs must name at least one artifact")
@@ -343,7 +405,7 @@ class YamlJurisdictionSource:
             jurisdiction=code,
             version=doc.field("version").require_integer(),
             valid_from_tax_year=doc.field("valid_from_tax_year").require_integer(),
-            inputs=cls._identifiers(doc.field("inputs")),
+            inputs={declaration.name: declaration for declaration in inputs},
             forms=(
                 Form(
                     name=default,
@@ -352,6 +414,7 @@ class YamlJurisdictionSource:
                     capabilities=tuple(
                         cls._selection(entry) for entry in doc.field("capabilities").items()
                     ),
+                    required=True,
                 ),
                 *forms_beside(default),
             ),
@@ -369,6 +432,53 @@ class YamlJurisdictionSource:
                 raise YamlShapeError(f"{item.where}: {identifier!r} is listed more than once")
             identifiers.add(identifier)
         return frozenset(identifiers)
+
+    @classmethod
+    def _declarations(cls, node: YamlNode) -> tuple[InputDeclaration, ...]:
+        """A list of input declarations, none repeated; an empty list is Manifest's check."""
+        declarations = tuple(cls._declaration(entry) for entry in node.items())
+        names: set[str] = set()
+        for entry, declaration in zip(node.items(), declarations, strict=True):
+            if declaration.name in names:
+                raise YamlShapeError(
+                    f"{entry.where}: {declaration.name!r} is listed more than once"
+                )
+            names.add(declaration.name)
+        return declarations
+
+    @classmethod
+    def _declaration(cls, entry: YamlNode) -> InputDeclaration:
+        """One input or field: its `name`, whether it is `required`, and for an optional one its
+        `default` (written as the value, `null` for blank) and the printed `basis`."""
+        fields = entry.require_mapping(
+            frozenset({"name"}), optional=_OPTIONAL_INPUT_KEYS | {"required"}
+        )
+        name = fields.field("name").require_non_empty_string()
+        required = fields.optional_field("required")
+        if required is None:
+            raise InvalidManifestError(f"input {name!r}: required must be declared true or false")
+        default = fields.optional_field("default")
+        basis = fields.optional_field("basis")
+        return InputDeclaration(
+            name=name,
+            required=required.require_boolean(),
+            default=None if default is None else cls._default(default),
+            basis=None if basis is None else basis.require_non_empty_string(),
+        )
+
+    @staticmethod
+    def _default(node: YamlNode) -> Default:
+        """`null`, a quoted string or an empty list, as the value the default is."""
+        value = node.value
+        if value is None:
+            return Default(None)
+        if isinstance(value, str):
+            return Default(value)
+        if isinstance(value, list) and not value:
+            return Default(())
+        raise YamlShapeError(
+            f"{node.where} must be null, a quoted string or [], got {type(value).__name__}"
+        )
 
     @classmethod
     def _selection(cls, entry: YamlNode) -> CapabilitySelection:

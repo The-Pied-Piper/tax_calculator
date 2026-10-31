@@ -3,4 +3,5 @@ inputs:
   # institutions for 2025 (fees for each institution must be more than $100)": the form takes one
   # total, so the number of institutions the fees were paid to is the caller's count, a whole number
   # of 0 or more, read by `ca/more_than_per_unit` (times $100) for the minimum of the total.
-  - ca/canadian_tuition_institutions
+  - name: ca/canadian_tuition_institutions
+    required: true

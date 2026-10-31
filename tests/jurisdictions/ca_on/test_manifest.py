@@ -195,7 +195,7 @@ def test_the_manifest_has_the_inputs_outputs_and_selections_of_the_family(
 ) -> None:
     found = manifest()
 
-    assert family.INPUTS <= found.inputs
+    assert family.INPUTS <= found.inputs.keys()
     assert family.OUTPUTS <= set(found.forms[0].exports)
     assert family.STEPS <= set(found.forms[0].capabilities)
 
@@ -217,7 +217,7 @@ def test_ca_on_has_one_manifest_from_2025() -> None:
     assert found.jurisdiction == CA_ON
     assert found.version == 1
     assert found.valid_from_tax_year == 2025
-    assert found.inputs == INPUTS
+    assert found.inputs.keys() == INPUTS
     # T1 line 167, the refund or balance owing, Schedule 7 line 23, what the return produces for
     # the next year's line 1, line 12010, the amount of dividends other than eligible, which
     # nothing else on the return reads; the Federal Worksheet's "Line 25000 - Other payments

@@ -1,0 +1,344 @@
+form:
+  name: ca/t2125
+capabilities:
+  # T2125 Area G "Immediate expensing limit allocated to your business: Multiply $1.5 million by
+  # the percentage assigned to your business in column 3**", first step: $1.5 million times the
+  # percentage assigned to your business in column 3, a caller input as the form prints it (40
+  # for 40%).
+  - name: ca/apply_percentage
+    params:
+      rounding: ca/business_immediate_expensing_rounding
+    consumes:
+      amount: ca/business_immediate_expensing_cap
+      percentage: ca/business_epop_percentage
+    produces:
+      output: ca/business_immediate_expensing_share
+  # T2125 Area G "** If the total of column 3 is more than 100%, enter "0."", first step: 100%
+  # less "Total of percentage assigned: Total of column 3", a caller input; negative when the
+  # total is more than 100%.
+  - name: core/subtract
+    consumes:
+      amount: ca/business_epop_percentage_maximum
+      less: ca/business_epop_percentage_total
+    produces:
+      output: ca/business_epop_percentage_room
+  # T2125 Area G "Immediate expensing limit allocated to your business: Multiply $1.5 million by
+  # the percentage assigned to your business in column 3**" and "** If the total of column 3 is
+  # more than 100%, enter "0."": the multiple above when 100% less the total of column 3 is zero
+  # or positive, else 0.
+  - name: ca/choose_by_sign
+    consumes:
+      sign: ca/business_epop_percentage_room
+      when_positive: []
+      when_zero: []
+      when_negative: []
+      when_non_positive: []
+      when_non_negative:
+        - ca/business_immediate_expensing_share
+    produces:
+      output: ca/business_immediate_expensing_allocated
+  # T2125 Area A endnote 5 "$1.5 million, if you are not associated with any other eligible person
+  # or partnership (EPOP) in the tax year": the answer to a yes or no question, a count of 1 or 0,
+  # checked before the step that reads it. A count of 2 or more is refused, not capped.
+  - name: ca/yes_or_no_count
+    consumes:
+      count: ca/business_epop_associated
+    produces:
+      output: ca/business_epop_associated_checked
+  # T2125 Area A endnote 5 "zero, if you are associated with one or more EPOPs and an agreement that
+  # assigns a percentage to one or more of the associated EPOPs was not filed with the minister in a
+  # prescribed form": the answer to a yes or no question, a count of 1 or 0, checked before the step
+  # that reads it. A count of 2 or more is refused, not capped.
+  - name: ca/yes_or_no_count
+    consumes:
+      count: ca/business_epop_agreement_filed
+    produces:
+      output: ca/business_epop_agreement_filed_checked
+  # T2125 Area A endnote 5 "any amount allocated by the minister under subsection 1104(3.4) of the
+  # Regulations": the answer to a yes or no question, a count of 1 or 0, checked before the step
+  # that reads it. A count of 2 or more is refused, not capped.
+  - name: ca/yes_or_no_count
+    consumes:
+      count: ca/business_minister_allocation_given
+    produces:
+      output: ca/business_minister_allocation_given_checked
+  # T2125 Area A endnote 5 "amount iii of Area G, if you are associated with one or more EPOPs
+  # in the tax year" and "zero, if you are associated with one or more EPOPs and an agreement
+  # that assigns a percentage to one or more of the associated EPOPs was not filed with the
+  # minister in a prescribed form": amount iii times the count of agreements filed (a caller's 0
+  # or 1), so 0 when none was filed.
+  - name: core/times_count
+    consumes:
+      amount: ca/business_immediate_expensing_allocated
+      count: ca/business_epop_agreement_filed_checked
+    produces:
+      output: ca/business_immediate_expensing_associated_limit
+  # T2125 Area A endnote 5 "the immediate expensing limit, which is equal to one of the
+  # following, whichever is applicable": a count of 1 for associated with one or more EPOPs (a
+  # caller's 0 or 1) chooses the limit above ("amount iii of Area G" or "zero"); with a count of
+  # 0 it is the $1.5 million ("if you are not associated with any other eligible person or
+  # partnership (EPOP) in the tax year").
+  - name: core/choose_by_count
+    consumes:
+      count: ca/business_epop_associated_checked
+      when_none: ca/business_immediate_expensing_cap
+      when_any: ca/business_immediate_expensing_associated_limit
+    produces:
+      output: ca/business_immediate_expensing_limit_before_minister
+  # T2125 Note 5 "any amount allocated by the minister under subsection 1104(3.4) of the
+  # Regulations": a count of 1 (a caller's 0 or 1) chooses the amount allocated by the minister, as
+  # entered, in place of the limit before the days scaling; with a count of 0 the limit before the
+  # minister's amount stands. The amount allocated is the amount for the year, and the days scaling
+  # below applies to it as it does to the limit.
+  - name: core/choose_by_count
+    consumes:
+      count: ca/business_minister_allocation_given_checked
+      when_none: ca/business_immediate_expensing_limit_before_minister
+      when_any: ca/business_minister_allocation
+    produces:
+      output: ca/business_immediate_expensing_limit_before_proration
+  # Income Tax Regulations 1104(3.5)(b): "where an eligible person or partnership has a taxation
+  # year that is less than 51 weeks, its immediate expensing limit for the year is that proportion
+  # of its immediate expensing limit for the year determined without reference to this paragraph
+  # that the number of days in the year is of 365". The limit before the days scaling (the
+  # minister's amount included) times the days of the fiscal period over the 365 of a full year,
+  # rounded to the cent, for a fiscal period of fewer than 357 days (51 weeks of 7 days, the shared
+  # figure `ca/immediate_expensing_short_year_days`); any other fiscal period keeps the amount as it
+  # is. Guide T4002, "Immediate expensing incentive": "The limit is also prorated for tax years
+  # shorter than 365 days" is the guide's wording of the same rule, which the Regulations narrow to
+  # 51 weeks.
+  - name: ca/prorated_by_fiscal_period_days
+    params:
+      rounding: ca/business_immediate_expensing_rounding
+      class_rates: ca/cca_class_rates
+    consumes:
+      amount: ca/business_immediate_expensing_limit_before_proration
+      fiscal_period_days: ca/business_fiscal_period_days
+      short_year_days: ca/immediate_expensing_short_year_days
+    produces:
+      output: ca/business_immediate_expensing_limit
+  # T2125 Area A endnote 5 "the immediate expensing limit, which is equal to one of the following,
+  # whichever is applicable", "any amount allocated by the minister under subsection 1104(3.4) of
+  # the Regulations", and Income Tax Regulations 1104(3.5)(b). The person's limit before the days
+  # scaling, the one limit the statements of the four forms share: the limit before the minister's
+  # amount, unscaled, or the amount allocated by the minister when there is one, which is also
+  # unscaled. The statements are compared on it because each statement's own fiscal period scales
+  # the limit above, and a person's statements may cover periods of different lengths.
+  - name: core/choose_by_count
+    consumes:
+      count: ca/business_minister_allocation_given_checked
+      when_none: ca/business_immediate_expensing_limit_before_minister
+      when_any: ca/business_minister_allocation
+    produces:
+      output: ca/business_immediate_expensing_limit_unprorated
+  # T2125 Area A endnote 5 "the amount of income, if any, earned from the source of income that
+  # is a business (before any CCA deductions) in which the relevant DIEP is used for the tax
+  # year": line 9369 "Net income (loss) before adjustments" plus line 9936, the CCA it deducted
+  # (the recapture on line 8230 is already in gross income and the terminal loss on line 9270 an
+  # expense), not below zero.
+  - name: core/sum_not_below_zero
+    consumes:
+      parts:
+        - ca/business_net_income_before_adjustments
+        - ca/business_cca_claim
+    produces:
+      output: ca/business_income_before_cca
+  # T2125 Area A "Total immediate expensing claim for the year: Total of column 9" (line i) and
+  # endnote 5 "The total immediate expensing amount for the tax year (total of column 9) is
+  # limited to the lesser of: the immediate expensing limit"; "the UCC of DIEPs in column 8";
+  # "the amount of income, if any, earned from the source of income that is a business (before
+  # any CCA deductions) in which the relevant DIEP is used for the tax year": the total of
+  # column 9 of the Area A list, refused when above the limit or above the income before CCA.
+  - name: ca/immediate_expensing_claim
+    params:
+      class_rates: ca/cca_class_rates
+    consumes:
+      classes: ca/business_cca_classes_adjusted
+      immediate_expensing_limit: ca/business_immediate_expensing_limit
+      income_before_cca: ca/business_income_before_cca
+    produces:
+      output: ca/business_immediate_expensing_claim
+  # T2125 Charts A to C, "Motor vehicle expenses", filled in for each vehicle of the statement's
+  # list and added: Chart A line 16 "Allowable motor vehicle expenses: Add amounts 13 to 15
+  # (enter this total on line 9281 of Part 4)". The printed constants of Charts B and C
+  # ("$350***", "÷ 30", "$44,706", "$1,100", "$38,000" and "× 85%") are its datasets, and the
+  # sales tax rate of the province and the days of the statement's fiscal period (Chart B line 18)
+  # are its inputs, a vehicle's interest days being refused above the fiscal period's days.
+  - name: ca/business_vehicle_expenses
+    params:
+      interest_limits: ca/business_vehicle_interest_limits
+      lease_limits: ca/business_vehicle_lease_limits
+      days_divisor: ca/business_vehicle_days_divisor
+      lease_price_rate: ca/business_vehicle_lease_price_rate
+      deposit_minimum: ca/business_vehicle_deposit_minimum
+      rounding: ca/business_vehicle_rounding
+    consumes:
+      vehicles: ca/business_vehicles
+      sales_tax_rate: ca/business_vehicle_sales_tax_rate
+      fiscal_period_days: ca/business_fiscal_period_days
+    produces:
+      output: ca/business_motor_vehicle_expenses
+  # T2125 Part 4 "Total expenses: Total of amounts 4B to 4V 9368": the 19 expense lines 4B
+  # to 4T ("Advertising" to "Motor vehicle expenses (not including CCA) (amount 16 of
+  # Chart A)"; the caller's inputs, and 4T is amount 16 of Chart A, produced by the steps
+  # above), then 4U (line 9936) and 4V (line 9270), in the form's order.
+  - name: core/sum
+    consumes:
+      parts:
+        - ca/business_advertising
+        - ca/business_meals_and_entertainment
+        - ca/business_bad_debts
+        - ca/business_insurance
+        - ca/business_interest_and_bank_charges
+        - ca/business_business_taxes_licences_and_memberships
+        - ca/business_office_expenses
+        - ca/business_office_stationery_and_supplies
+        - ca/business_professional_fees
+        - ca/business_management_and_administration_fees
+        - ca/business_rent
+        - ca/business_repairs_and_maintenance
+        - ca/business_salaries_wages_and_benefits
+        - ca/business_property_taxes
+        - ca/business_travel_expenses
+        - ca/business_utilities
+        - ca/business_fuel_costs
+        - ca/business_delivery_freight_and_express
+        - ca/business_motor_vehicle_expenses
+        - ca/business_cca_claim
+        - ca/business_other_expenses_with_terminal_loss
+    produces:
+      output: ca/business_total_expenses
+  # T2125 Part 4 "Net income (loss) before adjustments: Amount 4A minus line 9368" (line
+  # 9369): signed, a loss is negative.
+  - name: core/subtract
+    consumes:
+      amount: ca/business_gross_income_before_expenses
+      less: ca/business_total_expenses
+    produces:
+      output: ca/business_net_income_before_adjustments
+  # T2125 Part 5 "Your share of line 9369 or the amount from your T5013 slip, Statement of
+  # Partnership Income. 5A": a count of 1 for a partner chooses the amount from the T5013 slip,
+  # as entered; with a count of 0 it is line 9369.
+  - name: core/choose_by_count
+    consumes:
+      count: ca/business_partner_checked
+      when_none: ca/business_net_income_before_adjustments
+      when_any: ca/business_partner_share
+    produces:
+      output: ca/business_share_of_net_income
+  # T2125 Part 6 "Total other amounts deductible from your share of the net partnership
+  # income (loss): Add amounts 6A to 6E (enter this on line 9943 of Part 5). 6F": 6A to 6E
+  # "List details of expenses: Expense amounts", caller inputs.
+  - name: core/sum
+    consumes:
+      parts:
+        - ca/business_partner_other_amount_a
+        - ca/business_partner_other_amount_b
+        - ca/business_partner_other_amount_c
+        - ca/business_partner_other_amount_d
+        - ca/business_partner_other_amount_e
+    produces:
+      output: ca/business_partner_other_amounts_total
+  # T2125 Part 5 "Other amounts deductible from your share of net partnership income
+  # (loss) (amount 6F)" (line 9943).
+  - name: core/sum
+    consumes:
+      parts:
+        - ca/business_partner_other_amounts_total
+    produces:
+      output: ca/business_partner_other_amounts
+  # T2125 Part 5 "Total: Amount 5A plus amount 5B plus line 9974 5C": amount 5B "Canadian
+  # journalism labour tax credit allocated to you in the year (box 236 of your T5013
+  # slip)" and line 9974 "GST/HST rebate for partners received in the year", caller
+  # inputs.
+  - name: core/sum
+    consumes:
+      parts:
+        - ca/business_share_of_net_income
+        - ca/business_journalism_labour_tax_credit
+        - ca/business_partner_gst_hst_rebate
+    produces:
+      output: ca/business_partnership_total
+  # T2125 Part 5 "Net income (loss) after adjustments: Amount 5C minus line 9943 5D":
+  # signed, a loss is negative.
+  - name: core/subtract
+    consumes:
+      amount: ca/business_partnership_total
+      less: ca/business_partner_other_amounts
+    produces:
+      output: ca/business_net_income_after_adjustments
+  # T2125 Part 7 "Subtotal: Add amounts 7A to 7G. 7H": 7A "Heat", 7B "Electricity", 7C
+  # "Insurance", 7D "Maintenance", 7E "Mortgage interest", 7F "Property taxes" and 7G
+  # "Other expenses (specify)", caller inputs.
+  - name: core/sum
+    consumes:
+      parts:
+        - ca/business_home_heat
+        - ca/business_home_electricity
+        - ca/business_home_insurance
+        - ca/business_home_maintenance
+        - ca/business_home_mortgage_interest
+        - ca/business_home_property_taxes
+        - ca/business_home_other_expenses
+    produces:
+      output: ca/business_home_expenses_subtotal
+  # T2125 Part 7 "Subtotal: Amount 7H minus amount 7I 7J": amount 7I "Personal-use part of
+  # the business-use-of-home expenses", a caller input.
+  - name: core/subtract
+    consumes:
+      amount: ca/business_home_expenses_subtotal
+      less: ca/business_home_personal_use_part
+    produces:
+      output: ca/business_home_expenses_business_part
+  # T2125 Part 7 "Subtotal: Add amounts 7J to 7L. 7M": 7K "Capital cost allowance
+  # (business part only), which means amount ii of Area A minus any portion of capital
+  # cost allowance that is for personal use or entered on line 9936 of Part 4" and 7L
+  # "Amount carried forward from previous year", caller inputs.
+  - name: core/sum
+    consumes:
+      parts:
+        - ca/business_home_expenses_business_part
+        - ca/business_home_cca
+        - ca/business_home_carried_forward
+    produces:
+      output: ca/business_home_expenses_available
+  # T2125 Part 7 "Net income (loss) after adjustments (amount 5D) (if negative, enter
+  # "0"). 7N": amount 5D, or 0 when it is negative.
+  - name: core/sum_not_below_zero
+    consumes:
+      parts:
+        - ca/business_net_income_after_adjustments
+    produces:
+      output: ca/business_home_income_limit
+  # T2125 Part 7 "Business-use-of-home expenses available to carry forward: Amount 7M
+  # minus amount 7N (if negative, enter "0") 7O": the claim left over, 0 when amount 7N is
+  # the larger.
+  - name: core/subtract_not_below_zero
+    consumes:
+      amount: ca/business_home_expenses_available
+      less: ca/business_home_income_limit
+    produces:
+      output: ca/business_home_carry_forward
+  # T2125 Part 7 "Allowable claim: Amount 7M or 7N above, whichever is less (enter your
+  # share of this amount on line 9945 of Part 5) 7P".
+  - name: core/lesser_of
+    consumes:
+      amounts:
+        - ca/business_home_expenses_available
+        - ca/business_home_income_limit
+    produces:
+      output: ca/business_home_allowable_claim
+  # T2125 Part 5 "Business-use-of-home expenses (amount 7P)" (line 9945).
+  - name: core/sum
+    consumes:
+      parts:
+        - ca/business_home_allowable_claim
+    produces:
+      output: ca/business_home_expenses
+  # T2125 Part 5 "Your net income (loss): Amount 5D minus line 9945" (line 9946), signed.
+  - name: core/subtract
+    consumes:
+      amount: ca/business_net_income_after_adjustments
+      less: ca/business_home_expenses
+    produces:
+      output: ca/business_income

@@ -30,6 +30,7 @@ from tax_engine.domain.parameters.rounding import NO_ROUNDING
 from tax_engine.domain.record_list import RecordList
 from tax_engine.domain.trace import ItemsTotalLine
 from tax_engine.jurisdictions.ca.catalog import FOREIGN_TAX_COUNTRIES
+from tests.manifest_support import required_inputs
 
 D = Decimal
 
@@ -91,9 +92,10 @@ def service(identifier: str) -> TaxComputationService:
         jurisdiction=code,
         version=1,
         valid_from_tax_year=2025,
-        inputs=frozenset({"ca/foreign_tax_countries"}),
+        inputs=required_inputs(frozenset({"ca/foreign_tax_countries"})),
         forms=(
             Form(
+                required=True,
                 name=code.namespace.identifier("return"),
                 instances=None,
                 exports=("ex/foreign_tax_countries_total",),

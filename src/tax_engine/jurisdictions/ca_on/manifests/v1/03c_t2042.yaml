@@ -12,6 +12,7 @@
 # (03o_t2043_places_present.yaml), read by Form T2043.
 form:
   name: ca/t2042
+  required: true
   instances: ca/t2042_statements
   exports:
     - ca/farming_income
@@ -71,6 +72,213 @@ form:
     - ca/farm_present_amount_nb
     - ca/farm_present_amount_outside_eight
     - ca/farm_fuel_charge_credit
+  fields:
+    - name: ca/farm_wheat
+      required: true
+    - name: ca/farm_oats
+      required: true
+    - name: ca/farm_barley
+      required: true
+    - name: ca/farm_mixed_grains
+      required: true
+    - name: ca/farm_corn
+      required: true
+    - name: ca/farm_canola
+      required: true
+    - name: ca/farm_flaxseed
+      required: true
+    - name: ca/farm_soybeans
+      required: true
+    - name: ca/farm_grains_and_oilseeds
+      required: true
+    - name: ca/farm_fruit
+      required: true
+    - name: ca/farm_potatoes
+      required: true
+    - name: ca/farm_vegetables
+      required: true
+    - name: ca/farm_tobacco
+      required: true
+    - name: ca/farm_greenhouse_and_nursery
+      required: true
+    - name: ca/farm_forage_crops_or_seeds
+      required: true
+    - name: ca/farm_other_crops
+      required: true
+    - name: ca/farm_cattle
+      required: true
+    - name: ca/farm_swine
+      required: true
+    - name: ca/farm_poultry
+      required: true
+    - name: ca/farm_sheep_and_lambs
+      required: true
+    - name: ca/farm_livestock_and_animal_products_revenue
+      required: true
+    - name: ca/farm_milk_and_cream
+      required: true
+    - name: ca/farm_eggs
+      required: true
+    - name: ca/farm_other_commodities
+      required: true
+    - name: ca/farm_dairy_subsidies
+      required: true
+    - name: ca/farm_crop_insurance
+      required: true
+    - name: ca/farm_other_program_payments
+      required: true
+    - name: ca/farm_rebates
+      required: true
+    - name: ca/farm_custom_work
+      required: true
+    - name: ca/farm_insurance_proceeds
+      required: true
+    - name: ca/farm_patronage_dividends
+      required: true
+    - name: ca/farm_other_income
+      required: true
+    - name: ca/farm_containers_and_twine
+      required: true
+    - name: ca/farm_fertilizers_and_lime
+      required: true
+    - name: ca/farm_pesticides
+      required: true
+    - name: ca/farm_seeds_and_plants
+      required: true
+    - name: ca/farm_feed_supplements_straw_and_bedding
+      required: true
+    - name: ca/farm_livestock_purchased
+      required: true
+    - name: ca/farm_veterinary_fees
+      required: true
+    - name: ca/farm_machinery_repairs_licences_and_insurance
+      required: true
+    - name: ca/farm_gasoline_diesel_and_oil
+      required: true
+    - name: ca/farm_building_repairs_and_maintenance
+      required: true
+    - name: ca/farm_clearing_levelling_and_draining
+      required: true
+    - name: ca/farm_crop_insurance_premiums
+      required: true
+    - name: ca/farm_custom_work_expenses
+      required: true
+    - name: ca/farm_electricity
+      required: true
+    - name: ca/farm_heating_and_curing_fuel
+      required: true
+    - name: ca/farm_insurance_program_overpayment_recapture
+      required: true
+    - name: ca/farm_insurance
+      required: true
+    - name: ca/farm_interest_and_bank_charges
+      required: true
+    - name: ca/farm_office_expenses
+      required: true
+    - name: ca/farm_professional_fees
+      required: true
+    - name: ca/farm_property_taxes
+      required: true
+    - name: ca/farm_rent
+      required: true
+    - name: ca/farm_salaries_wages_and_benefits
+      required: true
+    - name: ca/business_vehicles
+      required: true
+    - name: ca/farm_vehicle_sales_tax_rate
+      required: true
+    - name: ca/farm_small_tools
+      required: true
+    - name: ca/farm_mandatory_inventory_adjustment_previous_year
+      required: true
+    - name: ca/farm_optional_inventory_adjustment_previous_year
+      required: true
+    - name: ca/farm_other_expenses
+      required: true
+    - name: ca/farm_optional_inventory_adjustment_current_year
+      required: true
+    - name: ca/farm_mandatory_inventory_adjustment_current_year
+      required: true
+    - name: ca/farm_cca_personal_part
+      required: true
+    - name: ca/farm_partner
+      required: true
+    - name: ca/farm_partner_share
+      required: true
+    - name: ca/farm_fuel_charge_credit
+      required: true
+    - name: ca/farm_partner_gst_hst_rebate
+      required: true
+    - name: ca/farm_partner_other_amount_a
+      required: true
+    - name: ca/farm_partner_other_amount_b
+      required: true
+    - name: ca/farm_partner_other_amount_c
+      required: true
+    - name: ca/farm_partner_other_amount_d
+      required: true
+    - name: ca/farm_partner_other_amount_e
+      required: true
+    - name: ca/farm_home_heat
+      required: true
+    - name: ca/farm_home_electricity
+      required: true
+    - name: ca/farm_home_insurance
+      required: true
+    - name: ca/farm_home_maintenance
+      required: true
+    - name: ca/farm_home_mortgage_interest
+      required: true
+    - name: ca/farm_home_property_taxes
+      required: true
+    - name: ca/farm_home_other_expenses
+      required: true
+    - name: ca/farm_home_personal_use_part
+      required: true
+    - name: ca/farm_home_cca
+      required: true
+    - name: ca/farm_home_carried_forward
+      required: true
+    - name: ca/farm_fiscal_period_days_entered
+      required: true
+    - name: ca/farm_land_additions
+      required: true
+    - name: ca/farm_land_dispositions
+      required: true
+    - name: ca/farm_quota_additions
+      required: true
+    - name: ca/farm_quota_dispositions
+      required: true
+    - name: ca/farm_liabilities
+      required: true
+    - name: ca/farm_drawings
+      required: true
+    - name: ca/farm_capital_contributions
+      required: true
+    - name: ca/farm_designated_province
+      required: true
+    - name: ca/farm_non_arms_length_expenses
+      required: true
+    - name: ca/farm_days_in_2024
+      required: true
+    - name: ca/farm_chart_b_provinces
+      required: true
+    - name: ca/farm_also_outside_eight
+      required: true
+    - name: ca/farm_cca_classes
+      required: true
+    - name: ca/farm_epop_associated
+      required: true
+    - name: ca/farm_epop_agreement_filed
+      required: true
+    - name: ca/farm_epop_percentage
+      required: true
+    - name: ca/farm_epop_percentage_total
+      required: true
+    - name: ca/farm_minister_allocation_given
+      required: true
+    - name: ca/farm_minister_allocation
+      required: true
 capabilities:
   # T2042 Area A endnote 2 "The proceeds of disposition of a zero-emission passenger vehicle
   # (ZEPV) that has been included in Class 54, or a passenger vehicle bought after April 18, 2021,
@@ -263,371 +471,3 @@ capabilities:
       fiscal_period_days: ca/farm_fiscal_period_days
     produces:
       output: ca/farm_cca_table_claim
-  # T2042 Part 4 "Capital cost allowance (CCA). Enter amount ii of Area A minus any personal part
-  # and any CCA for business-use-of-home expenses." (line 9936), first step: amount ii minus the
-  # personal part of CCA, a caller input.
-  - name: core/subtract
-    consumes:
-      amount: ca/farm_cca_table_claim
-      less: ca/farm_cca_personal_part
-    produces:
-      output: ca/farm_cca_claim_less_personal_part
-  # T2042 Part 4 line 9936 (Capital cost allowance), second step: that result minus the CCA for
-  # business-use-of-home expenses, amount 7K "Capital cost allowance (business part only), which
-  # means amount ii of Area A minus any portion of capital cost allowance that is for personal use
-  # or entered on line 9936 of Part 4", a caller input.
-  - name: core/subtract
-    consumes:
-      amount: ca/farm_cca_claim_less_personal_part
-      less: ca/farm_home_cca
-    produces:
-      output: ca/farm_cca_claim
-  # T2042 Part 4 "Total farm expenses: Amount 4B plus line 9936" (line 9898): the two added.
-  - name: core/sum
-    consumes:
-      parts:
-        - ca/farm_expenses_subtotal
-        - ca/farm_cca_claim
-    produces:
-      output: ca/farm_total_expenses
-  # T2042 Part 4 "Net income (loss) before inventory adjustments: Amount 4A minus line 9898"
-  # (line 9899): signed, a loss is negative.
-  - name: core/subtract
-    consumes:
-      amount: ca/farm_gross_income_before_expenses
-      less: ca/farm_total_expenses
-    produces:
-      output: ca/farm_net_income_before_adjustments
-  # T2042 Part 4 "Net income (loss) after inventory adjustments: Total of lines 9899, 9941, and
-  # 9942" (4C), with line 9941 "Optional inventory adjustment included in the current year" and
-  # line 9942 "Mandatory inventory adjustment included in the current year", both caller inputs.
-  - name: core/sum
-    consumes:
-      parts:
-        - ca/farm_net_income_before_adjustments
-        - ca/farm_optional_inventory_adjustment_current_year
-        - ca/farm_mandatory_inventory_adjustment_current_year
-    produces:
-      output: ca/farm_net_income_after_inventory_adjustments
-  # T2042 Part 5 "Your share of amount 4C or the amount from your T5013 slip, Statement of
-  # Partnership Income" (5A): a count of 1 for a partner chooses the amount from the T5013 slip,
-  # as entered; with a count of 0 it is amount 4C.
-  - name: core/choose_by_count
-    consumes:
-      count: ca/farm_partner_checked
-      when_none: ca/farm_net_income_after_inventory_adjustments
-      when_any: ca/farm_partner_share
-    produces:
-      output: ca/farm_share_of_net_income
-  # T2042 Part 5 "Total: Amount 5A plus line 9951 plus line 9974" (5B): line 9951 "Return of fuel
-  # charge proceeds to farmers tax credit allocated to you in the year" and line 9974 "GST/HST
-  # rebate for partners received in the year", both caller inputs.
-  - name: core/sum
-    consumes:
-      parts:
-        - ca/farm_share_of_net_income
-        - ca/farm_fuel_charge_credit
-        - ca/farm_partner_gst_hst_rebate
-    produces:
-      output: ca/farm_partnership_total
-  # T2042 Part 6 "Total other amounts deductible from your share of the net partnership income
-  # (loss): Add amounts 6A to 6E (enter this amount on line 9943 of Part 5)." (6F): 6A to 6E,
-  # caller inputs.
-  - name: core/sum
-    consumes:
-      parts:
-        - ca/farm_partner_other_amount_a
-        - ca/farm_partner_other_amount_b
-        - ca/farm_partner_other_amount_c
-        - ca/farm_partner_other_amount_d
-        - ca/farm_partner_other_amount_e
-    produces:
-      output: ca/farm_partner_other_amounts_total
-  # T2042 Part 5 "Other amounts deductible from your share of net partnership income (loss)
-  # (amount 6F)" (line 9943).
-  - name: core/sum
-    consumes:
-      parts:
-        - ca/farm_partner_other_amounts_total
-    produces:
-      output: ca/farm_partner_other_amounts
-  # T2042 Part 5 "Net income (loss) after adjustments: Amount 5B minus line 9943" (5C): signed, a
-  # loss is negative.
-  - name: core/subtract
-    consumes:
-      amount: ca/farm_partnership_total
-      less: ca/farm_partner_other_amounts
-    produces:
-      output: ca/farm_net_income_after_adjustments
-  # T2042 Part 7 "Subtotal: Add amounts 7A to 7G." (7H): 7A "Heat", 7B "Electricity", 7C
-  # "Insurance", 7D "Maintenance", 7E "Mortgage interest", 7F "Property taxes" and 7G "Other
-  # expenses (specify)", caller inputs.
-  - name: core/sum
-    consumes:
-      parts:
-        - ca/farm_home_heat
-        - ca/farm_home_electricity
-        - ca/farm_home_insurance
-        - ca/farm_home_maintenance
-        - ca/farm_home_mortgage_interest
-        - ca/farm_home_property_taxes
-        - ca/farm_home_other_expenses
-    produces:
-      output: ca/farm_home_expenses_subtotal
-  # T2042 Part 7 "Subtotal: Amount 7H minus amount 7I" (7J): amount 7I "Personal-use part of the
-  # business-use-of-home expenses", a caller input.
-  - name: core/subtract
-    consumes:
-      amount: ca/farm_home_expenses_subtotal
-      less: ca/farm_home_personal_use_part
-    produces:
-      output: ca/farm_home_expenses_business_part
-  # T2042 Part 7 "Subtotal: Add amounts 7J to 7L." (7M): amount 7K and 7L "Amount carried forward
-  # from previous year", a caller input.
-  - name: core/sum
-    consumes:
-      parts:
-        - ca/farm_home_expenses_business_part
-        - ca/farm_home_cca
-        - ca/farm_home_carried_forward
-    produces:
-      output: ca/farm_home_expenses_available
-  # T2042 Part 7 "Net income (loss) after adjustments (amount 5C) (if negative, enter "0")." (7N):
-  # amount 5C, or 0 when it is negative.
-  - name: core/sum_not_below_zero
-    consumes:
-      parts:
-        - ca/farm_net_income_after_adjustments
-    produces:
-      output: ca/farm_home_income_limit
-  # T2042 Part 7 "Business-use-of-home expenses available to carry forward: Amount 7M minus amount
-  # 7N (if negative, enter "0")" (7O): the claim left over, 0 when amount 7N is the larger.
-  - name: core/subtract_not_below_zero
-    consumes:
-      amount: ca/farm_home_expenses_available
-      less: ca/farm_home_income_limit
-    produces:
-      output: ca/farm_home_carry_forward
-  # T2042 Part 7 "Allowable claim: Amount 7M or 7N above, whichever is less (enter your share of
-  # this amount on line 9945 of Part 5)" (7P).
-  - name: core/lesser_of
-    consumes:
-      amounts:
-        - ca/farm_home_expenses_available
-        - ca/farm_home_income_limit
-    produces:
-      output: ca/farm_home_allowable_claim
-  # T2042 Part 5 "Business-use-of-home expenses (amount 7P)" (line 9945).
-  - name: core/sum
-    consumes:
-      parts:
-        - ca/farm_home_allowable_claim
-    produces:
-      output: ca/farm_home_expenses
-  # T2042 Part 5 "Your net income (loss): Amount 5C minus line 9945 (enter this amount on line
-  # 14100 of your income tax and benefit return)" (line 9946): T1 "Line 25: Farming income" and
-  # "Line 14100: Net" are the same artifact, signed: a loss is negative.
-  - name: core/subtract
-    consumes:
-      amount: ca/farm_net_income_after_adjustments
-      less: ca/farm_home_expenses
-    produces:
-      output: ca/farming_income
-  # T2042 Area A column 22 "UCC at the end of the year (col. 7 minus col. 21)": the class number
-  # and column 22 of each class of the Area A list, a product of the return for next year's
-  # column 1.
-  - name: ca/closing_ucc_prorated
-    params:
-      class_rates: ca/cca_class_rates
-    consumes:
-      classes: ca/farm_cca_classes_adjusted
-      fiscal_period_days: ca/farm_fiscal_period_days
-    produces:
-      output: ca/farm_closing_ucc
-  # T2042 Area A endnote 5 "the immediate expensing limit, which is equal to one of the
-  # following, whichever is applicable: $1.5 million, if you are not associated with any other
-  # eligible person or partnership (EPOP) in the tax year" and Area G "Immediate expensing limit
-  # allocated to your business: Multiply $1.5 million by the percentage assigned to your
-  # business in column 3**" (amount iv): the printed $1.5 million, a dataset.
-  - name: core/credit_amount
-    params:
-      amount: ca/farm_immediate_expensing_cap
-    produces:
-      output: ca/farm_immediate_expensing_cap
-  # Income Tax Regulations 1104(3.5)(b): "where an eligible person or partnership has a taxation
-  # year that is less than 51 weeks": the 51 weeks, printed as 51 weeks of 7 days, 357 days, one
-  # figure for each form, read by the prorating step.
-  - name: core/credit_amount
-    params:
-      amount: ca/immediate_expensing_short_year_days
-    produces:
-      output: ca/immediate_expensing_short_year_days
-  # T2042 Area G "The total of all percentages assigned under the agreement should not be more
-  # than 100%. If the total is more than 100%, then the associated group has an immediate
-  # expensing limit of zero." and "** If the total of column 3 is more than 100%, enter "0."":
-  # the printed 100%, a dataset, as the form prints a percentage (100 for 100%).
-  - name: core/credit_amount
-    params:
-      amount: ca/farm_epop_percentage_maximum
-    produces:
-      output: ca/farm_epop_percentage_maximum
-  # T2042 Area G "Immediate expensing limit allocated to your business: Multiply $1.5 million by
-  # the percentage assigned to your business in column 3**" (amount iv), first step: $1.5
-  # million times the percentage assigned to your business in column 3, a caller input as the
-  # form prints it (40 for 40%).
-  - name: ca/apply_percentage
-    params:
-      rounding: ca/farm_immediate_expensing_rounding
-    consumes:
-      amount: ca/farm_immediate_expensing_cap
-      percentage: ca/farm_epop_percentage
-    produces:
-      output: ca/farm_immediate_expensing_share
-  # T2042 Area G "** If the total of column 3 is more than 100%, enter "0."", first step: 100%
-  # less "Total of percentage assigned: Total of column 3", a caller input; negative when the
-  # total is more than 100%.
-  - name: core/subtract
-    consumes:
-      amount: ca/farm_epop_percentage_maximum
-      less: ca/farm_epop_percentage_total
-    produces:
-      output: ca/farm_epop_percentage_room
-  # T2042 Area G "Immediate expensing limit allocated to your business: Multiply $1.5 million by
-  # the percentage assigned to your business in column 3**" (amount iv) and "** If the total of
-  # column 3 is more than 100%, enter "0."": the multiple above when 100% less the total of
-  # column 3 is zero or positive, else 0.
-  - name: ca/choose_by_sign
-    consumes:
-      sign: ca/farm_epop_percentage_room
-      when_positive: []
-      when_zero: []
-      when_negative: []
-      when_non_positive: []
-      when_non_negative:
-        - ca/farm_immediate_expensing_share
-    produces:
-      output: ca/farm_immediate_expensing_allocated
-  # T2042 Area A endnote 5 "$1.5 million, if you are not associated with any other eligible person
-  # or partnership (EPOP) in the tax year": the answer to a yes or no question, a count of 1 or 0,
-  # checked before the step that reads it. A count of 2 or more is refused, not capped.
-  - name: ca/yes_or_no_count
-    consumes:
-      count: ca/farm_epop_associated
-    produces:
-      output: ca/farm_epop_associated_checked
-  # T2042 Area A endnote 5 "zero, if you are associated with one or more EPOPs and an agreement that
-  # assigns a percentage to one or more of the associated EPOPs was not filed with the minister in a
-  # prescribed form": the answer to a yes or no question, a count of 1 or 0, checked before the step
-  # that reads it. A count of 2 or more is refused, not capped.
-  - name: ca/yes_or_no_count
-    consumes:
-      count: ca/farm_epop_agreement_filed
-    produces:
-      output: ca/farm_epop_agreement_filed_checked
-  # T2042 Area A endnote 5 "any amount allocated by the minister under subsection 1104(3.4) of the
-  # Regulations": the answer to a yes or no question, a count of 1 or 0, checked before the step
-  # that reads it. A count of 2 or more is refused, not capped.
-  - name: ca/yes_or_no_count
-    consumes:
-      count: ca/farm_minister_allocation_given
-    produces:
-      output: ca/farm_minister_allocation_given_checked
-  # T2042 Area A endnote 5 "amount iv of Area G, if you are associated with one or more EPOPs
-  # in the tax year" and "zero, if you are associated with one or more EPOPs and an agreement
-  # that assigns a percentage to one or more of the associated EPOPs was not filed with the
-  # minister in a prescribed form": amount iv times the count of agreements filed (a caller's 0
-  # or 1), so 0 when none was filed.
-  - name: core/times_count
-    consumes:
-      amount: ca/farm_immediate_expensing_allocated
-      count: ca/farm_epop_agreement_filed_checked
-    produces:
-      output: ca/farm_immediate_expensing_associated_limit
-  # T2042 Area A endnote 5 "the immediate expensing limit, which is equal to one of the
-  # following, whichever is applicable": a count of 1 for associated with one or more EPOPs (a
-  # caller's 0 or 1) chooses the limit above ("amount iv of Area G" or "zero"); with a count of
-  # 0 it is the $1.5 million ("if you are not associated with any other eligible person or
-  # partnership (EPOP) in the tax year").
-  - name: core/choose_by_count
-    consumes:
-      count: ca/farm_epop_associated_checked
-      when_none: ca/farm_immediate_expensing_cap
-      when_any: ca/farm_immediate_expensing_associated_limit
-    produces:
-      output: ca/farm_immediate_expensing_limit_before_minister
-  # T2042 Note 5 "any amount allocated by the minister under subsection 1104(3.4) of the
-  # Regulations": a count of 1 (a caller's 0 or 1) chooses the amount allocated by the minister, as
-  # entered, in place of the limit before the days scaling; with a count of 0 the limit before the
-  # minister's amount stands. The amount allocated is the amount for the year, and the days scaling
-  # below applies to it as it does to the limit.
-  - name: core/choose_by_count
-    consumes:
-      count: ca/farm_minister_allocation_given_checked
-      when_none: ca/farm_immediate_expensing_limit_before_minister
-      when_any: ca/farm_minister_allocation
-    produces:
-      output: ca/farm_immediate_expensing_limit_before_proration
-  # Income Tax Regulations 1104(3.5)(b): "where an eligible person or partnership has a taxation
-  # year that is less than 51 weeks, its immediate expensing limit for the year is that proportion
-  # of its immediate expensing limit for the year determined without reference to this paragraph
-  # that the number of days in the year is of 365". The limit before the days scaling (the
-  # minister's amount included) times the days of the fiscal period over the 365 of a full year,
-  # rounded to the cent, for a fiscal period of fewer than 357 days (51 weeks of 7 days, the shared
-  # figure `ca/immediate_expensing_short_year_days`); any other fiscal period keeps the amount as it
-  # is. Guide T4002, "Immediate expensing incentive": "The limit is also prorated for tax years
-  # shorter than 365 days" is the guide's wording of the same rule, which the Regulations narrow to
-  # 51 weeks.
-  - name: ca/prorated_by_fiscal_period_days
-    params:
-      rounding: ca/farm_immediate_expensing_rounding
-      class_rates: ca/cca_class_rates
-    consumes:
-      amount: ca/farm_immediate_expensing_limit_before_proration
-      fiscal_period_days: ca/farm_fiscal_period_days
-      short_year_days: ca/immediate_expensing_short_year_days
-    produces:
-      output: ca/farm_immediate_expensing_limit
-  # T2042 Area A endnote 5 "the immediate expensing limit, which is equal to one of the following,
-  # whichever is applicable", "any amount allocated by the minister under subsection 1104(3.4) of
-  # the Regulations", and Income Tax Regulations 1104(3.5)(b). The person's limit before the days
-  # scaling, the one limit the statements of the four forms share: the limit before the minister's
-  # amount, unscaled, or the amount allocated by the minister when there is one, which is also
-  # unscaled. The statements are compared on it because each statement's own fiscal period scales
-  # the limit above, and a person's statements may cover periods of different lengths.
-  - name: core/choose_by_count
-    consumes:
-      count: ca/farm_minister_allocation_given_checked
-      when_none: ca/farm_immediate_expensing_limit_before_minister
-      when_any: ca/farm_minister_allocation
-    produces:
-      output: ca/farm_immediate_expensing_limit_unprorated
-  # T2042 Area A endnote 5 "the amount of income, if any, earned from the source of income that
-  # is a business (before any CCA deductions) in which the relevant DIEP is used for the tax
-  # year": line 9899 "Net income (loss) before inventory adjustments" plus line 9936, the CCA it
-  # deducted (the recapture on line 9600 is already in gross income and the terminal loss on
-  # line 9790 an expense), not below zero. Guide T4002 2025, "Line 9899 or 9369 - Net income
-  # (loss) before adjustments": "For business and professional income, use line 9369 on Form
-  # T2125. For farming income, use line 9899 on Form T2042. For fishing income, use line 9369 on
-  # Form T2121." - the pairing of the figure T2125 and T2121 use for their income before CCA.
-  - name: core/sum_not_below_zero
-    consumes:
-      parts:
-        - ca/farm_net_income_before_adjustments
-        - ca/farm_cca_claim
-    produces:
-      output: ca/farm_income_before_cca
-  # T2042 Area A "Total immediate expensing claim for the year: Total of column 9" (line i) and
-  # endnote 5 "The total immediate expensing amount for the tax year (total of column 9) is
-  # limited to the lesser of: the immediate expensing limit"; "the UCC of DIEPs in column 8";
-  # "the amount of income, if any, earned from the source of income that is a business (before
-  # any CCA deductions) in which the relevant DIEP is used for the tax year": the total of
-  # column 9 of the Area A list, refused when above the limit or above the income before CCA.
-  - name: ca/immediate_expensing_claim
-    params:
-      class_rates: ca/cca_class_rates
-    consumes:
-      classes: ca/farm_cca_classes_adjusted
-      immediate_expensing_limit: ca/farm_immediate_expensing_limit
-      income_before_cca: ca/farm_income_before_cca
-    produces:
-      output: ca/farm_immediate_expensing_claim

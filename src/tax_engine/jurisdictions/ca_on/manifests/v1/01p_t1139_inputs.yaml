@@ -4,4 +4,5 @@
 # positions of its statements for amounts A, H and I, the box ticked in Part 6 and the figures
 # entered on the lines of Parts 2 to 5; the row form ca/t1139 (31_t1139.yaml) runs once for each.
 inputs:
-  - ca/t1139_businesses
+  - name: ca/t1139_businesses
+    required: true

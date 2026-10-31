@@ -41,7 +41,13 @@ from tax_engine.domain.errors import (
 from tax_engine.domain.form import FormSet
 from tax_engine.domain.jurisdiction import Jurisdiction
 from tax_engine.domain.jurisdiction_code import JurisdictionCode
-from tax_engine.domain.manifest import CapabilitySelection, Form, Manifest
+from tax_engine.domain.manifest import (
+    CapabilitySelection,
+    Default,
+    Form,
+    InputDeclaration,
+    Manifest,
+)
 from tax_engine.domain.record_list import RecordList, RecordListKind
 from tax_engine.domain.trace import FormInstanceLine, RecordTotalLine, SubtractedLine
 from tests.application.services.test_tax_computation import (
@@ -53,6 +59,7 @@ from tests.application.services.test_tax_computation import (
     StepLine,
     factor_data,
 )
+from tests.manifest_support import required_fields, required_inputs
 
 D = Decimal
 EX_ON = JurisdictionCode("EX-ON")
@@ -153,8 +160,10 @@ DOUBLE = CapabilitySelection(
     produces={"doubled": "ex/units_doubled"},
 )
 RENTAL = Form(
+    required=True,
     name="ex/rental",
     instances="ex/rentals",
+    fields=required_fields(RENTALS),
     exports=("ex/net_income", "ex/units_doubled"),
     capabilities=(NET, DOUBLE),
 )
@@ -178,7 +187,12 @@ SCALE = CapabilitySelection(
     produces={"target": "ex/scaled"},
 )
 SCALING = Form(
-    name="ex/scaling", instances="ex/bases", exports=("ex/scaled",), capabilities=(SCALE,)
+    required=True,
+    name="ex/scaling",
+    instances="ex/bases",
+    fields=required_fields(BASES),
+    exports=("ex/scaled",),
+    capabilities=(SCALE,),
 )
 SCALED_SUM = CapabilitySelection(
     name="core/record_total",
@@ -201,8 +215,10 @@ SUMMARY_LESS = CapabilitySelection(
     produces={"output": "ex/spare"},
 )
 SUMMARY = Form(
+    required=True,
     name="ex/summary",
     instances="ex/summaries",
+    fields=required_fields(SUMMARIES),
     exports=("ex/spare",),
     capabilities=(SUMMARY_TOTAL, SUMMARY_LESS),
 )
@@ -221,8 +237,10 @@ CYCLE_TOTAL_SELECTION = CapabilitySelection(
     produces={"output": "ex/cycle_total"},
 )
 CYCLE_RENTAL = Form(
+    required=True,
     name="ex/rental",
     instances="ex/rentals",
+    fields=required_fields(RENTALS),
     exports=("ex/net_income", "ex/units_doubled", "ex/cycle_total"),
     capabilities=(NET, DOUBLE, CYCLE_TOTAL_SELECTION),
 )
@@ -240,13 +258,17 @@ def manifest_of(
 ) -> Manifest:
     """A manifest whose default form `ex-on/return` runs `capabilities` and exports `outputs`."""
     default = Form(
-        name=RETURN, instances=None, exports=tuple(sorted(outputs)), capabilities=capabilities
+        required=True,
+        name=RETURN,
+        instances=None,
+        exports=tuple(sorted(outputs)),
+        capabilities=capabilities,
     )
     return Manifest(
         jurisdiction=EX_ON,
         version=1,
         valid_from_tax_year=2025,
-        inputs=inputs,
+        inputs=required_inputs(inputs),
         forms=(default, *forms),
     )
 
@@ -263,7 +285,7 @@ def edited(
     default, *others = manifest.forms
     return manifest_of(
         default.capabilities if capabilities is None else capabilities,
-        inputs=manifest.inputs if inputs is None else inputs,
+        inputs=frozenset(manifest.inputs) if inputs is None else inputs,
         outputs=frozenset(default.exports) if outputs is None else outputs,
         forms=tuple(others) if forms is None else forms,
     )
@@ -866,7 +888,9 @@ def test_an_inner_input_nothing_reads_is_refused_naming_the_form() -> None:
     artifacts = artifact_registry(rentals_kind=wider)
 
     with pytest.raises(InvalidCompositionError, match="ex/rental") as caught:
-        service(rental_manifest(), artifacts).compose(EX_ON, 2025)
+        service(rental_manifest(replace(RENTAL, fields=required_fields(wider))), artifacts).compose(
+            EX_ON, 2025
+        )
 
     assert "'notes' is consumed by nothing" in str(caught.value)
 
@@ -918,7 +942,12 @@ def test_an_export_that_is_neither_an_amount_a_count_nor_a_record_list_is_not_im
         produces={"note": "ex/note"},
     )
     form = Form(
-        name="ex/labelled", instances="ex/bases", exports=("ex/note",), capabilities=(describe,)
+        required=True,
+        name="ex/labelled",
+        instances="ex/bases",
+        fields=required_fields(BASES),
+        exports=("ex/note",),
+        capabilities=(describe,),
     )
     manifest = manifest_of(
         (), inputs=frozenset({"ex/bases"}), outputs=frozenset({"ex/bases"}), forms=(form,)
@@ -1091,4 +1120,70 @@ def test_two_forms_of_a_group_that_both_require_an_instance_are_refused_when_com
     )
 
     with pytest.raises(InvalidCompositionError, match=r"'ex/either'.*'ex/rental'.*'ex/scaling'"):
+        service(manifest).compose(EX_ON, 2025)
+
+
+# --- required, defaults, fields and predicates, checked against the artifact kinds ---------------
+
+
+def test_a_field_of_the_instances_kind_the_manifest_does_not_declare_is_refused_at_compose() -> (
+    None
+):
+    form = replace(RENTAL, fields=required_fields(RENTALS)[:-1])
+
+    with pytest.raises(InvalidManifestError, match="form 'ex/rental': field 'ex/units' of "):
+        service(rental_manifest(form)).compose(EX_ON, 2025)
+
+
+def test_a_declared_field_the_instances_kind_does_not_have_is_refused_at_compose() -> None:
+    ghost = InputDeclaration(name="ex/ghost", required=True)
+    form = replace(RENTAL, fields=(*required_fields(RENTALS), ghost))
+
+    with pytest.raises(InvalidManifestError, match="field 'ex/ghost' is not a field of "):
+        service(rental_manifest(form)).compose(EX_ON, 2025)
+
+
+def test_a_field_default_that_does_not_suit_its_kind_is_refused_at_compose() -> None:
+    expenses = InputDeclaration("ex/expenses", False, Default("lots"), "Line 2")
+    fields = tuple(
+        expenses if field.name == "ex/expenses" else field for field in required_fields(RENTALS)
+    )
+
+    with pytest.raises(InvalidManifestError, match="input 'ex/expenses': default 'lots' must be"):
+        service(rental_manifest(replace(RENTAL, fields=fields))).compose(EX_ON, 2025)
+
+
+def test_an_optional_field_with_a_default_that_suits_its_kind_composes() -> None:
+    expenses = InputDeclaration("ex/expenses", False, Default("0"), "Line 2")
+    fields = tuple(
+        expenses if field.name == "ex/expenses" else field for field in required_fields(RENTALS)
+    )
+
+    service(rental_manifest(replace(RENTAL, fields=fields))).compose(EX_ON, 2025)
+
+
+def test_an_input_default_that_does_not_suit_its_kind_is_refused_at_compose() -> None:
+    manifest = rental_manifest()
+    inputs = {
+        **manifest.inputs,
+        "ex/rentals": InputDeclaration("ex/rentals", False, Default("0"), "Line 1"),
+    }
+
+    with pytest.raises(
+        InvalidManifestError, match="input 'ex/rentals': default '0' must be an empty"
+    ):
+        service(replace(manifest, inputs=inputs)).compose(EX_ON, 2025)
+
+
+@pytest.mark.parametrize("kind", [GROSS_RENT, OTHER_AMOUNT])
+def test_an_optional_form_gated_by_a_money_amount_is_refused_at_compose(
+    kind: ArtifactKind[Any],
+) -> None:
+    gated = replace(
+        SCALING, required=False, required_when=kind.identifier, basis="Complete this form if ..."
+    )
+    inputs = frozenset({*scaling_manifest().inputs, kind.identifier})
+    manifest = edited(scaling_manifest(), inputs=inputs, forms=(gated,))
+
+    with pytest.raises(InvalidManifestError, match="required_when 'ex/.*' is not a yes/no"):
         service(manifest).compose(EX_ON, 2025)

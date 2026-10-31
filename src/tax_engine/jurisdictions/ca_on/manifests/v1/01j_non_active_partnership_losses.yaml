@@ -15,5 +15,6 @@
 # own line (the form ca/t2048 does so in 06a_capital_gains_deduction_qbt.yaml).
 form:
   name: ca/non_active_partnership_losses
+  required: true
   exports:
     - ca/non_active_partnership_losses

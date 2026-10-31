@@ -29,6 +29,7 @@ from tax_engine.domain.manifest import Form, Manifest
 from tax_engine.domain.record_list import RecordListKind
 from tax_engine.jurisdictions.ca.catalog import RC381_INSTANCES
 from tests.jurisdictions.ca_on.manifest_families import rc381_cpp_qpp
+from tests.jurisdictions.ca_on.manifest_support import instance_fields, required_entries
 
 CA_ON = JurisdictionCode("CA-ON")
 PARTS = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1"
@@ -87,6 +88,8 @@ def test_the_first_part_declares_the_form_with_its_instances_limits_and_exports(
 
     assert declared == {
         "name": "ca/rc381",
+        "required": True,
+        "fields": required_entries(instance_fields("ca/rc381")),
         "instances": "ca/rc381_instances",
         "max_instances": 1,
         "min_instances": 0,
@@ -155,7 +158,7 @@ def test_the_return_form_holds_no_rc381_line_but_the_six_totals() -> None:
 def test_the_instances_are_an_input_of_the_manifest_with_the_filers_entries_the_form_reads() -> (
     None
 ):
-    assert rc381_cpp_qpp.INPUTS <= manifest().inputs
+    assert rc381_cpp_qpp.INPUTS <= manifest().inputs.keys()
 
 
 def test_the_instances_kind_is_a_record_list_with_no_fields() -> None:

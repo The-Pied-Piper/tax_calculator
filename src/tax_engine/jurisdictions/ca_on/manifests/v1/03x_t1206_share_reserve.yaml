@@ -6,9 +6,21 @@
 # line C.
 form:
   name: ca/t1206_share_reserve
+  required: true
   instances: ca/t1206_share_reserve_rows
   exports:
     - ca/t1206_row_reserve
+  fields:
+    - name: ca/t1206_reserve_capital_gain
+      required: true
+    - name: ca/t1206_reserve_amount_payable_after_year_end
+      required: true
+    - name: ca/t1206_reserve_proceeds
+      required: true
+    - name: ca/t1206_reserve_years_after_sale
+      required: true
+    - name: ca/t1206_reserve_claimed
+      required: true
 capabilities:
   # "Amount payable after the end of the year" over "Proceeds of disposition": the form prints no bound,
   # so an amount payable above the proceeds is refused, not capped.

@@ -15,6 +15,7 @@ from tax_engine.domain.errors import AmbiguousManifestError, DomainError, NotFou
 from tax_engine.domain.jurisdiction import Jurisdiction
 from tax_engine.domain.jurisdiction_code import JurisdictionCode
 from tax_engine.domain.manifest import CapabilitySelection, Form, Manifest
+from tests.manifest_support import required_inputs
 
 EX_ON = JurisdictionCode("EX-ON")
 
@@ -24,9 +25,10 @@ def manifest(version: int, valid_from_tax_year: int) -> Manifest:
         jurisdiction=EX_ON,
         version=version,
         valid_from_tax_year=valid_from_tax_year,
-        inputs=frozenset({"ex/levy_base"}),
+        inputs=required_inputs(frozenset({"ex/levy_base"})),
         forms=(
             Form(
+                required=True,
                 name="ex-on/return",
                 instances=None,
                 exports=("ex/levy",),

@@ -3,12 +3,14 @@ inputs:
   # of column 15 and the no-property-left tick, and the change in use answer and fair market value of
   # column 3 (Guide T4044 2025, Part A column 3): one record for each Class 8 row, the caller's figures
   # as the form takes them (the claim is the filer's election "or lower amount", within the maximum).
-  - ca/t777_class_8_rows
+  - name: ca/t777_class_8_rows
+    required: true
   # Form T777 Part A "Class number" 10, 54 and 55, columns 1 to 6, the claim of column 15 and the
   # change in use answer and fair market value of column 3 (Guide T4044 2025, Part A column 3), with
   # the vehicle year, cost, government assistance and the zero-emission vehicles sold from a Class 54
   # row (Guide T4036 "Class 54 (30%)"): one record for each vehicle row, the caller's figures.
-  - ca/t777_vehicle_rows
+  - name: ca/t777_vehicle_rows
+    required: true
   # Form T777 Part B "List each passenger vehicle on a separate line", "Date acquired (yyyy-mm-dd)"
   # (its year) and "Cost of vehicle", columns 1 to 4 (class number, UCC at the start, cost of
   # additions, proceeds of dispositions), the AIIP and RIIP parts of the
@@ -16,70 +18,111 @@ inputs:
   # each Class 10.1 vehicle, the caller's figures, with the answers and figures of Guide T4044's
   # Part B column 3: bought from a non-arm's-length person (fair market value and seller's cost) and
   # change in use (fair market value).
-  - ca/t777_part_b_rows
+  - name: ca/t777_part_b_rows
+    required: true
   # Form T777 Part A "Class 54" sold zero-emission vehicle, Guide T4036 2025 "Class 54 (30%)": the GST
   # or HST rate of the sale, a caller's figure in percent, used only for a Class 54 vehicle sold (as
   # the T2125 and T2121 rate is).
-  - ca/t777_vehicle_sales_tax_rate
+  - name: ca/t777_vehicle_sales_tax_rate
+    required: true
   # Form T777 page 1, lines 1, 2, 5 to 8, 10, 12 and 14, and the amount before the printed 50% of
   # line 4 ("Food, beverages, and entertainment expenses × 50% ="): the caller's figures as the form
   # takes them. Line 9 "Tradesperson's tools expenses (maximum $1,000)" is the filer's claim, which
   # is refused above the maximum deduction of Guide T4044 "Deduction for tools"; so is line 14
   # "Artists' employment expenses" above the maximum of Guide T4044 "Part 1 - Artists' employment
   # expenses".
-  - ca/t777_accounting_and_legal_fees
-  - ca/t777_advertising_and_promotion
-  - ca/t777_food_beverages_entertainment
-  - ca/t777_lodging
-  - ca/t777_parking
-  - ca/t777_office_supplies
-  - ca/t777_other_expenses
-  - ca/t777_tradespersons_tools
-  - ca/t777_apprentice_mechanic_tools
-  - ca/t777_musical_instrument_expenses
-  - ca/t777_artists_employment_expenses
+  - name: ca/t777_accounting_and_legal_fees
+    required: true
+  - name: ca/t777_advertising_and_promotion
+    required: true
+  - name: ca/t777_food_beverages_entertainment
+    required: true
+  - name: ca/t777_lodging
+    required: true
+  - name: ca/t777_parking
+    required: true
+  - name: ca/t777_office_supplies
+    required: true
+  - name: ca/t777_other_expenses
+    required: true
+  - name: ca/t777_tradespersons_tools
+    required: true
+  - name: ca/t777_apprentice_mechanic_tools
+    required: true
+  - name: ca/t777_musical_instrument_expenses
+    required: true
+  - name: ca/t777_artists_employment_expenses
+    required: true
   # Form T777 line 3 chart (page 2): lines 18 and 19 (the kilometres driven to earn employment income
   # and in total), 21 to 24, 26 and 28 (the motor vehicle expenses) and 31 ("the total of all rebates,
   # motor vehicle allowances, and reimbursements"): the caller's figures.
-  - ca/t777_employment_kilometres
-  - ca/t777_total_kilometres
-  - ca/t777_vehicle_fuel
-  - ca/t777_vehicle_maintenance
-  - ca/t777_vehicle_insurance
-  - ca/t777_vehicle_licence_and_registration
-  - ca/t777_vehicle_interest
-  - ca/t777_interest_days
+  - name: ca/t777_employment_kilometres
+    required: true
+  - name: ca/t777_total_kilometres
+    required: true
+  - name: ca/t777_vehicle_fuel
+    required: true
+  - name: ca/t777_vehicle_maintenance
+    required: true
+  - name: ca/t777_vehicle_insurance
+    required: true
+  - name: ca/t777_vehicle_licence_and_registration
+    required: true
+  - name: ca/t777_vehicle_interest
+    required: true
+  - name: ca/t777_interest_days
+    required: true
   # Guide T4044 "Eligible leasing costs" chart (the guide of T777 line 27): lines 1 to 4 and the year
   # the lease was entered into, the caller's figures; line 27 is the chart's result.
-  - ca/t777_lease_charges
-  - ca/t777_lease_payments_before
-  - ca/t777_lease_days
-  - ca/t777_lease_list_price
-  - ca/t777_lease_year
-  - ca/t777_passenger_vehicle
+  - name: ca/t777_lease_charges
+    required: true
+  - name: ca/t777_lease_payments_before
+    required: true
+  - name: ca/t777_lease_days
+    required: true
+  - name: ca/t777_lease_list_price
+    required: true
+  - name: ca/t777_lease_year
+    required: true
+  - name: ca/t777_passenger_vehicle
+    required: true
   # Guide T4044 "Repayments and imputed interest" (the guide of T777 line 27): a repayment owing, and
   # the three conditions of imputed interest ("You made one or more deposits", "All deposits are
   # refundable", "The deposits total is more than $1,000"): the caller's answers and total, read only
   # for a passenger vehicle.
-  - ca/t777_lease_repayment_owing
-  - ca/t777_lease_deposits_made
-  - ca/t777_lease_deposits_refundable
-  - ca/t777_lease_deposits_total
-  - ca/t777_vehicle_other_expenses
-  - ca/t777_vehicle_allowances
+  - name: ca/t777_lease_repayment_owing
+    required: true
+  - name: ca/t777_lease_deposits_made
+    required: true
+  - name: ca/t777_lease_deposits_refundable
+    required: true
+  - name: ca/t777_lease_deposits_total
+    required: true
+  - name: ca/t777_vehicle_other_expenses
+    required: true
+  - name: ca/t777_vehicle_allowances
+    required: true
   # Form T777 line 16 chart (page 3): lines 42 to 46 (the work-space expenses), 48 (the total
   # employment-use amount the filer calculates) and 49 (the amount carried forward from the previous
   # year): the caller's figures.
-  - ca/t777_work_space_electricity_heat_water_internet
-  - ca/t777_work_space_maintenance
-  - ca/t777_work_space_home_insurance
-  - ca/t777_work_space_property_taxes
-  - ca/t777_work_space_other_expenses
-  - ca/t777_work_space_employment_use_amount
-  - ca/t777_work_space_carried_forward
+  - name: ca/t777_work_space_electricity_heat_water_internet
+    required: true
+  - name: ca/t777_work_space_maintenance
+    required: true
+  - name: ca/t777_work_space_home_insurance
+    required: true
+  - name: ca/t777_work_space_property_taxes
+    required: true
+  - name: ca/t777_work_space_other_expenses
+    required: true
+  - name: ca/t777_work_space_employment_use_amount
+    required: true
+  - name: ca/t777_work_space_carried_forward
+    required: true
   # Form T777 line 11 chart (page 2): "Complete lines 33 to 40 below for each eligible temporary
   # relocation": one record for each eligible temporary relocation, the caller's figures.
-  - ca/t777_relocations
+  - name: ca/t777_relocations
+    required: true
   # Guide T4044 (2025) Chapter 7 "Deduction for tools", the formula's figures: "the total cost of
   # eligible tools that you bought in 2025", "your income from employment as a tradesperson for the
   # year", "the amount you received in 2025 under the Apprenticeship Incentive Grant and the
@@ -87,15 +130,21 @@ inputs:
   # and Apprenticeship Completion Grant overpayments that you had to repay in 2025": the caller's
   # figures. The tools cost and the two grant figures are the same figures the apprentice mechanic
   # formula reads.
-  - ca/t777_eligible_tools_cost
+  - name: ca/t777_eligible_tools_cost
+    required: true
   # "If you were a tradesperson in 2025" and "Have your employer complete question 12 of Part C of
   # the form [T2200] to certify that the tools being claimed were bought and provided by you as a
   # condition of your employment as a tradesperson": yes or no answers (1 or 0).
-  - ca/t777_were_a_tradesperson_in_2025
-  - ca/t777_tradesperson_tools_certified_on_t2200_question_12
-  - ca/t777_tradesperson_employment_income
-  - ca/t777_apprenticeship_grants_received
-  - ca/t777_apprenticeship_grant_overpayments
+  - name: ca/t777_were_a_tradesperson_in_2025
+    required: true
+  - name: ca/t777_tradesperson_tools_certified_on_t2200_question_12
+    required: true
+  - name: ca/t777_tradesperson_employment_income
+    required: true
+  - name: ca/t777_apprenticeship_grants_received
+    required: true
+  - name: ca/t777_apprenticeship_grant_overpayments
+    required: true
   # Guide T4044 (2025) "Deduction for tools for an eligible apprentice mechanic", the formula's own
   # figures: "If you become employed as an eligible apprentice mechanic for the first time during
   # 2025" (a yes or no answer, 1 or 0) and "the cost of eligible tools you bought during the last
@@ -107,23 +156,36 @@ inputs:
   # in a program leading to a mechanic's designation; employed as an apprentice mechanic) and
   # "Have your employer complete question 13 of Part C of the form [T2200] to certify": yes or no
   # answers (1 or 0).
-  - ca/t777_registered_in_a_mechanic_designation_program
-  - ca/t777_employed_as_an_apprentice_mechanic
-  - ca/t777_apprentice_mechanic_tools_certified_on_t2200_question_13
-  - ca/t777_first_employed_as_apprentice_mechanic_in_2025
-  - ca/t777_apprentice_tools_cost_last_three_months_of_2024
-  - ca/t777_apprentice_mechanic_employment_income
-  - ca/t777_apprentice_mechanic_tools_carry_forward
+  - name: ca/t777_registered_in_a_mechanic_designation_program
+    required: true
+  - name: ca/t777_employed_as_an_apprentice_mechanic
+    required: true
+  - name: ca/t777_apprentice_mechanic_tools_certified_on_t2200_question_13
+    required: true
+  - name: ca/t777_first_employed_as_apprentice_mechanic_in_2025
+    required: true
+  - name: ca/t777_apprentice_tools_cost_last_three_months_of_2024
+    required: true
+  - name: ca/t777_apprentice_mechanic_employment_income
+    required: true
+  - name: ca/t777_apprentice_mechanic_tools_carry_forward
+    required: true
   # Guide T4044 (2025) "Part 2 - Musical instrument expenses": "your income for the year from your
   # employment as a musician", the income before the other employment expenses: the caller's figure.
-  - ca/t777_musician_employment_income
+  - name: ca/t777_musician_employment_income
+    required: true
   # Guide T4044 (2025) "Part 1 - Artists' employment expenses", the limit's own figures: "the expenses
   # you actually paid in 2025", "any amounts you carried forward from previous years", "your
   # employment income from artistic activities" and the "interest for your motor vehicle" and "capital
   # cost allowance for your motor vehicle" deducted from artistic income: the caller's figures. The
   # musical instrument expenses are line 12.
-  - ca/t777_artists_expenses_paid
-  - ca/t777_artists_expenses_carry_forward
-  - ca/t777_artists_employment_income
-  - ca/t777_artists_vehicle_interest_deducted
-  - ca/t777_artists_vehicle_cca_deducted
+  - name: ca/t777_artists_expenses_paid
+    required: true
+  - name: ca/t777_artists_expenses_carry_forward
+    required: true
+  - name: ca/t777_artists_employment_income
+    required: true
+  - name: ca/t777_artists_vehicle_interest_deducted
+    required: true
+  - name: ca/t777_artists_vehicle_cca_deducted
+    required: true

@@ -9,6 +9,7 @@
 # shares disposed of to your child, or a disposition under a QBT or QCC).
 form:
   name: ca/t2017_line_4_reserve
+  required: true
   instances: ca/t2017_line_4_reserve_rows
   exports:
     - ca/t2017_row_reserve
@@ -16,6 +17,25 @@ form:
     - ca/t2017_reserve_period_1_of_2024_checked
     - ca/t2017_reserve_reported_on_slip_checked
     - ca/t2017_reserve_partnership_year_began_before_june_25_2024_checked
+  fields:
+    - name: ca/t2017_reserve_capital_gain
+      required: true
+    - name: ca/t2017_reserve_amount_payable_after_year_end
+      required: true
+    - name: ca/t2017_reserve_proceeds
+      required: true
+    - name: ca/t2017_reserve_years_after_disposition
+      required: true
+    - name: ca/t2017_reserve_claimed
+      required: true
+    - name: ca/t2017_reserve_previous_year_claim
+      required: true
+    - name: ca/t2017_reserve_period_1_of_2024
+      required: true
+    - name: ca/t2017_reserve_reported_on_slip
+      required: true
+    - name: ca/t2017_reserve_partnership_year_began_before_june_25_2024
+      required: true
 capabilities:
   # "Amount payable to you after the end of the year" over "Proceeds of disposition": the form prints no
   # bound, so an amount payable above the proceeds is refused, not capped.

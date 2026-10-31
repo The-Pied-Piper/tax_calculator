@@ -1,0 +1,535 @@
+inputs:
+  - name: ca/tuition_part_time_months
+    required: true
+  - name: ca/tuition_full_time_months
+    required: true
+  - name: ca-on/dependent_children
+    required: true
+  - name: ca-on/dependants
+    required: true
+  - name: ca-on/not_resident_of_canada_at_start_of_year
+    required: true
+  - name: ca-on/not_resident_of_ontario_at_year_end
+    required: true
+  - name: ca-on/bankrupt_in_year
+    required: true
+  - name: ca-on/return_filed_by_trustee_in_bankruptcy
+    required: true
+  - name: ca-on/not_claiming_ontario_tax_reduction
+    required: true
+  - name: ca/spouse_or_common_law_partner_on_december_31
+    required: true
+  - name: ca-on/claims_tax_reduction_amounts_at_equal_net_income
+    required: true
+  - name: ca/eligible_dependants
+    required: true
+  - name: ca/dependant_net_income
+    required: true
+  - name: ca/infirm_dependants
+    required: true
+  - name: ca/medical_expenses
+    required: true
+  - name: ca/other_dependants
+    required: true
+  - name: ca-on/caregiver_dependants
+    required: true
+  - name: ca-on/disability_dependants
+    required: true
+  - name: ca/disability_dependants
+    required: true
+  - name: ca/eligible_for_disability_amount
+    required: true
+  - name: ca/under_18_on_december_31
+    required: true
+  - name: ca/disability_self_care_expenses
+    required: true
+  # Schedule ON(S11) line 1 "Enter your unused Ontario tuition and education amounts from your
+  # 2024 notice of assessment or reassessment": a caller input, the figure on that notice, not a
+  # calculation on this return (as Schedule 7 line 1 is for RRSPs).
+  - name: ca-on/unused_tuition_amounts_brought_forward
+    required: true
+  # Schedule ON(S2) lines 1 to 3, 6 to 8 and the Ontario tax on line 5: figures from another
+  # person's Form ON428, caller inputs (their lines 58080, 58360, 58440, 58040, 24, 58560 and 8),
+  # one set for the one spouse. Their line 26000 and the separation count are the federal
+  # Schedule 2's inputs again.
+  - name: ca-on/spouse_return_ontario_age_amount
+    required: true
+  - name: ca-on/spouse_return_ontario_pension_income_amount
+    required: true
+  - name: ca-on/spouse_return_ontario_disability_amount
+    required: true
+  - name: ca-on/spouse_return_ontario_basic_tax
+    required: true
+  - name: ca-on/spouse_return_ontario_basic_personal_amount
+    required: true
+  - name: ca-on/spouse_return_ontario_line_24
+    required: true
+  - name: ca-on/spouse_return_ontario_unused_tuition_amount
+    required: true
+  - name: ca/infirm_children
+    required: true
+  - name: ca/born_in_1960_or_earlier
+    required: true
+  - name: ca/spouse_net_income
+    required: true
+  - name: ca/spouses_claimed
+    required: true
+  - name: ca/spouse_caregiver_eligible
+    required: true
+  - name: ca/dependant_caregiver_eligible
+    required: true
+  - name: ca/dependant_caregiver_aged_18_or_older
+    required: true
+  - name: ca/child_care_expenses_paid
+    required: true
+  - name: ca/children_under_seven
+    required: true
+  - name: ca/children_with_disability
+    required: true
+  - name: ca/children_seven_to_sixteen
+    required: true
+  - name: ca/cwb_eligible_dependants
+    required: true
+  - name: ca/income_tax_deducted
+    required: true
+  - name: ca/part_xii_2_tax_credit
+    required: true
+  - name: ca/employee_and_partner_gst_hst_rebate
+    required: true
+  - name: ca/educator_supplies_expenses
+    required: true
+  - name: ca/tax_paid_by_instalments
+    required: true
+  - name: ca/itc_recapture_expenditure_at_15_percent
+    required: true
+  - name: ca/itc_recapture_expenditure_at_20_percent
+    required: true
+  # Form T2209, "the federal refundable First Nations abatement (line 44100 of your return)"
+  # of note (4), and the countries of lines 1 and 2, each with lines 43100 and 43300.
+  - name: ca/first_nations_abatement
+    required: true
+  - name: ca/foreign_tax_countries
+    required: true
+  - name: ca/labour_sponsored_funds_net_cost
+    required: true
+  - name: ca/resp_aips_received_part_a
+    required: true
+  - name: ca/resp_aips_rrsp_contributions
+    required: true
+  - name: ca/resp_aips_reduction_used_in_previous_years
+    required: true
+  - name: ca/resp_aips_received_part_b
+    required: true
+  - name: ca/resp_aips_part_a_applies
+    required: true
+  - name: ca/rl_10_labour_sponsored_fund_amount
+    required: true
+  # Form T691 Part 1 lines 2, 3, 5, 6, 8, 9 and 10: the caller's figures, entered as the form takes
+  # them (the CCA and carrying charges, the net income before CCA of film and rental and leasing
+  # property, the tax shelter losses and amounts deductible, and the carrying charges of a limited
+  # or non-active partner).
+  - name: ca/amt_film_property_cca_and_carrying_charges
+    required: true
+  - name: ca/amt_film_property_income_before_cca
+    required: true
+  - name: ca/amt_rental_property_cca_and_carrying_charges
+    required: true
+  - name: ca/amt_rental_property_income_before_cca
+    required: true
+  - name: ca/amt_tax_shelter_losses
+    required: true
+  - name: ca/amt_tax_shelter_deductible_amounts
+    required: true
+  - name: ca/amt_limited_partner_carrying_charges
+    required: true
+  # Form T691 Part 9 lines 1 to 4 and Part 1 lines 17, 18, 24 and 25: the caller's figures, entered
+  # as the form takes them (the resource expenditures, the resource income lines, the capital gains
+  # exempt under a tax treaty and of graduated rate estates, and the gifts of publicly listed
+  # securities with the amount from line 68231 of Form T1170).
+  - name: ca/amt_resource_expenditures
+    required: true
+  - name: ca/amt_resource_production_income
+    required: true
+  - name: ca/amt_resource_foreign_property_income
+    required: true
+  - name: ca/amt_class_43_1_income
+    required: true
+  - name: ca/amt_treaty_exempt_capital_gains
+    required: true
+  - name: ca/amt_graduated_rate_estate_capital_gains
+    required: true
+  - name: ca/amt_publicly_listed_gifts_total
+    required: true
+  - name: ca/amt_publicly_listed_gifts_t1170_line_68231
+    required: true
+  # Form T691 Part 1 lines 31, 36 and 37, 39 to 42, 59, 64 to 67 and 70 to 75: the
+  # caller's figures, entered as the form takes them (the gifts under a security
+  # option plan, the prospector and deferred profit-sharing deductions, the limited partnership and
+  # non-capital and net capital losses differences, the PPIP premiums deduction, the non-deductible
+  # property expenses and the employment expenses). Lines 28 and 35 are the T4 boxes of 01f and 01g.
+  # Line 56, the moving expenses deduction, is the computed line 21900 and is not an input.
+  - name: ca/t4_security_options_boxes_39_and_91
+    required: true
+  - name: ca/amt_security_option_publicly_listed_gifts
+    required: true
+  - name: ca/t4_security_options_boxes_41_and_92
+    required: true
+  - name: ca/amt_prospector_or_grubstaker_deduction
+    required: true
+  - name: ca/amt_deferred_profit_sharing_plan_deduction
+    required: true
+  - name: ca/amt_limited_partnership_difference_no_election
+    required: true
+  - name: ca/amt_limited_partnership_difference_election
+    required: true
+  - name: ca/amt_non_capital_losses_difference
+    required: true
+  - name: ca/amt_net_capital_losses_difference
+    required: true
+  - name: ca/amt_ppip_premiums_deduction
+    required: true
+  - name: ca/amt_non_deductible_interest
+    required: true
+  - name: ca/amt_life_insurance_premiums_as_collateral
+    required: true
+  - name: ca/amt_financing_expenses
+    required: true
+  - name: ca/amt_investment_counsel_fees
+    required: true
+  - name: ca/amt_commission_employment_expenses
+    required: true
+  - name: ca/amt_legal_and_accounting_expenses
+    required: true
+  - name: ca/amt_repayment_of_salary_and_wages
+    required: true
+  - name: ca/amt_excess_epsp_amounts
+    required: true
+  - name: ca/amt_forfeited_salary_deferral_amounts
+    required: true
+  - name: ca/amt_repayment_of_wage_loss_replacement
+    required: true
+  # Form T691 Part 1 line 101: the caller's figure, the section 119 credit for a former resident,
+  # entered as the form takes it. Line 100 is the federal logging tax credit of line 133, computed.
+  - name: ca/amt_section_119_former_resident_credit
+    required: true
+  # Form T691 Part 8 line 1 "Minimum tax carryover from previous years (2018 to 2024)" and line 12
+  # "Claim an amount that is not more than line 1 or 11, whichever is less.": the carryover from
+  # earlier returns, and the amount the filer claims on line 40427 (line 12, applied), entered as
+  # the form takes them.
+  - name: ca/amt_minimum_tax_carryover_from_previous_years
+    required: true
+  - name: ca/amt_minimum_tax_carryover_applied
+    required: true
+  - name: ca/political_contributions
+    required: true
+  # Form T929 Step 1 line 1 "Enter the total of all amounts in column 2" and line 2 "Enter the total of
+  # all amounts in column 3" (the amounts paid, and the amounts reimbursed or assisted), the
+  # disability supports the filer paid, as the form takes them.
+  - name: ca/t929_expenses_paid
+    required: true
+  - name: ca/t929_expenses_reimbursed
+    required: true
+  # Form T929 Step 2 line 8 "Enter the number of weeks in the year that you attended the institution or
+  # secondary school", the weeks attended, a count.
+  - name: ca/t929_weeks_attended
+    required: true
+  # Form T929 Step 2 line 4 "Enter your earned income", the items of the definition "Your earned income
+  # is the total of the following amounts" that are not computed from the return: net research grants,
+  # any earnings supplement, any financial support under Part II of the Employment Insurance Act or a
+  # similar program, any income replacement support similar to Employment Insurance, any amounts under
+  # the Wage Earner Protection Program Act in respect of wages, and any federal, provincial or
+  # territorial government COVID-19 payments received in the year for which a T4A or T4E was received.
+  - name: ca/t929_net_research_grants
+    required: true
+  - name: ca/t929_earnings_supplements
+    required: true
+  - name: ca/t929_employment_insurance_part_2_support
+    required: true
+  - name: ca/t929_income_replacement_support
+    required: true
+  - name: ca/t929_wage_earner_protection_amounts
+    required: true
+  - name: ca/t929_covid_19_payments
+    required: true
+  # Form T1223 Part C, the clergy residence deduction (line 23100): the figures the form takes from
+  # the filer, entered as the form takes them. Part C (A), the employer's residence benefit (box 30
+  # of the T4 slip); line 1, the income from qualifying employment from all eligible employers;
+  # line 3, the number of months in qualifying employment; line 6, the actual rent and eligible
+  # utilities paid or the fair rental value of a residence owned; line 7, all amounts claimed for
+  # the accommodation, including a spouse's. Whether Part C (B) is completed is derived from lines
+  # 3, 6 and 7 (22_clergy_residence_deduction.yaml), not entered.
+  - name: ca/clergy_employer_residence_benefit
+    required: true
+  - name: ca/clergy_qualifying_employment_income
+    required: true
+  - name: ca/clergy_months_in_qualifying_employment
+    required: true
+  - name: ca/clergy_accommodation_cost
+    required: true
+  - name: ca/clergy_other_accommodation_claims
+    required: true
+  - name: ca/wage_loss_replacement_plan_income
+    required: true
+  - name: ca/resident_in_canada_throughout_2025
+    required: true
+  - name: ca/aged_18_or_older_at_end_of_2025
+    required: true
+  - name: ca/spouse_net_income_before_adjustments
+    required: true
+  - name: ca/spouse_uccb_repayment
+    required: true
+  - name: ca/spouse_rdsp_income_repayment
+    required: true
+  - name: ca/spouse_universal_child_care_benefit
+    required: true
+  - name: ca/spouse_rdsp_income
+    required: true
+  # T1 line 26600 "Line 26600: Did you own or hold specified foreign property where the total cost
+  # amount of all such property, at any time in 2025, was more than CAN$100,000? 1 Yes or 2 No":
+  # carried as entered and also an output (0 for No, 1 for Yes).
+  - name: ca/specified_foreign_property_over_100k
+    required: true
+  - name: ca-on/opportunities_fund_donation
+    required: true
+  - name: ca-on/fertility_expenses
+    required: true
+  - name: ca-on/claims_seniors_care_credit
+    required: true
+  - name: ca-on/seniors_transit_paid
+    required: true
+  - name: ca-on/flow_through_share_slips
+    required: true
+  - name: ca-on/coop_education_payroll
+    required: true
+  - name: ca-on/coop_education_placements
+    required: true
+  # Form ON479 line 63265 "Are you claiming this credit as a member of a partnership? 1 Yes or
+  # 2 No" and line 63270 "If yes, enter your nine-digit business number. (enter 9 digits)":
+  # listed under outputs too, since the form computes nothing from them and the return
+  # carries them as entered.
+  - name: ca-on/coop_claimed_as_partnership_member
+    required: true
+  - name: ca-on/coop_partnership_business_number
+    required: true
+  - name: ca-on/community_food_program_donations
+    required: true
+  - name: ca/charitable_donations
+    required: true
+  - name: ca/government_donations
+    required: true
+  - name: ca/university_donations_outside_canada
+    required: true
+  - name: ca/foreign_charity_donations
+    required: true
+  - name: ca/ecological_and_cultural_gifts
+    required: true
+  - name: ca/ecological_gifts_before_2016
+    required: true
+  - name: ca/depreciable_gift_recaptured_depreciation
+    required: true
+  - name: ca/depreciable_gift_net_proceeds
+    required: true
+  - name: ca/depreciable_gift_capital_cost
+    required: true
+  - name: ca/capital_gift_taxable_gains
+    required: true
+  - name: ca/capital_gift_gains_deduction
+    required: true
+  - name: ca-on/political_contributions
+    required: true
+  - name: ca-on/care_supporting_persons_adjusted_income
+    required: true
+  # Form ON-BEN lines 61020 to 61230: listed under outputs too, since the form
+  # computes nothing from them and the return carries them as entered.
+  - name: ca-on/applies_for_energy_and_property_tax_credit
+    required: true
+  - name: ca-on/applies_for_northern_energy_credit
+    required: true
+  - name: ca-on/chooses_single_benefit_payment
+    required: true
+  - name: ca-on/applies_for_senior_homeowners_grant
+    required: true
+  - name: ca-on/separate_residences_for_medical_reasons
+    required: true
+  - name: ca-on/lived_in_student_residence
+    required: true
+  - name: ca-on/rent_paid
+    required: true
+  - name: ca-on/property_tax_paid
+    required: true
+  - name: ca-on/reserve_home_energy_costs
+    required: true
+  - name: ca-on/public_long_term_care_paid
+    required: true
+  # Form T2048 (line 25395): the qualifying dispositions, one record for each (any number; none
+  # included); the form ca/t2048 reads their fields, the starting amounts and 0 or 1 answers of
+  # Parts 2 to 5 and Chart A (but for Chart A lines 3, 6 and 14, 01j to 01l, the taxable
+  # capital gains of line 13, 01m, the Part 3 line 24 answer, 01n, and the recovery part of line
+  # 13000 of line 15, 01o), as
+  # `06a_capital_gains_deduction_qbt.yaml` takes them.
+  - name: ca/t2048_dispositions
+    required: true
+  - name: ca/non_active_partnership_losses
+    required: true
+  - name: ca/other_investment_expenses
+    required: true
+  - name: ca/other_property_income
+    required: true
+  - name: ca/partnership_taxable_capital_gains
+    required: true
+  - name: ca/has_investment_expenses
+    required: true
+  # Form T657 (line 25400)
+  - name: ca/t657_gains_1985_to_1991
+    required: true
+  - name: ca/t657_gains_1992_and_1993
+    required: true
+  - name: ca/t657_gains_1994
+    required: true
+  - name: ca/t657_gains_1995
+    required: true
+  - name: ca/t657_gains_1996_to_1999
+    required: true
+  - name: ca/t657_gains_2000
+    required: true
+  - name: ca/t657_gains_2001
+    required: true
+  - name: ca/t657_gains_2002_to_2024
+    required: true
+  - name: ca/t657_capital_losses_claimed_1985
+    required: true
+  - name: ca/t657_abil_claimed_1985_to_2024
+    required: true
+  - name: ca/t657_t2048_line_17217_for_2024
+    required: true
+  - name: ca/t657_deductions_claimed_1985_to_2024
+    required: true
+  - name: ca/t657_chart_2_line_1
+    required: true
+  - name: ca/t657_chart_2_line_2
+    required: true
+  - name: ca/t657_chart_2_line_6
+    required: true
+  - name: ca/t657_chart_2_line_10
+    required: true
+  - name: ca/t657_chart_2_line_14
+    required: true
+  - name: ca/t657_inclusion_rate_2000
+    required: true
+  - name: ca/t657_chart_2_line_18
+    required: true
+  - name: ca/t657_chart_2016_uses_d_instead
+    required: true
+  - name: ca/t657_chart_2016_amount_b_instead
+    required: true
+  - name: ca/t657_chart_2016_claims_additional_deduction
+    required: true
+  - name: ca/t657_chart_2017_uses_d_instead
+    required: true
+  - name: ca/t657_chart_2017_amount_d_instead
+    required: true
+  - name: ca/t657_chart_2017_claims_additional_deduction
+    required: true
+  - name: ca/t657_chart_2018_uses_d_instead
+    required: true
+  - name: ca/t657_chart_2018_amount_d_instead
+    required: true
+  - name: ca/t657_chart_2018_claims_additional_deduction
+    required: true
+  - name: ca/t657_chart_2019_uses_d_instead
+    required: true
+  - name: ca/t657_chart_2019_amount_d_instead
+    required: true
+  - name: ca/t657_chart_2019_claims_additional_deduction
+    required: true
+  - name: ca/t657_chart_2020_uses_d_instead
+    required: true
+  - name: ca/t657_chart_2020_amount_d_instead
+    required: true
+  - name: ca/t657_chart_2020_claims_additional_deduction
+    required: true
+  - name: ca/t657_chart_2021_uses_d_instead
+    required: true
+  - name: ca/t657_chart_2021_amount_d_instead
+    required: true
+  - name: ca/t657_chart_2021_amount_i
+    required: true
+  - name: ca/t657_chart_2021_part_2_amount_g
+    required: true
+  - name: ca/t657_chart_2021_claims_additional_deduction
+    required: true
+  - name: ca/t657_chart_2022_uses_d_instead
+    required: true
+  - name: ca/t657_chart_2022_amount_d_instead
+    required: true
+  - name: ca/t657_chart_2022_amount_i
+    required: true
+  - name: ca/t657_chart_2022_part_2_amount_g
+    required: true
+  - name: ca/t657_chart_2022_claims_additional_deduction
+    required: true
+  - name: ca/t657_chart_2023_uses_d_instead
+    required: true
+  - name: ca/t657_chart_2023_amount_d_instead
+    required: true
+  - name: ca/t657_chart_2023_amount_i
+    required: true
+  - name: ca/t657_chart_2023_part_2_amount_g
+    required: true
+  - name: ca/t657_chart_2023_claims_additional_deduction
+    required: true
+  - name: ca/t657_chart_2024_period_1_amount_h
+    required: true
+  - name: ca/t657_chart_2024_period_1_amount_j
+    required: true
+  - name: ca/t657_chart_2024_period_2_amount_h
+    required: true
+  - name: ca/t657_chart_2024_period_2_amount_j
+    required: true
+  - name: ca/t657_part_1_amount_f
+    required: true
+  - name: ca/t657_part_1_amount_g
+    required: true
+  - name: ca/t657_part_1_amount_h
+    required: true
+  - name: ca/t657_part_1_amount_l
+    required: true
+  - name: ca/t657_part_2_excluded_f
+    required: true
+  - name: ca/t657_part_2_excluded_g
+    required: true
+  - name: ca/t657_part_2_excluded_h
+    required: true
+  - name: ca/t657_part_2_amount_l
+    required: true
+  - name: ca/capital_gains_deduction_claimed
+    required: true
+  - name: ca/t657_chart_1_rows
+    required: true
+  - name: ca/split_income_from_foreign_sources
+    required: true
+  - name: ca/total_income_from_foreign_sources
+    required: true
+  - name: ca/split_income_non_business_from_foreign_sources
+    required: true
+  - name: ca/total_non_business_income_from_foreign_sources
+    required: true
+  # Form T2043 Part 5, the credit allocated from a partnership for each designated province
+  # ("amount from box 237 of each T5013 slip or from each letter"), lines 67079 to 67082 and
+  # 67103 to 67106, as the form takes them; the form ca/t2043 reads them.
+  - name: ca/fuel_charge_partnership_credit_on
+    required: true
+  - name: ca/fuel_charge_partnership_credit_mb
+    required: true
+  - name: ca/fuel_charge_partnership_credit_sk
+    required: true
+  - name: ca/fuel_charge_partnership_credit_ab
+    required: true
+  - name: ca/fuel_charge_partnership_credit_ns
+    required: true
+  - name: ca/fuel_charge_partnership_credit_pe
+    required: true
+  - name: ca/fuel_charge_partnership_credit_nl
+    required: true
+  - name: ca/fuel_charge_partnership_credit_nb
+    required: true

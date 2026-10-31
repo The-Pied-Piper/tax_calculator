@@ -36,6 +36,11 @@ from tax_engine.jurisdictions.ca.catalog import (
     T2017_ROW_RESERVE,
 )
 from tests.jurisdictions.ca_on.manifest_families import t2017_reserve as family
+from tests.jurisdictions.ca_on.manifest_support import (
+    input_names,
+    instance_fields,
+    required_entries,
+)
 
 CA_ON = JurisdictionCode("CA-ON")
 MANIFESTS = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1"
@@ -93,6 +98,8 @@ def test_each_row_part_declares_its_row_form_with_its_list_as_instances_and_the_
 
         assert declared == {
             "name": f"ca/t2017_line_{line}_reserve",
+            "required": True,
+            "fields": required_entries(instance_fields(f"ca/t2017_line_{line}_reserve")),
             "instances": f"ca/t2017_line_{line}_reserve_rows",
             "exports": list(family.row_exports(line)),
         }, part.name
@@ -101,7 +108,11 @@ def test_each_row_part_declares_its_row_form_with_its_list_as_instances_and_the_
 def test_the_summary_part_declares_the_form_with_no_instances_and_its_five_exports() -> None:
     declared = yaml.safe_load(SUMMARY_PART.read_text())["form"]
 
-    assert declared == {"name": family.SUMMARY_FORM, "exports": list(family.SUMMARY_EXPORTS)}
+    assert declared == {
+        "name": family.SUMMARY_FORM,
+        "required": True,
+        "exports": list(family.SUMMARY_EXPORTS),
+    }
 
 
 def test_the_manifest_has_each_row_form_with_its_list_as_instances() -> None:
@@ -146,32 +157,32 @@ def test_the_t2017_parts_are_named_by_the_layout_rule_and_not_over_30_kb() -> No
 
 
 def test_the_inputs_part_declares_the_seven_starting_inputs_line_14_and_the_ten_lists() -> None:
-    declared = yaml.safe_load(INPUTS_PART.read_text())["inputs"]
+    declared = input_names(yaml.safe_load(INPUTS_PART.read_text()))
 
     assert set(declared) == family.INPUTS
-    assert family.INPUTS <= manifest().inputs
+    assert family.INPUTS <= manifest().inputs.keys()
 
 
 def test_line_26_is_computed_from_the_2024_figure_so_the_return_does_not_enter_it() -> None:
-    declared = yaml.safe_load(INPUTS_PART.read_text())["inputs"]
+    declared = input_names(yaml.safe_load(INPUTS_PART.read_text()))
 
     assert "ca/t2017_line_26" not in declared
-    assert "ca/t2017_line_26" not in manifest().inputs
+    assert "ca/t2017_line_26" not in manifest().inputs.keys()
     assert "ca/t2017_lines_66990_and_67058_for_2024" in declared
-    assert "ca/t2017_lines_66990_and_67058_for_2024" in manifest().inputs
+    assert "ca/t2017_lines_66990_and_67058_for_2024" in manifest().inputs.keys()
 
 
 def test_line_14_is_an_entered_input_and_no_step_of_the_part_reads_it() -> None:
-    assert "ca/t2017_line_14" in manifest().inputs
+    assert "ca/t2017_line_14" in manifest().inputs.keys()
     for steps in (*family.ROW_STEPS.values(), family.SUMMARY_STEPS):
         for each in steps:
             assert "ca/t2017_line_14" not in referenced(each.consumes.values()), each.name
 
 
 def test_the_row_fields_are_the_row_forms_inputs_and_not_the_return_s() -> None:
-    assert family.RESERVE_FIELDS.isdisjoint(manifest().inputs)
+    assert family.RESERVE_FIELDS.isdisjoint(manifest().inputs.keys())
     assert family.RESERVE_FIELDS.isdisjoint(family.INPUTS)
-    assert T2017_RESERVE_NINE_YEAR.identifier not in manifest().inputs
+    assert T2017_RESERVE_NINE_YEAR.identifier not in manifest().inputs.keys()
 
 
 def test_the_nine_year_answer_is_a_field_of_lines_2_and_8_only() -> None:

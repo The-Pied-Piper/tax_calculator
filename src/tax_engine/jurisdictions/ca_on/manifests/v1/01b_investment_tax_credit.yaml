@@ -3,67 +3,84 @@ inputs:
   # 559
   # of Form T661 plus applicable amount from box 40* of your T3 slip, minus amounts from lines 67130
   # and 67135)": the caller's figure, as the form takes it.
-  - ca/itc_sred_expenditures
+  - name: ca/itc_sred_expenditures
+    required: true
   # Form T2038(IND) Part A line 67130 "80% of total contributions made to agricultural organizations
   # for SR&ED": the caller's figure, as the form takes it.
-  - ca/itc_agricultural_sred_contributions
+  - name: ca/itc_agricultural_sred_contributions
+    required: true
   # Form T2038(IND) Part A line 67135 "ITC allocated from a partnership for SR&ED (see boxes 186,
   # 187,
   # and 189 of your T5013 slips)": the caller's figure, read as it is.
-  - ca/itc_sred_partnership_allocation
+  - name: ca/itc_sred_partnership_allocation
+    required: true
   # Form T2038(IND) Part A line 67140 "ITC for total investments in qualified property (include
   # applicable amount from box 40* of your T3 slip)": the caller's figure, as the form takes it.
-  - ca/itc_qualified_property
+  - name: ca/itc_qualified_property
+    required: true
   # Form T2038(IND) Part B line 67170 "Total of your flow-through mining expenditures related to
   # mineral exploration tax credit" from Part IV of Form T1229: the caller's figure, as the form
   # takes
   # it.
-  - ca/itc_mineral_exploration_expenditures
+  - name: ca/itc_mineral_exploration_expenditures
+    required: true
   # Form T2038(IND) Part B line 67175 "Total of your flow-through critical mineral mining
   # expenditures
   # related to critical mineral exploration tax credit" from Part IV of Form T1229: the caller's
   # figure, as the form takes it.
-  - ca/itc_critical_mineral_expenditures
+  - name: ca/itc_critical_mineral_expenditures
+    required: true
   # Form T2038(IND) Part B Table 1 "Calculation of total Apprenticeship job creation tax credit",
   # one
   # record for each apprentice, column 3 "The lesser of eligible salary and wages** payable in the
   # year
   # or $20,000.": the caller's list, as the form takes it.
-  - ca/itc_apprentices
+  - name: ca/itc_apprentices
+    required: true
   # Form T2038(IND) Part B line 67180 "Total apprenticeship job creation tax credit (Total of
   # amounts in
   # column 3 plus applicable amount from box 40* of your T3 slip)": the caller's box 40 amount of
   # the T3
   # slip, as the form takes it.
-  - ca/itc_apprenticeship_t3_box_40
+  - name: ca/itc_apprenticeship_t3_box_40
+    required: true
   # Form T2038(IND) Part B line 67184 "Repayment of assistance that reduced qualified SR&ED
   # expenditures incurred in 2014 and prior years (amount from line 560 of Form T661)": the caller's
   # figure, as the form takes it.
-  - ca/itc_sred_repayment_2014_and_prior
+  - name: ca/itc_sred_repayment_2014_and_prior
+    required: true
   # Form T2038(IND) Part B line 67185 "Repayment of assistance that reduced qualified SR&ED
   # expenditures incurred in 2015 and subsequent years (amount from line 560 of Form T661)": the
   # caller's figure, as the form takes it.
-  - ca/itc_sred_repayment_2015_and_after
+  - name: ca/itc_sred_repayment_2015_and_after
+    required: true
   # Form T2038(IND) Part D amount 1 "ITC opening balance and carry forward from prior years (net of
   # expired amounts)": the caller's figure, as the form takes it.
-  - ca/itc_opening_balance
+  - name: ca/itc_opening_balance
+    required: true
   # Form T2038(IND) Part D amount 6 "Adjustment for a graduated rate estate, enter the amount of ITC
   # allocated to beneficiaries from box 40 of your T3 slip": the caller's figure, as the form takes
   # it.
-  - ca/itc_graduated_rate_estate_allocation
+  - name: ca/itc_graduated_rate_estate_allocation
+    required: true
   # Form T2038(IND) Part D amount 15 "Enter your claim on this line:": the claim the filer chooses,
   # an election, as the form takes it; it is claimed up to amount I or K and refused above it.
-  - ca/itc_claim
+  - name: ca/itc_claim
+    required: true
   # Form T2038(IND) Part E line 67200 "Third previous year" (the part of amount L to carry back for
   # the third previous year): the caller's election, as the form takes it.
-  - ca/itc_carryback_third_previous_year
+  - name: ca/itc_carryback_third_previous_year
+    required: true
   # Form T2038(IND) Part E line 67210 "Second previous year" (the part of amount L to carry back for
   # the second previous year): the caller's election, as the form takes it.
-  - ca/itc_carryback_second_previous_year
+  - name: ca/itc_carryback_second_previous_year
+    required: true
   # Form T2038(IND) Part E line 67220 "First previous year" (the part of amount L to carry back for
   # the first previous year): the caller's election, as the form takes it.
-  - ca/itc_carryback_first_previous_year
+  - name: ca/itc_carryback_first_previous_year
+    required: true
   # Form T2038(IND) Part E amount 17 "Amount you designate as a refund of ITC (cannot be more than
   # amount N)": the refund the filer designates, an election, as the form takes it; it is refused
   # above amount N.
-  - ca/itc_refund_designation
+  - name: ca/itc_refund_designation
+    required: true

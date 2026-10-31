@@ -58,7 +58,11 @@ def composed() -> FormComposition:
 def test_the_part_declares_the_form_with_its_export_and_no_instances() -> None:
     declared = yaml.safe_load(PART.read_text())["form"]
 
-    assert declared == {"name": FORM, "exports": list(spouse_on_december_31.FORM_EXPORTS)}
+    assert declared == {
+        "name": FORM,
+        "required": True,
+        "exports": list(spouse_on_december_31.FORM_EXPORTS),
+    }
 
 
 def test_the_part_is_a_form_of_its_own_and_adds_no_step_to_the_return() -> None:
@@ -86,12 +90,12 @@ def test_the_return_selects_none_of_the_forms_steps() -> None:
 
 
 def test_the_one_input_is_a_manifest_input() -> None:
-    assert spouse_on_december_31.INPUTS <= manifest().inputs
+    assert spouse_on_december_31.INPUTS <= manifest().inputs.keys()
     assert len(spouse_on_december_31.INPUTS) == 1
 
 
 def test_the_manifest_has_no_lift_spouse_input_any_more() -> None:
-    assert "ca-on/lift_spouse_at_year_end" not in manifest().inputs
+    assert "ca-on/lift_spouse_at_year_end" not in manifest().inputs.keys()
 
 
 def test_the_form_runs_once_and_derives_the_kind_of_its_export() -> None:

@@ -49,6 +49,7 @@ from tax_engine.domain.parameters.rounding import NO_ROUNDING
 from tax_engine.domain.registry import Namespace
 from tax_engine.domain.trace import TraceLine
 from tax_engine.domain.worksheet import Worksheet
+from tests.manifest_support import required_inputs
 
 D = Decimal
 EX_ON = JurisdictionCode("EX-ON")
@@ -207,9 +208,10 @@ def manifest(
         jurisdiction=EX_ON,
         version=version,
         valid_from_tax_year=valid_from_tax_year,
-        inputs=inputs,
+        inputs=required_inputs(inputs),
         forms=(
             Form(
+                required=True,
                 name=EX_ON.namespace.identifier("return"),
                 instances=None,
                 exports=tuple(sorted(outputs)),

@@ -12,6 +12,7 @@
 # four; the summary form ca/t1139_return (31a_t1139_return.yaml) puts them on the lines of the return.
 form:
   name: ca/t1139
+  required: true
   instances: ca/t1139_businesses
   exports:
     - ca/t1139_reported_on_business_line
@@ -29,6 +30,51 @@ form:
     - ca/t1139_profit_replaced_on_commission_line
     - ca/t1139_profit_replaced_on_farming_line
     - ca/t1139_profit_replaced_on_fishing_line
+  fields:
+    - name: ca/t1139_line
+      required: true
+    - name: ca/t1139_formula
+      required: true
+    - name: ca/t1139_a_statements
+      required: true
+    - name: ca/t1139_h_statements
+      required: true
+    - name: ca/t1139_i_statements
+      required: true
+    - name: ca/t1139_cancelling_election
+      required: true
+    - name: ca/t1139_amount_2a
+      required: true
+    - name: ca/t1139_amount_2b
+      required: true
+    - name: ca/t1139_amount_2e
+      required: true
+    - name: ca/t1139_amount_2f
+      required: true
+    - name: ca/t1139_amount_2h
+      required: true
+    - name: ca/t1139_amount_2i
+      required: true
+    - name: ca/t1139_amount_2j
+      required: true
+    - name: ca/t1139_amount_2m
+      required: true
+    - name: ca/t1139_amount_2n
+      required: true
+    - name: ca/t1139_designates_amount
+      required: true
+    - name: ca/t1139_designated_amount
+      required: true
+    - name: ca/t1139_amount_3a
+      required: true
+    - name: ca/t1139_amount_3b
+      required: true
+    - name: ca/t1139_amount_3e
+      required: true
+    - name: ca/t1139_amount_3f
+      required: true
+    - name: ca/t1139_last_years_additional_income
+      required: true
 capabilities:
   # Part 6 "I am cancelling my previous election to have a fiscal period that does not end on
   # December 31 in order to have a fiscal period ending on December 31.": a box ticked or not, 1 or

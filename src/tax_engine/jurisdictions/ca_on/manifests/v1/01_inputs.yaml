@@ -1,303 +1,522 @@
 inputs:
-  - ca/employment_income
+  - name: ca/employment_income
+    required: true
   # T1 lines 10105, 10120 and 10130 "Line 10105: Tax-exempt income for emergency services
   # volunteers", "Line 10120: Commissions included on line 10100 (box 42 of all T4 slips)" and "Line
   # 10130: Wage-loss replacement contributions": carried as entered and also outputs; line 10120 is
   # already in line 10100.
-  - ca/emergency_services_volunteer_exempt_income
-  - ca/t4_commissions
-  - ca/wage_loss_replacement_contributions
+  - name: ca/emergency_services_volunteer_exempt_income
+    required: true
+  - name: ca/t4_commissions
+    required: true
+  - name: ca/wage_loss_replacement_contributions
+    required: true
   # Schedule 3 Part 3 and Part 4: the ten property lists (lines 1 to 10), the unapplied
   # listed personal property losses, the properties sold (Form T2091(IND)), line 13
   # (16100), line 15 (17400), line 16 (17600) and line 20 (19200); line 21 (19700) is
   # computed.
-  - ca/qsbcs_dispositions
-  - ca/qffp_dispositions
-  - ca/qffp_foreclosure_dispositions
-  - ca/share_dispositions
-  - ca/real_estate_dispositions
-  - ca/bond_dispositions
-  - ca/crypto_asset_dispositions
-  - ca/other_foreclosure_dispositions
-  - ca/personal_use_property_dispositions
-  - ca/listed_personal_property_dispositions
-  - ca/unapplied_listed_personal_property_losses
-  - ca/principal_residence_properties
-  - ca/capital_gains_deferral
-  - ca/slip_capital_gains_or_losses
-  - ca/t3_capital_gains_or_losses
+  - name: ca/qsbcs_dispositions
+    required: true
+  - name: ca/qffp_dispositions
+    required: true
+  - name: ca/qffp_foreclosure_dispositions
+    required: true
+  - name: ca/share_dispositions
+    required: true
+  - name: ca/real_estate_dispositions
+    required: true
+  - name: ca/bond_dispositions
+    required: true
+  - name: ca/crypto_asset_dispositions
+    required: true
+  - name: ca/other_foreclosure_dispositions
+    required: true
+  - name: ca/personal_use_property_dispositions
+    required: true
+  - name: ca/listed_personal_property_dispositions
+    required: true
+  - name: ca/unapplied_listed_personal_property_losses
+    required: true
+  - name: ca/principal_residence_properties
+    required: true
+  - name: ca/capital_gains_deferral
+    required: true
+  - name: ca/slip_capital_gains_or_losses
+    required: true
+  - name: ca/t3_capital_gains_or_losses
+    required: true
   # Schedule 3 Part 1, flipped property: line 17905 and the nine tick boxes of line 17906, each a
   # 0 or 1 count; the form ca/schedule_3 reads them (03h_schedule_3_flipped_property.yaml).
-  - ca/flipped_property_disposed
-  - ca/flipped_property_life_event_1
-  - ca/flipped_property_life_event_2
-  - ca/flipped_property_life_event_3
-  - ca/flipped_property_life_event_4
-  - ca/flipped_property_life_event_5
-  - ca/flipped_property_life_event_6
-  - ca/flipped_property_life_event_7
-  - ca/flipped_property_life_event_8
-  - ca/flipped_property_life_event_9
-  - ca/partnership_gains_at_full_inclusion
-  - ca/other_employment_income
-  - ca/old_age_security
-  - ca/cpp_or_qpp_benefits
+  - name: ca/flipped_property_disposed
+    required: true
+  - name: ca/flipped_property_life_event_1
+    required: true
+  - name: ca/flipped_property_life_event_2
+    required: true
+  - name: ca/flipped_property_life_event_3
+    required: true
+  - name: ca/flipped_property_life_event_4
+    required: true
+  - name: ca/flipped_property_life_event_5
+    required: true
+  - name: ca/flipped_property_life_event_6
+    required: true
+  - name: ca/flipped_property_life_event_7
+    required: true
+  - name: ca/flipped_property_life_event_8
+    required: true
+  - name: ca/flipped_property_life_event_9
+    required: true
+  - name: ca/partnership_gains_at_full_inclusion
+    required: true
+  - name: ca/other_employment_income
+    required: true
+  - name: ca/old_age_security
+    required: true
+  - name: ca/cpp_or_qpp_benefits
+    required: true
   # T1 line 11410 "Line 11410: Disability benefits included on line 11400 (box 16 of the T4A(P)
   # slip)": carried as entered and also an output; already in line 11400.
-  - ca/t4ap_disability_benefits
-  - ca/other_pensions_and_superannuation
-  - ca/universal_child_care_benefit
+  - name: ca/t4ap_disability_benefits
+    required: true
+  - name: ca/other_pensions_and_superannuation
+    required: true
+  - name: ca/universal_child_care_benefit
+    required: true
   # T1 line 11701 "Line 11701: UCCB amount designated to a dependant": carried as entered and also
   # an output.
-  - ca/uccb_designated_to_dependant
-  - ca/ei_and_other_benefits
+  - name: ca/uccb_designated_to_dependant
+    required: true
+  - name: ca/ei_and_other_benefits
+    required: true
   # T1 line 11905 "Line 11905: EI maternity and parental benefits, and provincial parental insurance
   # plan (PPIP) benefits": carried as entered and also an output; already in line 11900.
-  - ca/ei_maternity_parental_benefits
-  - ca/t3_taxable_dividends_other_than_eligible
-  - ca/t4ps_taxable_dividends_other_than_eligible
-  - ca/t5_taxable_dividends_other_than_eligible
-  - ca/t5013_taxable_dividends_other_than_eligible
-  - ca/t3_taxable_dividends
-  - ca/t4ps_taxable_dividends
-  - ca/t5_taxable_dividends
-  - ca/t5013_taxable_dividends
-  - ca/eligible_dividends_received_without_a_slip
-  - ca/other_dividends_received_without_a_slip
-  - ca/t3_dividend_tax_credit
-  - ca/t4ps_dividend_tax_credit
-  - ca/t5_dividend_tax_credit
-  - ca/t5013_dividend_tax_credit
-  - ca/t3_investment_income
-  - ca/t5_investment_income
-  - ca/t5013_investment_income
-  - ca/investment_income_credited_not_received
-  - ca/tax_refund_interest
-  - ca/foreign_investment_income
-  - ca/investment_income_without_a_slip
-  - ca/investment_royalties
-  - ca/investment_income_reported_in_previous_years
-  - ca/net_partnership_income
-  - ca/rdsp_income
+  - name: ca/ei_maternity_parental_benefits
+    required: true
+  - name: ca/t3_taxable_dividends_other_than_eligible
+    required: true
+  - name: ca/t4ps_taxable_dividends_other_than_eligible
+    required: true
+  - name: ca/t5_taxable_dividends_other_than_eligible
+    required: true
+  - name: ca/t5013_taxable_dividends_other_than_eligible
+    required: true
+  - name: ca/t3_taxable_dividends
+    required: true
+  - name: ca/t4ps_taxable_dividends
+    required: true
+  - name: ca/t5_taxable_dividends
+    required: true
+  - name: ca/t5013_taxable_dividends
+    required: true
+  - name: ca/eligible_dividends_received_without_a_slip
+    required: true
+  - name: ca/other_dividends_received_without_a_slip
+    required: true
+  - name: ca/t3_dividend_tax_credit
+    required: true
+  - name: ca/t4ps_dividend_tax_credit
+    required: true
+  - name: ca/t5_dividend_tax_credit
+    required: true
+  - name: ca/t5013_dividend_tax_credit
+    required: true
+  - name: ca/t3_investment_income
+    required: true
+  - name: ca/t5_investment_income
+    required: true
+  - name: ca/t5013_investment_income
+    required: true
+  - name: ca/investment_income_credited_not_received
+    required: true
+  - name: ca/tax_refund_interest
+    required: true
+  - name: ca/foreign_investment_income
+    required: true
+  - name: ca/investment_income_without_a_slip
+    required: true
+  - name: ca/investment_royalties
+    required: true
+  - name: ca/investment_income_reported_in_previous_years
+    required: true
+  - name: ca/net_partnership_income
+    required: true
+  - name: ca/rdsp_income
+    required: true
   # Form T776: the statements, one record for each rental operation (any number); the form
   # ca/t776 reads their fields.
-  - ca/t776_statements
+  - name: ca/t776_statements
+    required: true
   # Form Schedule 8: the copies of the form, none or one (a record has no fields); the form
   # ca/schedule_8 reads the starting amounts it needs from the inputs below, like the return.
-  - ca/schedule_8_instances
+  - name: ca/schedule_8_instances
+    required: true
   # Form RC381: the copies of the form, none or one (a record has no fields); the form ca/rc381
   # reads the starting amounts it needs from the inputs below, like the return. The return carries
   # Schedule 8 or Form RC381, not both (the exclusive group ca/cpp_calculation).
-  - ca/rc381_instances
+  - name: ca/rc381_instances
+    required: true
   # Form T929: the copies of the form, none or one (a record has no fields); the form ca/t929 reads
   # the figures it takes from the inputs below, entered as the form takes them.
-  - ca/t929_instances
+  - name: ca/t929_instances
+    required: true
   # Form T2125: the statements, one record for each business (any number); the form ca/t2125
   # reads their fields.
-  - ca/t2125_statements
+  - name: ca/t2125_statements
+    required: true
   # Form T2042: the statements, one record for each farming business (any number); the form ca/t2042
   # reads their fields.
-  - ca/t2042_statements
+  - name: ca/t2042_statements
+    required: true
   # Form T2121: the statements, one record for each fishing business (any number); the form ca/t2121
   # reads their fields.
-  - ca/t2121_statements
+  - name: ca/t2121_statements
+    required: true
   # Form RC359: the copies of the form, one record for each employer with EPSP contributions
   # (any number, none included); the form ca/rc359 reads their fields.
-  - ca/rc359_employers
+  - name: ca/rc359_employers
+    required: true
   # Form T1-M: the moves, one record for each move (any number); the form ca/t1_m reads their
   # fields, the 19 inputs of the form's lines 1, 2, 4, 5, 6, 7, 9, 10, 12, 13, 14, 16, 17, 18, 19,
   # 21, 22, 25 and 28.
-  - ca/t1_m_moves
+  - name: ca/t1_m_moves
+    required: true
   # Schedule 5 and line 133: the provinces with a logging operation, one record for each province
   # (any number, none included) holding the logging tax paid to it and the net logging income in
   # it, as 5000-G "Federal logging tax credit" takes them; the step ca/logging_tax_credit reads
   # their fields.
-  - ca/logging_operations
+  - name: ca/logging_operations
+    required: true
   # T1 line 12799 "Line 12799: Total" (under "Line 15: Support payments received"): carried as
   # entered and also an output.
-  - ca/support_payments_received_total
-  - ca/taxable_support_payments
-  - ca/rrsp_income
-  - ca/fhsa_income
-  - ca/other_fhsa_income
-  - ca/other_income
-  - ca/taxable_scholarships
-  - ca/workers_compensation_benefits
-  - ca/social_assistance_payments
-  - ca/net_federal_supplements
-  - ca/uccb_repayment
-  - ca/rdsp_income_repayment
-  - ca/oas_overpayment_recovered
-  - ca/ei_benefits_repayment
-  - ca/canadian_armed_forces_and_police_deduction
-  - ca/limited_partnership_losses_of_other_years
-  - ca/non_capital_losses_of_other_years
-  - ca/unapplied_net_capital_losses_1985_to_1987
-  - ca/unapplied_net_capital_losses_1988_and_1989
-  - ca/unapplied_net_capital_losses_1990_to_1999
-  - ca/unapplied_net_capital_losses_2000
-  - ca/unapplied_net_capital_losses_2001_to_2024
-  - ca/net_capital_losses_claimed
-  - ca/net_capital_losses_before_may_23_1985
-  - ca/pre_1986_deductions_before_1988
-  - ca/pre_1986_deductions_1988_and_1989
-  - ca/pre_1986_deductions_1990_to_1999
-  - ca/pre_1986_deductions_2000
-  - ca/pre_1986_deductions_2001_to_2024
-  - ca/additional_deductions
+  - name: ca/support_payments_received_total
+    required: true
+  - name: ca/taxable_support_payments
+    required: true
+  - name: ca/rrsp_income
+    required: true
+  - name: ca/fhsa_income
+    required: true
+  - name: ca/other_fhsa_income
+    required: true
+  - name: ca/other_income
+    required: true
+  - name: ca/taxable_scholarships
+    required: true
+  - name: ca/workers_compensation_benefits
+    required: true
+  - name: ca/social_assistance_payments
+    required: true
+  - name: ca/net_federal_supplements
+    required: true
+  - name: ca/uccb_repayment
+    required: true
+  - name: ca/rdsp_income_repayment
+    required: true
+  - name: ca/oas_overpayment_recovered
+    required: true
+  - name: ca/ei_benefits_repayment
+    required: true
+  - name: ca/canadian_armed_forces_and_police_deduction
+    required: true
+  - name: ca/limited_partnership_losses_of_other_years
+    required: true
+  - name: ca/non_capital_losses_of_other_years
+    required: true
+  - name: ca/unapplied_net_capital_losses_1985_to_1987
+    required: true
+  - name: ca/unapplied_net_capital_losses_1988_and_1989
+    required: true
+  - name: ca/unapplied_net_capital_losses_1990_to_1999
+    required: true
+  - name: ca/unapplied_net_capital_losses_2000
+    required: true
+  - name: ca/unapplied_net_capital_losses_2001_to_2024
+    required: true
+  - name: ca/net_capital_losses_claimed
+    required: true
+  - name: ca/net_capital_losses_before_may_23_1985
+    required: true
+  - name: ca/pre_1986_deductions_before_1988
+    required: true
+  - name: ca/pre_1986_deductions_1988_and_1989
+    required: true
+  - name: ca/pre_1986_deductions_1990_to_1999
+    required: true
+  - name: ca/pre_1986_deductions_2000
+    required: true
+  - name: ca/pre_1986_deductions_2001_to_2024
+    required: true
+  - name: ca/additional_deductions
+    required: true
   # Form T2209 note (3), net income, "minus any:" the part of line 25600 that is net employment
   # income from a prescribed international organization, foreign income exempt under a tax
   # treaty, or adult basic education tuition assistance; read by the foreign tax credit alone.
-  - ca/exempt_income_deductions
-  - ca/zone_a_days_lived
-  - ca/zone_a_additional_residency_days
-  - ca/zone_a_special_work_site_benefits
-  - ca/zone_b_days_lived
-  - ca/zone_b_additional_residency_days
-  - ca/zone_b_special_work_site_benefits
-  - ca/travel_trips
-  - ca/travel_individuals
-  - ca/other_payments_deduction_above_limit
-  - ca/unused_rrsp_contributions
-  - ca/rrsp_contributions
-  - ca/rrsp_deduction_limit
-  - ca/rrsp_amount_deducted
-  - ca/union_dues
+  - name: ca/exempt_income_deductions
+    required: true
+  - name: ca/zone_a_days_lived
+    required: true
+  - name: ca/zone_a_additional_residency_days
+    required: true
+  - name: ca/zone_a_special_work_site_benefits
+    required: true
+  - name: ca/zone_b_days_lived
+    required: true
+  - name: ca/zone_b_additional_residency_days
+    required: true
+  - name: ca/zone_b_special_work_site_benefits
+    required: true
+  - name: ca/travel_trips
+    required: true
+  - name: ca/travel_individuals
+    required: true
+  - name: ca/other_payments_deduction_above_limit
+    required: true
+  - name: ca/unused_rrsp_contributions
+    required: true
+  - name: ca/rrsp_contributions
+    required: true
+  - name: ca/rrsp_deduction_limit
+    required: true
+  - name: ca/rrsp_amount_deducted
+    required: true
+  - name: ca/union_dues
+    required: true
   # T1 line 20600 "Line 20600: Pension adjustment (box 52 of all T4 slips and box 034 of all T4A
   # slips)": carried as entered and also an output.
-  - ca/pension_adjustment
-  - ca/rpp_deduction
+  - name: ca/pension_adjustment
+    required: true
+  - name: ca/rpp_deduction
+    required: true
   # T1 line 21999 "Line 21999: Total" (under "Line 45: Support payments made"): carried as entered
   # and also an output.
-  - ca/support_payments_made_total
-  - ca/support_payments_deduction
-  - ca/exploration_and_development_expenses
-  - ca/other_deductions
-  - ca/split_income_dividends
-  - ca/split_income_dividends_other_than_eligible
-  - ca/other_split_income
-  - ca/total_carrying_charges
-  - ca/total_interest_expenses
-  - ca/total_other_expenses
-  - ca/capital_gains_deductions_1985_to_1987
-  - ca/capital_gains_deductions_1988_and_1989_other_than_eligible_capital_property
-  - ca/capital_gains_deductions_1988_and_1989_eligible_capital_property
-  - ca/capital_gains_deductions_1990_to_1999
-  - ca/capital_gains_deductions_2000
-  - ca/capital_gains_deductions_2001_to_2024
-  - ca/other_business_investment_loss_reductions_1986_to_1994
-  - ca/other_business_investment_loss_reductions_1994_to_1996
-  - ca/other_business_investment_loss_reductions_1997_to_1999
-  - ca/other_business_investment_loss_reductions_2000
-  - ca/other_business_investment_loss_reductions_2001_to_2023
-  - ca/other_business_investment_loss_reductions_2024
-  - ca/business_investment_loss
-  - ca/fhsa_contributions_in_2025
-  - ca/fhsa_contributions_in_2025_after_first_qualifying_withdrawal
-  - ca/fhsa_variable_b_amount
-  - ca/fhsa_designated_withdrawals_in_2025
-  - ca/fhsa_contributions_in_2024
-  - ca/fhsa_contributions_in_2024_before_first_qualifying_withdrawal
-  - ca/fhsa_carryforward_for_2025
-  - ca/fhsa_rrsp_transfers_in_2024_and_prior_years
-  - ca/fhsa_rrsp_transfers_in_2025
-  - ca/fhsa_designated_transfers_in_2024_and_prior_years
-  - ca/fhsa_designated_transfers_in_2025
-  - ca/fhsa_variable_h_amount
-  - ca/fhsa_carryforward_for_2024
-  - ca/fhsa_variable_f_amount
-  - ca/fhsa_annual_limits_for_2024_and_prior_years
-  - ca/fhsa_deductions_for_2024_and_prior_years
-  - ca/fhsa_unused_contributions_brought_forward
-  - ca/fhsa_contributions_deducted
-  - ca/fhsa_maximum_participation_period_ended
+  - name: ca/support_payments_made_total
+    required: true
+  - name: ca/support_payments_deduction
+    required: true
+  - name: ca/exploration_and_development_expenses
+    required: true
+  - name: ca/other_deductions
+    required: true
+  - name: ca/split_income_dividends
+    required: true
+  - name: ca/split_income_dividends_other_than_eligible
+    required: true
+  - name: ca/other_split_income
+    required: true
+  - name: ca/total_carrying_charges
+    required: true
+  - name: ca/total_interest_expenses
+    required: true
+  - name: ca/total_other_expenses
+    required: true
+  - name: ca/capital_gains_deductions_1985_to_1987
+    required: true
+  - name: ca/capital_gains_deductions_1988_and_1989_other_than_eligible_capital_property
+    required: true
+  - name: ca/capital_gains_deductions_1988_and_1989_eligible_capital_property
+    required: true
+  - name: ca/capital_gains_deductions_1990_to_1999
+    required: true
+  - name: ca/capital_gains_deductions_2000
+    required: true
+  - name: ca/capital_gains_deductions_2001_to_2024
+    required: true
+  - name: ca/other_business_investment_loss_reductions_1986_to_1994
+    required: true
+  - name: ca/other_business_investment_loss_reductions_1994_to_1996
+    required: true
+  - name: ca/other_business_investment_loss_reductions_1997_to_1999
+    required: true
+  - name: ca/other_business_investment_loss_reductions_2000
+    required: true
+  - name: ca/other_business_investment_loss_reductions_2001_to_2023
+    required: true
+  - name: ca/other_business_investment_loss_reductions_2024
+    required: true
+  - name: ca/business_investment_loss
+    required: true
+  - name: ca/fhsa_contributions_in_2025
+    required: true
+  - name: ca/fhsa_contributions_in_2025_after_first_qualifying_withdrawal
+    required: true
+  - name: ca/fhsa_variable_b_amount
+    required: true
+  - name: ca/fhsa_designated_withdrawals_in_2025
+    required: true
+  - name: ca/fhsa_contributions_in_2024
+    required: true
+  - name: ca/fhsa_contributions_in_2024_before_first_qualifying_withdrawal
+    required: true
+  - name: ca/fhsa_carryforward_for_2025
+    required: true
+  - name: ca/fhsa_rrsp_transfers_in_2024_and_prior_years
+    required: true
+  - name: ca/fhsa_rrsp_transfers_in_2025
+    required: true
+  - name: ca/fhsa_designated_transfers_in_2024_and_prior_years
+    required: true
+  - name: ca/fhsa_designated_transfers_in_2025
+    required: true
+  - name: ca/fhsa_variable_h_amount
+    required: true
+  - name: ca/fhsa_carryforward_for_2024
+    required: true
+  - name: ca/fhsa_variable_f_amount
+    required: true
+  - name: ca/fhsa_annual_limits_for_2024_and_prior_years
+    required: true
+  - name: ca/fhsa_deductions_for_2024_and_prior_years
+    required: true
+  - name: ca/fhsa_unused_contributions_brought_forward
+    required: true
+  - name: ca/fhsa_contributions_deducted
+    required: true
+  - name: ca/fhsa_maximum_participation_period_ended
+    required: true
   # Schedule 15 line 68930 "Line 68930: Tick this box if you opened your first FHSA in 2025 or
   # became a successor holder in 2025 and did not open another FHSA of your own in 2025 or a prior
   # year.", line 59 and line 68960 "Line 59 and line 68960: Total amount of qualifying withdrawals
   # made in 2025 (box 20 of your 2025 T4FHSA slips)" and line 68965 "Line 68965: Tick this box if
   # the address on page 1 of your return is the same as the address of the home that you bought or
   # built under the FHSA.": carried as entered and also outputs (a tick is 0 or 1).
-  - ca/fhsa_first_opened_in_year
-  - ca/fhsa_qualifying_withdrawals
-  - ca/fhsa_home_address_same
-  - ca/cpp_months
-  - ca/cpt20_earnings
+  - name: ca/fhsa_first_opened_in_year
+    required: true
+  - name: ca/fhsa_qualifying_withdrawals
+    required: true
+  - name: ca/fhsa_home_address_same
+    required: true
+  - name: ca/cpp_months
+    required: true
+  - name: ca/cpt20_earnings
+    required: true
   # Schedule 8 Part 5 line 3 and line 50399 "Employment earnings shown on a T4 slip that you are
   # electing to pay additional CPP contributions on (complete Form CPT20)": the caller's, taken as
   # the form takes it.
-  - ca/cpt20_t4_earnings
-  - ca/cpp_part_4_completed
+  - name: ca/cpt20_t4_earnings
+    required: true
+  - name: ca/cpp_part_4_completed
+    required: true
   # Schedule 8 Part 5 heading "Part 5 - Complete this part if you are reporting both: employment
   # income (complete Part 3 first) / self-employment income or other earnings that you are electing
   # to pay CPP contributions on. If not, leave this part blank.": the filer's choice, 1 or 0.
-  - ca/cpp_part_5_completed
+  - name: ca/cpp_part_5_completed
+    required: true
   # Schedule 8 Part 3 line 8 and line 50340 "Total actual base and first additional contributions
   # on CPP pensionable earnings from box 16 of all of your T4 slips", and line 21 and line 50341
   # "Total actual second additional contributions on CPP pensionable earnings from box 16A of all
   # of your T4 slips": the caller's, taken as the form takes them.
-  - ca/cpp_t4_base_and_first_additional_contributions
-  - ca/cpp_t4_second_additional_contributions
+  - name: ca/cpp_t4_base_and_first_additional_contributions
+    required: true
+  - name: ca/cpp_t4_second_additional_contributions
+    required: true
   # Form RC381 Part 2 line B (the months QPP applied), Part 3 lines 1, 2, 25, 39 and 45 (the T4
   # pensionable earnings outside Quebec and in Quebec, boxes 16A, 17 and 17A) and line 19, which is
   # the Schedule 8 Part 3 line 8 input above: the filer's entries, read by the form ca/rc381.
-  - ca/qpp_months
-  - ca/t4_cpp_pensionable_earnings_outside_quebec
-  - ca/t4_qpp_pensionable_earnings_in_quebec
-  - ca/t4_cpp_second_additional_box_16a
-  - ca/t4_qpp_contributions_box_17
-  - ca/t4_qpp_second_additional_box_17a
-  - ca/ei_controlled_corporation_earnings
-  - ca/ei_exempt_self_employment_income
-  - ca/ei_excluded_slips
-  - ca/ei_insurable_earnings
-  - ca/ei_special_benefits_agreement
+  - name: ca/qpp_months
+    required: true
+  - name: ca/t4_cpp_pensionable_earnings_outside_quebec
+    required: true
+  - name: ca/t4_qpp_pensionable_earnings_in_quebec
+    required: true
+  - name: ca/t4_cpp_second_additional_box_16a
+    required: true
+  - name: ca/t4_qpp_contributions_box_17
+    required: true
+  - name: ca/t4_qpp_second_additional_box_17a
+    required: true
+  - name: ca/ei_controlled_corporation_earnings
+    required: true
+  - name: ca/ei_exempt_self_employment_income
+    required: true
+  - name: ca/ei_excluded_slips
+    required: true
+  - name: ca/ei_insurable_earnings
+    required: true
+  - name: ca/ei_special_benefits_agreement
+    required: true
   # Form T2204 (Employee Overpayment of Employment Insurance Premiums): line 1 "Total EI
   # insurable earnings (box 24 or, if blank, box 14 of your T4 slips) (1)", line 2 "Total
   # self-employment and other earnings eligible for the EI program for access to EI special
   # benefits" and line 4 "Total premiums deducted: Residents of other than Quebec (box 18 and
   # box 55 of your T4 slips)".
-  - ca/t2204_insurable_earnings
-  - ca/t2204_self_employment_earnings
-  - ca/t2204_premiums_deducted
+  - name: ca/t2204_insurable_earnings
+    required: true
+  - name: ca/t2204_self_employment_earnings
+    required: true
+  - name: ca/t2204_premiums_deducted
+    required: true
   # Box 55 of the T4 slips, which line 4 above includes.
-  - ca/t2204_ppip_premiums
-  - ca/canadian_tuition_fees
-  - ca/canada_training_credit_limit
-  - ca/canada_training_credit_claimed
+  - name: ca/t2204_ppip_premiums
+    required: true
+  - name: ca/canadian_tuition_fees
+    required: true
+  - name: ca/canada_training_credit_limit
+    required: true
+  - name: ca/canada_training_credit_claimed
+    required: true
   # Schedule 12 (T1 line 157 and line 45355), Step 1: one record for each qualifying renovation the
   # caller lists, holding line 1 "Total amount paid from all sales slips and contracts included in
   # the table above and any additional sheets of paper Total qualifying expenditures", line 2
   # "Any amount that can reasonably be considered to be reimbursed (including government assistance
   # received or receivable) included in the amount on line 1" and line 5 "Amount of eligible
   # expenses being claimed by other eligible individuals".
-  - ca/home_renovations
-  - ca/foreign_tuition_fees
-  - ca/unused_tuition_from_2024
-  - ca/tuition_transfer_elected
-  - ca/tuition_transferred_from_child
-  - ca/spouse_return_age_amount
-  - ca/spouse_return_infirm_children_amount
-  - ca/spouse_return_pension_income_amount
-  - ca/spouse_return_disability_amount
-  - ca/spouse_designated_tuition
-  - ca/spouse_return_taxable_income
-  - ca/spouse_return_federal_basic_tax
-  - ca/spouse_return_basic_personal_amount
-  - ca/spouse_return_line_96
-  - ca/spouse_return_federal_tuition_amount
-  - ca/spouse_not_separated_90_days
-  - ca/volunteer_firefighters_conditions_met
-  - ca/search_and_rescue_conditions_met
-  - ca/home_buyers_claim
-  - ca/home_accessibility_expenses
-  - ca/home_accessibility_claimed_by_others
-  - ca/adoption_expense_children
-  - ca/pension_foreign_income
-  - ca/pension_us_ira_income
-  - ca/pension_rrif_transferred
-  - ca/pension_annuity_payments
-  - ca/pension_annuity_conditions_met
-  - ca/student_loan_interest
+  - name: ca/home_renovations
+    required: true
+  - name: ca/foreign_tuition_fees
+    required: true
+  - name: ca/unused_tuition_from_2024
+    required: true
+  - name: ca/tuition_transfer_elected
+    required: true
+  - name: ca/tuition_transferred_from_child
+    required: true
+  - name: ca/spouse_return_age_amount
+    required: true
+  - name: ca/spouse_return_infirm_children_amount
+    required: true
+  - name: ca/spouse_return_pension_income_amount
+    required: true
+  - name: ca/spouse_return_disability_amount
+    required: true
+  - name: ca/spouse_designated_tuition
+    required: true
+  - name: ca/spouse_return_taxable_income
+    required: true
+  - name: ca/spouse_return_federal_basic_tax
+    required: true
+  - name: ca/spouse_return_basic_personal_amount
+    required: true
+  - name: ca/spouse_return_line_96
+    required: true
+  - name: ca/spouse_return_federal_tuition_amount
+    required: true
+  - name: ca/spouse_not_separated_90_days
+    required: true
+  - name: ca/volunteer_firefighters_conditions_met
+    required: true
+  - name: ca/search_and_rescue_conditions_met
+    required: true
+  - name: ca/home_buyers_claim
+    required: true
+  - name: ca/home_accessibility_expenses
+    required: true
+  - name: ca/home_accessibility_claimed_by_others
+    required: true
+  - name: ca/adoption_expense_children
+    required: true
+  - name: ca/pension_foreign_income
+    required: true
+  - name: ca/pension_us_ira_income
+    required: true
+  - name: ca/pension_rrif_transferred
+    required: true
+  - name: ca/pension_annuity_payments
+    required: true
+  - name: ca/pension_annuity_conditions_met
+    required: true
+  - name: ca/student_loan_interest
+    required: true
   # Schedule 11 line 32005 "Line 32005: Tick this box if you were eligible for the disability tax
   # credit in 2025 or had a mental or physical impairment in 2025 and a medical practitioner has
   # certified that you cannot reasonably be expected to be enrolled as a full-time student because
@@ -306,304 +525,5 @@ inputs:
   # (maximum 12)" and line 32020 "Line 32020: Number of months you were enrolled as a full-time
   # student (box 25 of your Form T2202 and column C of your forms TL11A and TL11C) (maximum 12)":
   # carried as entered and also outputs; the printed maximum of 12 is not enforced here.
-  - ca/tuition_cannot_be_full_time_student
-  - ca/tuition_part_time_months
-  - ca/tuition_full_time_months
-  - ca-on/dependent_children
-  - ca-on/dependants
-  - ca-on/not_resident_of_canada_at_start_of_year
-  - ca-on/not_resident_of_ontario_at_year_end
-  - ca-on/bankrupt_in_year
-  - ca-on/return_filed_by_trustee_in_bankruptcy
-  - ca-on/not_claiming_ontario_tax_reduction
-  - ca/spouse_or_common_law_partner_on_december_31
-  - ca-on/claims_tax_reduction_amounts_at_equal_net_income
-  - ca/eligible_dependants
-  - ca/dependant_net_income
-  - ca/infirm_dependants
-  - ca/medical_expenses
-  - ca/other_dependants
-  - ca-on/caregiver_dependants
-  - ca-on/disability_dependants
-  - ca/disability_dependants
-  - ca/eligible_for_disability_amount
-  - ca/under_18_on_december_31
-  - ca/disability_self_care_expenses
-  # Schedule ON(S11) line 1 "Enter your unused Ontario tuition and education amounts from your
-  # 2024 notice of assessment or reassessment": a caller input, the figure on that notice, not a
-  # calculation on this return (as Schedule 7 line 1 is for RRSPs).
-  - ca-on/unused_tuition_amounts_brought_forward
-  # Schedule ON(S2) lines 1 to 3, 6 to 8 and the Ontario tax on line 5: figures from another
-  # person's Form ON428, caller inputs (their lines 58080, 58360, 58440, 58040, 24, 58560 and 8),
-  # one set for the one spouse. Their line 26000 and the separation count are the federal
-  # Schedule 2's inputs again.
-  - ca-on/spouse_return_ontario_age_amount
-  - ca-on/spouse_return_ontario_pension_income_amount
-  - ca-on/spouse_return_ontario_disability_amount
-  - ca-on/spouse_return_ontario_basic_tax
-  - ca-on/spouse_return_ontario_basic_personal_amount
-  - ca-on/spouse_return_ontario_line_24
-  - ca-on/spouse_return_ontario_unused_tuition_amount
-  - ca/infirm_children
-  - ca/born_in_1960_or_earlier
-  - ca/spouse_net_income
-  - ca/spouses_claimed
-  - ca/spouse_caregiver_eligible
-  - ca/dependant_caregiver_eligible
-  - ca/dependant_caregiver_aged_18_or_older
-  - ca/child_care_expenses_paid
-  - ca/children_under_seven
-  - ca/children_with_disability
-  - ca/children_seven_to_sixteen
-  - ca/cwb_eligible_dependants
-  - ca/income_tax_deducted
-  - ca/part_xii_2_tax_credit
-  - ca/employee_and_partner_gst_hst_rebate
-  - ca/educator_supplies_expenses
-  - ca/tax_paid_by_instalments
-  - ca/itc_recapture_expenditure_at_15_percent
-  - ca/itc_recapture_expenditure_at_20_percent
-  # Form T2209, "the federal refundable First Nations abatement (line 44100 of your return)"
-  # of note (4), and the countries of lines 1 and 2, each with lines 43100 and 43300.
-  - ca/first_nations_abatement
-  - ca/foreign_tax_countries
-  - ca/labour_sponsored_funds_net_cost
-  - ca/resp_aips_received_part_a
-  - ca/resp_aips_rrsp_contributions
-  - ca/resp_aips_reduction_used_in_previous_years
-  - ca/resp_aips_received_part_b
-  - ca/resp_aips_part_a_applies
-  - ca/rl_10_labour_sponsored_fund_amount
-  # Form T691 Part 1 lines 2, 3, 5, 6, 8, 9 and 10: the caller's figures, entered as the form takes
-  # them (the CCA and carrying charges, the net income before CCA of film and rental and leasing
-  # property, the tax shelter losses and amounts deductible, and the carrying charges of a limited
-  # or non-active partner).
-  - ca/amt_film_property_cca_and_carrying_charges
-  - ca/amt_film_property_income_before_cca
-  - ca/amt_rental_property_cca_and_carrying_charges
-  - ca/amt_rental_property_income_before_cca
-  - ca/amt_tax_shelter_losses
-  - ca/amt_tax_shelter_deductible_amounts
-  - ca/amt_limited_partner_carrying_charges
-  # Form T691 Part 9 lines 1 to 4 and Part 1 lines 17, 18, 24 and 25: the caller's figures, entered
-  # as the form takes them (the resource expenditures, the resource income lines, the capital gains
-  # exempt under a tax treaty and of graduated rate estates, and the gifts of publicly listed
-  # securities with the amount from line 68231 of Form T1170).
-  - ca/amt_resource_expenditures
-  - ca/amt_resource_production_income
-  - ca/amt_resource_foreign_property_income
-  - ca/amt_class_43_1_income
-  - ca/amt_treaty_exempt_capital_gains
-  - ca/amt_graduated_rate_estate_capital_gains
-  - ca/amt_publicly_listed_gifts_total
-  - ca/amt_publicly_listed_gifts_t1170_line_68231
-  # Form T691 Part 1 lines 31, 36 and 37, 39 to 42, 59, 64 to 67 and 70 to 75: the
-  # caller's figures, entered as the form takes them (the gifts under a security
-  # option plan, the prospector and deferred profit-sharing deductions, the limited partnership and
-  # non-capital and net capital losses differences, the PPIP premiums deduction, the non-deductible
-  # property expenses and the employment expenses). Lines 28 and 35 are the T4 boxes of 01f and 01g.
-  # Line 56, the moving expenses deduction, is the computed line 21900 and is not an input.
-  - ca/t4_security_options_boxes_39_and_91
-  - ca/amt_security_option_publicly_listed_gifts
-  - ca/t4_security_options_boxes_41_and_92
-  - ca/amt_prospector_or_grubstaker_deduction
-  - ca/amt_deferred_profit_sharing_plan_deduction
-  - ca/amt_limited_partnership_difference_no_election
-  - ca/amt_limited_partnership_difference_election
-  - ca/amt_non_capital_losses_difference
-  - ca/amt_net_capital_losses_difference
-  - ca/amt_ppip_premiums_deduction
-  - ca/amt_non_deductible_interest
-  - ca/amt_life_insurance_premiums_as_collateral
-  - ca/amt_financing_expenses
-  - ca/amt_investment_counsel_fees
-  - ca/amt_commission_employment_expenses
-  - ca/amt_legal_and_accounting_expenses
-  - ca/amt_repayment_of_salary_and_wages
-  - ca/amt_excess_epsp_amounts
-  - ca/amt_forfeited_salary_deferral_amounts
-  - ca/amt_repayment_of_wage_loss_replacement
-  # Form T691 Part 1 line 101: the caller's figure, the section 119 credit for a former resident,
-  # entered as the form takes it. Line 100 is the federal logging tax credit of line 133, computed.
-  - ca/amt_section_119_former_resident_credit
-  # Form T691 Part 8 line 1 "Minimum tax carryover from previous years (2018 to 2024)" and line 12
-  # "Claim an amount that is not more than line 1 or 11, whichever is less.": the carryover from
-  # earlier returns, and the amount the filer claims on line 40427 (line 12, applied), entered as
-  # the form takes them.
-  - ca/amt_minimum_tax_carryover_from_previous_years
-  - ca/amt_minimum_tax_carryover_applied
-  - ca/political_contributions
-  # Form T929 Step 1 line 1 "Enter the total of all amounts in column 2" and line 2 "Enter the total of
-  # all amounts in column 3" (the amounts paid, and the amounts reimbursed or assisted), the
-  # disability supports the filer paid, as the form takes them.
-  - ca/t929_expenses_paid
-  - ca/t929_expenses_reimbursed
-  # Form T929 Step 2 line 8 "Enter the number of weeks in the year that you attended the institution or
-  # secondary school", the weeks attended, a count.
-  - ca/t929_weeks_attended
-  # Form T929 Step 2 line 4 "Enter your earned income", the items of the definition "Your earned income
-  # is the total of the following amounts" that are not computed from the return: net research grants,
-  # any earnings supplement, any financial support under Part II of the Employment Insurance Act or a
-  # similar program, any income replacement support similar to Employment Insurance, any amounts under
-  # the Wage Earner Protection Program Act in respect of wages, and any federal, provincial or
-  # territorial government COVID-19 payments received in the year for which a T4A or T4E was received.
-  - ca/t929_net_research_grants
-  - ca/t929_earnings_supplements
-  - ca/t929_employment_insurance_part_2_support
-  - ca/t929_income_replacement_support
-  - ca/t929_wage_earner_protection_amounts
-  - ca/t929_covid_19_payments
-  # Form T1223 Part C, the clergy residence deduction (line 23100): the figures the form takes from
-  # the filer, entered as the form takes them. Part C (A), the employer's residence benefit (box 30
-  # of the T4 slip); line 1, the income from qualifying employment from all eligible employers;
-  # line 3, the number of months in qualifying employment; line 6, the actual rent and eligible
-  # utilities paid or the fair rental value of a residence owned; line 7, all amounts claimed for
-  # the accommodation, including a spouse's. Whether Part C (B) is completed is derived from lines
-  # 3, 6 and 7 (22_clergy_residence_deduction.yaml), not entered.
-  - ca/clergy_employer_residence_benefit
-  - ca/clergy_qualifying_employment_income
-  - ca/clergy_months_in_qualifying_employment
-  - ca/clergy_accommodation_cost
-  - ca/clergy_other_accommodation_claims
-  - ca/wage_loss_replacement_plan_income
-  - ca/resident_in_canada_throughout_2025
-  - ca/aged_18_or_older_at_end_of_2025
-  - ca/spouse_net_income_before_adjustments
-  - ca/spouse_uccb_repayment
-  - ca/spouse_rdsp_income_repayment
-  - ca/spouse_universal_child_care_benefit
-  - ca/spouse_rdsp_income
-  # T1 line 26600 "Line 26600: Did you own or hold specified foreign property where the total cost
-  # amount of all such property, at any time in 2025, was more than CAN$100,000? 1 Yes or 2 No":
-  # carried as entered and also an output (0 for No, 1 for Yes).
-  - ca/specified_foreign_property_over_100k
-  - ca-on/opportunities_fund_donation
-  - ca-on/fertility_expenses
-  - ca-on/claims_seniors_care_credit
-  - ca-on/seniors_transit_paid
-  - ca-on/flow_through_share_slips
-  - ca-on/coop_education_payroll
-  - ca-on/coop_education_placements
-  # Form ON479 line 63265 "Are you claiming this credit as a member of a partnership? 1 Yes or
-  # 2 No" and line 63270 "If yes, enter your nine-digit business number. (enter 9 digits)":
-  # listed under outputs too, since the form computes nothing from them and the return
-  # carries them as entered.
-  - ca-on/coop_claimed_as_partnership_member
-  - ca-on/coop_partnership_business_number
-  - ca-on/community_food_program_donations
-  - ca/charitable_donations
-  - ca/government_donations
-  - ca/university_donations_outside_canada
-  - ca/foreign_charity_donations
-  - ca/ecological_and_cultural_gifts
-  - ca/ecological_gifts_before_2016
-  - ca/depreciable_gift_recaptured_depreciation
-  - ca/depreciable_gift_net_proceeds
-  - ca/depreciable_gift_capital_cost
-  - ca/capital_gift_taxable_gains
-  - ca/capital_gift_gains_deduction
-  - ca-on/political_contributions
-  - ca-on/care_supporting_persons_adjusted_income
-  # Form ON-BEN lines 61020 to 61230: listed under outputs too, since the form
-  # computes nothing from them and the return carries them as entered.
-  - ca-on/applies_for_energy_and_property_tax_credit
-  - ca-on/applies_for_northern_energy_credit
-  - ca-on/chooses_single_benefit_payment
-  - ca-on/applies_for_senior_homeowners_grant
-  - ca-on/separate_residences_for_medical_reasons
-  - ca-on/lived_in_student_residence
-  - ca-on/rent_paid
-  - ca-on/property_tax_paid
-  - ca-on/reserve_home_energy_costs
-  - ca-on/public_long_term_care_paid
-  # Form T2048 (line 25395): the qualifying dispositions, one record for each (any number; none
-  # included); the form ca/t2048 reads their fields, the starting amounts and 0 or 1 answers of
-  # Parts 2 to 5 and Chart A (but for Chart A lines 3, 6 and 14, 01j to 01l, the taxable
-  # capital gains of line 13, 01m, the Part 3 line 24 answer, 01n, and the recovery part of line
-  # 13000 of line 15, 01o), as
-  # `06a_capital_gains_deduction_qbt.yaml` takes them.
-  - ca/t2048_dispositions
-  - ca/non_active_partnership_losses
-  - ca/other_investment_expenses
-  - ca/other_property_income
-  - ca/partnership_taxable_capital_gains
-  - ca/has_investment_expenses
-  # Form T657 (line 25400)
-  - ca/t657_gains_1985_to_1991
-  - ca/t657_gains_1992_and_1993
-  - ca/t657_gains_1994
-  - ca/t657_gains_1995
-  - ca/t657_gains_1996_to_1999
-  - ca/t657_gains_2000
-  - ca/t657_gains_2001
-  - ca/t657_gains_2002_to_2024
-  - ca/t657_capital_losses_claimed_1985
-  - ca/t657_abil_claimed_1985_to_2024
-  - ca/t657_t2048_line_17217_for_2024
-  - ca/t657_deductions_claimed_1985_to_2024
-  - ca/t657_chart_2_line_1
-  - ca/t657_chart_2_line_2
-  - ca/t657_chart_2_line_6
-  - ca/t657_chart_2_line_10
-  - ca/t657_chart_2_line_14
-  - ca/t657_inclusion_rate_2000
-  - ca/t657_chart_2_line_18
-  - ca/t657_chart_2016_uses_d_instead
-  - ca/t657_chart_2016_amount_b_instead
-  - ca/t657_chart_2016_claims_additional_deduction
-  - ca/t657_chart_2017_uses_d_instead
-  - ca/t657_chart_2017_amount_d_instead
-  - ca/t657_chart_2017_claims_additional_deduction
-  - ca/t657_chart_2018_uses_d_instead
-  - ca/t657_chart_2018_amount_d_instead
-  - ca/t657_chart_2018_claims_additional_deduction
-  - ca/t657_chart_2019_uses_d_instead
-  - ca/t657_chart_2019_amount_d_instead
-  - ca/t657_chart_2019_claims_additional_deduction
-  - ca/t657_chart_2020_uses_d_instead
-  - ca/t657_chart_2020_amount_d_instead
-  - ca/t657_chart_2020_claims_additional_deduction
-  - ca/t657_chart_2021_uses_d_instead
-  - ca/t657_chart_2021_amount_d_instead
-  - ca/t657_chart_2021_amount_i
-  - ca/t657_chart_2021_part_2_amount_g
-  - ca/t657_chart_2021_claims_additional_deduction
-  - ca/t657_chart_2022_uses_d_instead
-  - ca/t657_chart_2022_amount_d_instead
-  - ca/t657_chart_2022_amount_i
-  - ca/t657_chart_2022_part_2_amount_g
-  - ca/t657_chart_2022_claims_additional_deduction
-  - ca/t657_chart_2023_uses_d_instead
-  - ca/t657_chart_2023_amount_d_instead
-  - ca/t657_chart_2023_amount_i
-  - ca/t657_chart_2023_part_2_amount_g
-  - ca/t657_chart_2023_claims_additional_deduction
-  - ca/t657_chart_2024_period_1_amount_h
-  - ca/t657_chart_2024_period_1_amount_j
-  - ca/t657_chart_2024_period_2_amount_h
-  - ca/t657_chart_2024_period_2_amount_j
-  - ca/t657_part_1_amount_f
-  - ca/t657_part_1_amount_g
-  - ca/t657_part_1_amount_h
-  - ca/t657_part_1_amount_l
-  - ca/t657_part_2_excluded_f
-  - ca/t657_part_2_excluded_g
-  - ca/t657_part_2_excluded_h
-  - ca/t657_part_2_amount_l
-  - ca/capital_gains_deduction_claimed
-  - ca/t657_chart_1_rows
-  - ca/split_income_from_foreign_sources
-  - ca/total_income_from_foreign_sources
-  - ca/split_income_non_business_from_foreign_sources
-  - ca/total_non_business_income_from_foreign_sources
-  # Form T2043 Part 5, the credit allocated from a partnership for each designated province
-  # ("amount from box 237 of each T5013 slip or from each letter"), lines 67079 to 67082 and
-  # 67103 to 67106, as the form takes them; the form ca/t2043 reads them.
-  - ca/fuel_charge_partnership_credit_on
-  - ca/fuel_charge_partnership_credit_mb
-  - ca/fuel_charge_partnership_credit_sk
-  - ca/fuel_charge_partnership_credit_ab
-  - ca/fuel_charge_partnership_credit_ns
-  - ca/fuel_charge_partnership_credit_pe
-  - ca/fuel_charge_partnership_credit_nl
-  - ca/fuel_charge_partnership_credit_nb
+  - name: ca/tuition_cannot_be_full_time_student
+    required: true

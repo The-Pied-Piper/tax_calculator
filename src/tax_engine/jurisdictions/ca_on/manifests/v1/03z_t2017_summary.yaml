@@ -6,6 +6,7 @@
 # step reads); line 15 is line 13 of the previous page.
 form:
   name: ca/t2017
+  required: true
   exports:
     - ca/t2017_line_6
     - ca/t2017_line_12

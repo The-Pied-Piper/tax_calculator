@@ -40,6 +40,7 @@ from tax_engine.jurisdictions.ca.catalog import (
     FARM_CHART_B_PROVINCE_SALARIES,
     FARM_CHART_B_PROVINCES,
 )
+from tests.manifest_support import required_inputs
 
 D = Decimal
 
@@ -105,9 +106,10 @@ def service(identifier: str) -> TaxComputationService:
         jurisdiction=code,
         version=1,
         valid_from_tax_year=2025,
-        inputs=frozenset({"ca/farm_chart_b_provinces"}),
+        inputs=required_inputs(frozenset({"ca/farm_chart_b_provinces"})),
         forms=(
             Form(
+                required=True,
                 name=code.namespace.identifier("return"),
                 instances=None,
                 exports=("ex/chart_b_province_total",),

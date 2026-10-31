@@ -26,6 +26,7 @@ from tax_engine.domain.form import FormComposition
 from tax_engine.domain.jurisdiction_code import JurisdictionCode
 from tax_engine.domain.manifest import Form, Manifest
 from tests.jurisdictions.ca_on.manifest_families import t1139 as family
+from tests.jurisdictions.ca_on.manifest_support import input_names
 
 CA_ON = JurisdictionCode("CA-ON")
 MANIFESTS = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1"
@@ -129,14 +130,14 @@ def test_the_t1139_parts_are_named_by_the_layout_rule_and_not_over_30_kb() -> No
 
 
 def test_the_inputs_part_declares_the_one_list_of_businesses() -> None:
-    declared = yaml.safe_load(INPUTS_PART.read_text())["inputs"]
+    declared = input_names(yaml.safe_load(INPUTS_PART.read_text()))
 
     assert set(declared) == family.INPUTS
-    assert family.INPUTS <= manifest().inputs
+    assert family.INPUTS <= manifest().inputs.keys()
 
 
 def test_the_computed_exports_of_the_forms_are_not_inputs_of_the_return() -> None:
-    assert (family.ROW_EXPORTS | family.SUMMARY_EXPORTS).isdisjoint(manifest().inputs)
+    assert (family.ROW_EXPORTS | family.SUMMARY_EXPORTS).isdisjoint(manifest().inputs.keys())
 
 
 # --- the selections ------------------------------------------------------------------------------

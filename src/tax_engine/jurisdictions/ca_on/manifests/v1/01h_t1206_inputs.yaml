@@ -2,11 +2,15 @@ inputs:
   # Form T1206 page 6 line A "Capital gain on dispositions in 2025" and line B "Amount of 2024 reserve
   # (from line C of Form T1206 for 2024)", and line F "Capital gains from box 21 of your T3 slip(s)
   # (relating to dispositions in 2025)": the caller's figures as the form takes them.
-  - ca/t1206_capital_gain_on_dispositions
-  - ca/t1206_reserve_2024
-  - ca/t1206_t3_box_21_capital_gains
+  - name: ca/t1206_capital_gain_on_dispositions
+    required: true
+  - name: ca/t1206_reserve_2024
+    required: true
+  - name: ca/t1206_t3_box_21_capital_gains
+    required: true
   # Form T1206 page 6 "Calculation of reserve": "Complete this calculation and include the total amount
   # of your 2025 reserve on line C above", one record for each disposition with a reserve: the capital
   # gain, the amount payable after the end of the year, the proceeds of disposition and the years after
   # the sale, the caller's figures.
-  - ca/t1206_share_reserve_rows
+  - name: ca/t1206_share_reserve_rows
+    required: true

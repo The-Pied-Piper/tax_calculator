@@ -53,6 +53,7 @@ from tax_engine.jurisdictions.ca.catalog import (
     FARMING_INCOME,
 )
 from tests.jurisdictions.ca_on.end_to_end.support import run_a
+from tests.jurisdictions.ca_on.manifest_support import inputs_text, required_entries
 
 CA_ON = JurisdictionCode("CA-ON")
 V1 = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1"
@@ -87,7 +88,11 @@ def test_the_form_runs_once_for_the_return_and_exports_line_14100() -> None:
     declared = yaml.safe_load(PART.read_text())
 
     assert set(declared) == {"form", "capabilities"}
-    assert declared["form"] == {"name": "ca/farm_loss", "exports": ["ca/farming_income"]}
+    assert declared["form"] == {
+        "name": "ca/farm_loss",
+        "required": True,
+        "exports": ["ca/farming_income"],
+    }
     assert form().instances is None
     assert form().exports == ("ca/farming_income",)
 
@@ -101,19 +106,18 @@ def test_the_form_holds_the_16_steps_of_the_net_of_the_statements_and_the_restri
 
 def test_the_answer_is_a_manifest_input_declared_in_its_own_part() -> None:
     assert yaml.safe_load(INPUTS_PART.read_text()) == {
-        "inputs": [
-            "ca/farm_not_main_source_of_income",
-            "ca/restricted_farm_losses_of_other_years",
-            "ca/unapplied_restricted_farm_loss_taxes_and_interest",
-        ]
+        "inputs": required_entries(
+            [
+                "ca/farm_not_main_source_of_income",
+                "ca/restricted_farm_losses_of_other_years",
+                "ca/unapplied_restricted_farm_loss_taxes_and_interest",
+            ]
+        )
     }
-    assert "ca/farm_not_main_source_of_income" in manifest().inputs
-    assert "ca/farm_not_main_source_of_income" not in (V1 / "01_inputs.yaml").read_text()
-    assert "ca/unapplied_restricted_farm_loss_taxes_and_interest" in manifest().inputs
-    assert (
-        "ca/unapplied_restricted_farm_loss_taxes_and_interest"
-        not in (V1 / "01_inputs.yaml").read_text()
-    )
+    assert "ca/farm_not_main_source_of_income" in manifest().inputs.keys()
+    assert "ca/farm_not_main_source_of_income" not in inputs_text()
+    assert "ca/unapplied_restricted_farm_loss_taxes_and_interest" in manifest().inputs.keys()
+    assert "ca/unapplied_restricted_farm_loss_taxes_and_interest" not in inputs_text()
 
 
 def test_the_steps_of_the_part() -> None:
@@ -255,7 +259,10 @@ def test_the_t2042_form_exports_plain_line_9946_as_farming_income() -> None:
 
     assert "ca/farming_income" in t2042.exports
     assert not any("restricted" in identifier for identifier in t2042.exports)
-    assert "ca/farm_not_main_source_of_income" not in (V1 / "03c_t2042.yaml").read_text()
+    assert (
+        "ca/farm_not_main_source_of_income"
+        not in (V1 / "03c_t2042.yaml").read_text() + (V1 / "03c_t2042_2.yaml").read_text()
+    )
 
 
 def test_each_capability_of_the_form_runs_after_what_it_consumes() -> None:

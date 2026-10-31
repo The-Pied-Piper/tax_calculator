@@ -35,6 +35,7 @@ from tax_engine.domain.form import FormComposition
 from tax_engine.domain.jurisdiction_code import JurisdictionCode
 from tax_engine.domain.manifest import Form, Manifest
 from tests.jurisdictions.ca_on.manifest_families import t1032_pension_income_splitting as family
+from tests.jurisdictions.ca_on.manifest_support import input_names
 
 CA_ON = JurisdictionCode("CA-ON")
 MANIFESTS = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1"
@@ -104,7 +105,7 @@ def referenced(values: Iterable[object]) -> set[str]:
 def test_the_form_part_declares_the_form_with_no_instances_and_its_exports() -> None:
     declared = yaml.safe_load(FORM_PART.read_text())["form"]
 
-    assert declared == {"name": family.FORM, "exports": list(family.EXPORTS)}
+    assert declared == {"name": family.FORM, "required": True, "exports": list(family.EXPORTS)}
 
 
 def test_the_manifest_has_the_form_with_no_instances_and_its_exports() -> None:
@@ -218,7 +219,7 @@ def test_the_pension_split_inputs_and_dataset_are_gone() -> None:
     )
 
     assert "pension_split" not in names
-    assert not {"ca/pension_split_election", "ca/pension_split_amount"} & manifest().inputs
+    assert not {"ca/pension_split_election", "ca/pension_split_amount"} & manifest().inputs.keys()
 
 
 def test_the_total_credits_read_the_income_tax_deducted_after_the_election() -> None:
@@ -231,9 +232,9 @@ def test_the_total_credits_read_the_income_tax_deducted_after_the_election() -> 
 
 
 def test_lines_37_and_40_are_the_return_s_own_income_tax_deducted_not_form_inputs() -> None:
-    declared = yaml.safe_load(INPUTS_PART.read_text())["inputs"]
+    declared = input_names(yaml.safe_load(INPUTS_PART.read_text()))
 
-    assert "ca/income_tax_deducted" in manifest().inputs
+    assert "ca/income_tax_deducted" in manifest().inputs.keys()
     assert "ca/t1032_transferring_spouse_income_tax_deducted" not in declared
     assert "ca/t1032_receiving_spouse_income_tax_deducted" not in declared
 
@@ -297,18 +298,18 @@ def test_the_t1032_parts_are_named_by_the_layout_rule_and_not_over_30_kb() -> No
 
 
 def test_the_inputs_part_declares_the_starting_inputs_of_the_form() -> None:
-    declared = yaml.safe_load(INPUTS_PART.read_text())["inputs"]
+    declared = input_names(yaml.safe_load(INPUTS_PART.read_text()))
 
     assert set(declared) == family.INPUTS
-    assert family.INPUTS <= manifest().inputs
+    assert family.INPUTS <= manifest().inputs.keys()
 
 
 def test_line_22_is_one_input_and_the_t1_lines_are_not_inputs() -> None:
-    declared = yaml.safe_load(INPUTS_PART.read_text())["inputs"]
+    declared = input_names(yaml.safe_load(INPUTS_PART.read_text()))
 
     assert "ca/t1032_line_22" in declared
     assert "ca/t1032_filer_is_transferring_spouse" in declared
-    assert set(ELECTED_FLAGS).isdisjoint(manifest().inputs)
+    assert set(ELECTED_FLAGS).isdisjoint(manifest().inputs.keys())
 
 
 # --- the selections ------------------------------------------------------------------------------
@@ -527,7 +528,7 @@ def test_the_form_holds_the_nineteen_selections_of_the_note_1_part() -> None:
 
 
 def test_the_note_1_inputs_are_the_four_the_inputs_part_declares() -> None:
-    declared = yaml.safe_load(INPUTS_PART.read_text())["inputs"]
+    declared = input_names(yaml.safe_load(INPUTS_PART.read_text()))
 
     assert {
         "ca/t1032_receiving_spouse_under_65",

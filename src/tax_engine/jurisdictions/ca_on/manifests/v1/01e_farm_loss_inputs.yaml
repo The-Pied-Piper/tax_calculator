@@ -4,16 +4,19 @@ inputs:
   # subordinate source of income ... you may only be able to deduct a part of your net farm loss":
   # the filer's yes (1) or no (0), asked once for the return, read by the form ca/farm_loss
   # (03s_t2042_restricted_farm_loss.yaml); 0 restricts nothing.
-  - ca/farm_not_main_source_of_income
+  - name: ca/farm_not_main_source_of_income
+    required: true
   # Guide T4002 "Applying your restricted farm losses from years before 2025": "Claim this amount
   # on line 25200", the filer's amount to claim from the earliest year first, from their records or
   # notice of assessment; checked against the net farming income in 06g_restricted_farm_losses_of_
   # other_years.yaml.
-  - ca/restricted_farm_losses_of_other_years
+  - name: ca/restricted_farm_losses_of_other_years
+    required: true
   # Guide T4037 p.34 "The amount of RFLs that you can apply cannot be more than the property taxes and
   # interest on money you borrowed to buy the farmland that were included in the calculation of the
   # RFLs for each year", with its example "You have an unapplied RFL of $20,000 from 2000. This amount
   # includes $5,000 for property taxes, $5,000 for interest, and $10,000 for other expenses.": the
   # filer's unapplied RFL that is property taxes and interest, from their records; the amount applied
   # on the farmland lists is checked against it in 06h_restricted_farm_loss_applied.yaml.
-  - ca/unapplied_restricted_farm_loss_taxes_and_interest
+  - name: ca/unapplied_restricted_farm_loss_taxes_and_interest
+    required: true

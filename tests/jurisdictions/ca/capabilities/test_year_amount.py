@@ -35,6 +35,7 @@ from tax_engine.domain.parameters.kind import ParameterKind
 from tax_engine.domain.parameters.rounding import NO_ROUNDING
 from tax_engine.domain.parameters.year_amounts import YEAR_AMOUNTS, YearAmounts, YearAmountsRow
 from tax_engine.jurisdictions.ca.trace import YearAmountLine
+from tests.manifest_support import required_inputs
 
 D = Decimal
 
@@ -166,9 +167,10 @@ def service() -> TaxComputationService:
         jurisdiction=code,
         version=1,
         valid_from_tax_year=2025,
-        inputs=frozenset({"ex/lease_year"}),
+        inputs=required_inputs(frozenset({"ex/lease_year"})),
         forms=(
             Form(
+                required=True,
                 name=code.namespace.identifier("return"),
                 instances=None,
                 exports=("ex/list_price_limit",),

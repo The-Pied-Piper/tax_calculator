@@ -17,6 +17,7 @@
 # ca/qbt_has_investment_expenses (core/first_record_count, in 06a_capital_gains_deduction_qbt.yaml).
 form:
   name: ca/has_investment_expenses
+  required: true
   exports:
     - ca/has_investment_expenses_checked
 capabilities:

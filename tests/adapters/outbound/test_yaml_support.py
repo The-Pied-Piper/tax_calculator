@@ -162,6 +162,19 @@ def test_require_integer_accepts_int() -> None:
     assert node({"a": 7}).field("a").require_integer() == 7
 
 
+@pytest.mark.parametrize(
+    ("value", "got"), [(1, "int"), (0, "int"), ("true", "str"), ("yes", "str"), (None, "NoneType")]
+)
+def test_require_boolean_rejects(value: object, got: str) -> None:
+    with pytest.raises(YamlShapeError, match=f"^a must be true or false, got {got}"):
+        node({"a": value}).field("a").require_boolean()
+
+
+def test_require_boolean_accepts_a_boolean() -> None:
+    assert node({"a": True}).field("a").require_boolean() is True
+    assert node({"a": False}).field("a").require_boolean() is False
+
+
 def test_parse_decimal_reads_strings_exactly() -> None:
     assert node({"a": "0.145"}).field("a").parse_decimal() == Decimal("0.145")
 

@@ -1,8 +1,10 @@
 inputs:
   # Form T1212 line 1 "Opening balance of deferred security options benefits: (from your previous year's
   # notice of assessment or reassessment)": the caller's figure.
-  - ca/t1212_line_1_opening_balance
+  - name: ca/t1212_line_1_opening_balance
+    required: true
   # Form T1212 line 2 "Benefits that can no longer be deferred. Enter this amount on line 10100 of your
   # return" "65210": the caller's figure. It is part of the employment income entered on line 10100
   # (`ca/employment_income`), which is not added to again.
-  - ca/t1212_line_2_benefits_no_longer_deferred
+  - name: ca/t1212_line_2_benefits_no_longer_deferred
+    required: true

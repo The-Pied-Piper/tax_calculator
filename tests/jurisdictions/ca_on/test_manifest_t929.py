@@ -48,6 +48,13 @@ from tax_engine.jurisdictions.ca.catalog import (
     TOTAL_SPLIT_INCOME,
 )
 from tests.jurisdictions.ca_on.manifest_families import t929
+from tests.jurisdictions.ca_on.manifest_support import (
+    INPUTS_PARTS,
+    inputs_text,
+    instance_fields,
+    lists,
+    required_entries,
+)
 
 CA_ON = JurisdictionCode("CA-ON")
 PARTS = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1"
@@ -64,7 +71,6 @@ FORM_PARTS = (
     "05y_t929_copies_4.yaml",
 )
 COPIES_PARTS = FORM_PARTS[1:]
-INPUTS_PART = PARTS / "01_inputs.yaml"
 DEDUCTIONS_PART = PARTS / "05_deductions.yaml"
 DEDUCTIONS_SUM = "ca/deductions_from_total_income"
 DEDUCTION_PRODUCER = "ca/disability_supports_deduction"
@@ -128,6 +134,8 @@ def test_the_first_part_declares_the_form_t929_with_its_instances_limits_and_exp
 
     assert declared == {
         "name": "ca/t929",
+        "required": True,
+        "fields": required_entries(instance_fields("ca/t929")),
         "instances": "ca/t929_instances",
         "max_instances": 1,
         "min_instances": 0,
@@ -293,29 +301,29 @@ def test_the_return_totals_the_deduction_before_the_line_23300_sum_in_05_deducti
 
 
 def test_the_other_parts_hold_no_t929_input() -> None:
-    inputs_text = INPUTS_PART.read_text()
+    inputs_text_ = inputs_text()
 
     for identifier in t929.INPUTS:
-        assert f"- {identifier}\n" in inputs_text, identifier
+        assert f"- name: {identifier}\n" in inputs_text_, identifier
     for name in sorted(path.name for path in PARTS.glob("*.yaml")):
-        if name in (*FORM_PARTS, "01_inputs.yaml"):
+        if name in (*FORM_PARTS, *(part.name for part in INPUTS_PARTS)):
             continue
         text = (PARTS / name).read_text()
         for identifier in t929.INPUTS:
-            assert f"- {identifier}\n" not in text, (name, identifier)
+            assert not lists(text, identifier), (name, identifier)
 
 
 def test_the_disability_supports_deduction_is_no_longer_a_manifest_input() -> None:
-    assert DISABILITY_SUPPORTS_DEDUCTION.identifier not in manifest().inputs
-    assert f"  - {DEDUCTION_PRODUCER}\n" not in INPUTS_PART.read_text()
+    assert DISABILITY_SUPPORTS_DEDUCTION.identifier not in manifest().inputs.keys()
+    assert not lists(inputs_text(), DEDUCTION_PRODUCER, indent="  ")
 
 
 # --- the instances and the inputs -----------------------------------------------------------------
 
 
 def test_the_instances_are_an_input_of_the_manifest() -> None:
-    assert t929.INPUTS <= manifest().inputs
-    assert "ca/t929_instances" in manifest().inputs
+    assert t929.INPUTS <= manifest().inputs.keys()
+    assert "ca/t929_instances" in manifest().inputs.keys()
 
 
 def test_the_instances_kind_is_a_record_list_with_no_fields() -> None:

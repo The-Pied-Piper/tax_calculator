@@ -28,6 +28,7 @@ from tax_engine.domain.form import FormComposition
 from tax_engine.domain.jurisdiction_code import JurisdictionCode
 from tax_engine.domain.manifest import Manifest
 from tests.jurisdictions.ca_on.manifest_families import t2125
+from tests.jurisdictions.ca_on.manifest_support import all_input_names
 
 CA_ON = JurisdictionCode("CA-ON")
 MANIFESTS = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1"
@@ -93,8 +94,8 @@ def test_amount_5b_stays_an_input_of_each_statement_as_the_form_asks_it() -> Non
 
 
 def test_the_return_takes_no_input_for_the_line_162_credit() -> None:
-    assert CREDIT not in manifest().inputs
-    assert CREDIT not in yaml.safe_load(INPUTS_PART.read_text())["inputs"]
+    assert CREDIT not in manifest().inputs.keys()
+    assert CREDIT not in all_input_names()
 
 
 def test_the_return_totals_the_statements_into_the_credit_by_record_total_in_14_refund() -> None:

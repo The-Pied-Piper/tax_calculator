@@ -7,6 +7,7 @@
 # in Schedule 8, Form RC381 and Form T929 read that export.
 form:
   name: ca/farm_loss
+  required: true
   exports:
     - ca/farming_income
 capabilities:

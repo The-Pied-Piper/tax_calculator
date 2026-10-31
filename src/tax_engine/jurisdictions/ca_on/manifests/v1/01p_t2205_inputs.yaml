@@ -3,41 +3,53 @@ inputs:
   # Income", line 1 "Add the amounts from boxes 20, 22 and 26 of all your T4RSP slips and part of the
   # amount from box 18 of your T4A slips that relate to SPP amount you received ... Enter the total.":
   # the caller's figure, one total.
-  - ca/t2205_line_1
+  - name: ca/t2205_line_1
+    required: true
   # Form T2205 line 2 "Enter the amount of transfers from your spousal or common-law partner's RRSPs to
   # your FHSAs that are considered to be a taxable withdrawal": the caller's figure.
-  - ca/t2205_line_2
+  - name: ca/t2205_line_2
+    required: true
   # Form T2205 line 4 "Enter the part of the amount from line 1 that was directly transferred to an
   # RRSP, PRPP, SPP, RRIF or that was used to buy an annuity": the caller's figure, checked against line 1.
-  - ca/t2205_line_4
+  - name: ca/t2205_line_4
+    required: true
   # Form T2205 line 6 "Enter the total amount that your spouse or common-law partner contributed to
   # your RRSPs and SPP in the year you indicated above and the two preceding years.": the caller's figure.
-  - ca/t2205_line_6
+  - name: ca/t2205_line_6
+    required: true
   # Form T2205 line 7 "Enter the part of the amount from line 6 that your spouse or common-law partner
   # contributed to your RRSPs and SPP in the two preceding years and included in their income": the
   # caller's figure, checked against line 6.
-  - ca/t2205_line_7
+  - name: ca/t2205_line_7
+    required: true
   # Form T2205 line 11 "If part of this amount relates to withdrawals from an SPP": the part of line 11
   # that relates to SPP withdrawals, the caller's figure, checked against line 11.
-  - ca/t2205_line_11_spp_part
+  - name: ca/t2205_line_11_spp_part
+    required: true
   # Form T2205 line 12 "Enter the total amounts from box 20 of all your T4RIF slips you received from
   # spousal or common-law partner's RRIFs": the caller's figure, one total.
-  - ca/t2205_line_12
+  - name: ca/t2205_line_12
+    required: true
   # Form T2205 line 13 "Enter the total amounts from box 24 of the T4RIF slips you received from spousal
   # or common-law partner's RRIFs": the caller's figure, one total.
-  - ca/t2205_line_13
+  - name: ca/t2205_line_13
+    required: true
   # Form T2205 line 14 "Enter the part of the amount from line 13 that was directly transferred to a
   # RRIF, an RRSP, a PRPP, an SPP or that was used to buy an annuity": the caller's figure, checked
   # against line 13.
-  - ca/t2205_line_14
+  - name: ca/t2205_line_14
+    required: true
   # Form T2205 line 17 "Enter the total amount that your spouse or common-law partner contributed to
   # your RRSPs and SPP ... If you filled in Part 1 above, enter the amount from line 6.": the caller's
   # figure, read only when Part 1 is not filled in.
-  - ca/t2205_line_17
+  - name: ca/t2205_line_17
+    required: true
   # Form T2205 line 18 "Enter the part of the amount from line 17 that your spouse or common-law partner
   # contributed ... If you filled in Part 1 above, add the amounts from line 7 and line 10 and enter the
   # result.": the caller's figure, read only when Part 1 is not filled in, checked against line 17.
-  - ca/t2205_line_18
+  - name: ca/t2205_line_18
+    required: true
   # Form T2205 line 20 "Add the amounts from boxes 16 and 20 of all T4RIF slips you received from
   # spousal or common-law partner's RRIFs": the caller's figure, one total.
-  - ca/t2205_line_20
+  - name: ca/t2205_line_20
+    required: true

@@ -6,6 +6,7 @@
 # ca/t936.<name> (06b_capital_gains_deduction_t657.yaml). The return selects none of these steps.
 form:
   name: ca/t936
+  required: true
   exports:
     - ca/t936_chart_a_line_14
     - ca/t936_cnil

@@ -30,6 +30,11 @@ from tax_engine.adapters.outbound.yaml_jurisdictions import YamlJurisdictionSour
 from tax_engine.domain.jurisdiction_code import JurisdictionCode
 from tax_engine.domain.manifest import Form, Manifest
 from tests.jurisdictions.ca_on.manifest_families import t777
+from tests.jurisdictions.ca_on.manifest_support import (
+    input_names,
+    instance_fields,
+    required_entries,
+)
 
 CA_ON = JurisdictionCode("CA-ON")
 MANIFESTS = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1"
@@ -128,6 +133,7 @@ def test_the_t777_part_declares_the_form_ca_t777_with_no_instances_and_its_expor
     # computed in `03q_t777_lines.yaml` are declared here with the CCA exports.
     assert declared == {
         "name": "ca/t777",
+        "required": True,
         "exports": list(t777.FORM_EXPORTS),
     }
 
@@ -174,6 +180,8 @@ def test_the_relocation_part_declares_the_form_with_its_instances_and_exports() 
 
     assert declared == {
         "name": "ca/t777_relocation",
+        "required": True,
+        "fields": required_entries(instance_fields("ca/t777_relocation")),
         "instances": "ca/t777_relocations",
         "exports": list(t777.RELOCATION_EXPORTS),
     }
@@ -209,10 +217,10 @@ def test_the_form_exports_the_printed_lines_it_computes_as_well_as_the_cca_expor
 
 
 def test_the_inputs_part_declares_the_form_s_inputs() -> None:
-    declared = yaml.safe_load(INPUTS_PART.read_text())["inputs"]
+    declared = input_names(yaml.safe_load(INPUTS_PART.read_text()))
 
     assert set(declared) == t777.INPUTS
-    assert t777.INPUTS <= manifest().inputs
+    assert t777.INPUTS <= manifest().inputs.keys()
 
 
 def test_the_t777_parts_are_named_by_the_layout_rule_and_not_over_30_kb() -> None:
@@ -246,7 +254,7 @@ def test_the_form_steps_read_only_its_inputs_or_what_a_step_of_the_form_produces
     produced: set[str] = set()
     for step in form().capabilities:
         produced |= set(step.produces.values())
-    known = set(manifest().inputs) | produced
+    known = set(manifest().inputs.keys()) | produced
     for step in form().capabilities:
         # A dotted reference is a copy's export of the relocation form, read as `form.export`.
         plain = {name for name in referenced(step.consumes.values()) if "." not in name}

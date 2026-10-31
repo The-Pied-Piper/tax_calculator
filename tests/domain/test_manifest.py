@@ -11,14 +11,25 @@ include an input, carried onto the return as entered. Names are made up.
 from __future__ import annotations
 
 import dataclasses
+from decimal import Decimal
 from types import MappingProxyType
 from typing import Any, cast
 
 import pytest
 
+from tax_engine.domain.artifact import ArtifactKind, ArtifactRegistry
+from tax_engine.domain.digits import DigitsKind
 from tax_engine.domain.errors import InvalidManifestError
 from tax_engine.domain.jurisdiction_code import JurisdictionCode
-from tax_engine.domain.manifest import CapabilitySelection, Form, Manifest
+from tax_engine.domain.manifest import (
+    CapabilitySelection,
+    Default,
+    Form,
+    InputDeclaration,
+    Manifest,
+)
+from tax_engine.domain.record_list import RecordListKind
+from tests.manifest_support import required_inputs
 
 
 def selection() -> CapabilitySelection:
@@ -112,9 +123,15 @@ def manifest(
         jurisdiction=JurisdictionCode("EX-ON"),
         version=1,
         valid_from_tax_year=2025,
-        inputs=inputs,
+        inputs=required_inputs(inputs),
         forms=(
-            Form(name="ex-on/return", instances=None, exports=outputs, capabilities=(selection(),)),
+            Form(
+                required=True,
+                name="ex-on/return",
+                instances=None,
+                exports=outputs,
+                capabilities=(selection(),),
+            ),
         ),
     )
 
@@ -122,7 +139,7 @@ def manifest(
 def test_manifest_holds_its_inputs_and_its_forms() -> None:
     found = manifest(inputs=frozenset({"ex/taxable_base", "ex/gross_income"}), outputs=("ex/levy",))
 
-    assert found.inputs == frozenset({"ex/taxable_base", "ex/gross_income"})
+    assert found.inputs.keys() == frozenset({"ex/taxable_base", "ex/gross_income"})
     (only,) = found.forms
     assert only.name == "ex-on/return"
     assert only.exports == ("ex/levy",)
@@ -158,7 +175,7 @@ def test_manifest_rejects_no_forms() -> None:
 def test_manifest_accepts_an_identifier_that_is_both_input_and_export() -> None:
     found = manifest(inputs=frozenset({"ex/taxable_base", "ex/levy"}), outputs=("ex/levy",))
 
-    assert found.inputs == frozenset({"ex/taxable_base", "ex/levy"})
+    assert found.inputs.keys() == frozenset({"ex/taxable_base", "ex/levy"})
     assert found.forms[0].exports == ("ex/levy",)
 
 
@@ -223,6 +240,7 @@ def form(
     **limits: Any,
 ) -> Form:
     return Form(
+        required=True,
         name=name,
         instances=instances,
         exports=exports,
@@ -246,9 +264,13 @@ def test_form_fields_in_order() -> None:
         "instances",
         "exports",
         "capabilities",
+        "required",
         "max_instances",
         "min_instances",
         "exclusive_group",
+        "required_when",
+        "basis",
+        "fields",
     ]
 
 
@@ -464,3 +486,280 @@ def test_a_form_named_return_is_refused_only_as_a_second_of_that_name() -> None:
 
     with pytest.raises(InvalidManifestError, match="ex-on/return.*more than once"):
         dataclasses.replace(manifest(), forms=(*manifest().forms, clash))
+
+
+# --- required, defaults and predicates -----------------------------------------------------------
+#
+# Every input, every field of a form's instances and every form says whether it is required. A
+# required one takes no default; an optional input or field declares its default, written as the
+# value (`Default(None)` is blank), and the printed sentence that justifies it as its `basis`. An
+# optional form names a yes/no in `required_when`, with its own basis; a required form has neither.
+
+
+def optional(name: str = "ex/credit", default: Default | None = None) -> InputDeclaration:
+    return InputDeclaration(
+        name=name,
+        required=False,
+        default=Default("0") if default is None else default,
+        basis="Line 1: enter 0 if none",
+    )
+
+
+def test_a_required_input_takes_no_default_and_no_basis() -> None:
+    assert InputDeclaration(name="ex/income", required=True).default is None
+
+    with pytest.raises(InvalidManifestError, match="input 'ex/income': a required input takes no"):
+        InputDeclaration(name="ex/income", required=True, default=Default("0"))
+    with pytest.raises(InvalidManifestError, match="input 'ex/income': a required input takes no"):
+        InputDeclaration(name="ex/income", required=True, basis="Line 1")
+
+
+def test_an_optional_input_needs_a_default_and_a_basis() -> None:
+    with pytest.raises(InvalidManifestError, match="input 'ex/credit': .* needs a default"):
+        InputDeclaration(name="ex/credit", required=False, basis="Line 1")
+    with pytest.raises(InvalidManifestError, match="input 'ex/credit': .* needs a basis"):
+        InputDeclaration(name="ex/credit", required=False, default=Default("0"))
+    with pytest.raises(InvalidManifestError, match="input 'ex/credit': .* needs a basis"):
+        InputDeclaration(name="ex/credit", required=False, default=Default("0"), basis="")
+
+
+@pytest.mark.parametrize("value", [None, "0", "", "375.03", ()])
+def test_a_default_is_blank_text_a_figure_or_an_empty_list(value: str | tuple[()] | None) -> None:
+    assert optional(default=Default(value)).default == Default(value)
+
+
+@pytest.mark.parametrize("value", [0, 1.5, True, ("a",), ["x"]])
+def test_a_default_of_any_other_type_is_refused(value: Any) -> None:
+    with pytest.raises(InvalidManifestError, match="default must be null, a string or an empty"):
+        Default(value)
+
+
+def test_an_input_is_named_by_an_identifier() -> None:
+    with pytest.raises(InvalidManifestError, match="input 'Credit'"):
+        InputDeclaration(name="Credit", required=True)
+
+
+AMOUNT = ArtifactKind("ex/amount", Decimal)
+LEVY = ArtifactKind("ex/levy_amount", Decimal, non_negative=True)
+COUNT = ArtifactKind("ex/count", int, non_negative=True)
+ROWS = RecordListKind("ex/rows", fields=(AMOUNT, COUNT))
+NOTE = ArtifactKind("ex/note", str)
+BUSINESS_NUMBER = DigitsKind("ex/business_number", digits=9)
+
+
+@pytest.mark.parametrize(
+    ("kind", "value"),
+    [
+        (AMOUNT, "0"),
+        (AMOUNT, "-12.50"),
+        (LEVY, "375.03"),
+        (COUNT, "0"),
+        (ROWS, ()),
+        (NOTE, ""),
+        (BUSINESS_NUMBER, ""),
+        (BUSINESS_NUMBER, "123456789"),
+        (AMOUNT, None),
+        (ROWS, None),
+        (COUNT, None),
+    ],
+)
+def test_a_default_that_suits_its_kind_is_accepted(
+    kind: ArtifactKind[Any], value: str | tuple[()] | None
+) -> None:
+    optional(default=Default(value)).check_kind(kind)
+
+
+@pytest.mark.parametrize(
+    ("kind", "value", "problem"),
+    [
+        (AMOUNT, "abc", "must be a plain decimal number"),
+        (AMOUNT, "NaN", "must be a plain decimal number"),
+        (AMOUNT, "1e5", "must be a plain decimal number"),
+        (AMOUNT, " 5", "must be a plain decimal number"),
+        (AMOUNT, (), "must be a quoted number"),
+        (LEVY, "-1", "must not be below zero"),
+        (COUNT, "1.5", "must be a whole number"),
+        (COUNT, "1" * 5000, "is too long to read as a number"),
+        (COUNT, "-1", "must not be below zero"),
+        (ROWS, "0", "must be an empty list"),
+        (NOTE, (), "must be a string"),
+        (BUSINESS_NUMBER, "abc", "must be 9 digits"),
+        (BUSINESS_NUMBER, "12345", "must be 9 digits"),
+    ],
+)
+def test_a_default_that_does_not_suit_its_kind_is_refused_naming_the_input(
+    kind: ArtifactKind[Any], value: str | tuple[()], problem: str
+) -> None:
+    with pytest.raises(InvalidManifestError, match=f"input 'ex/credit': default .* {problem}"):
+        optional(default=Default(value)).check_kind(kind)
+
+
+def optional_form(**changes: Any) -> Form:
+    fields: dict[str, Any] = {
+        "name": "ex/relief",
+        "instances": None,
+        "exports": ("ex/relief_amount",),
+        "capabilities": (),
+        "required": False,
+        "required_when": "ex/relief_applies",
+        "basis": "Complete this form if you claim relief",
+    }
+    return Form(**{**fields, **changes})
+
+
+def test_an_optional_form_holds_its_predicate_and_its_basis() -> None:
+    found = optional_form()
+
+    assert (found.required, found.required_when) == (False, "ex/relief_applies")
+    assert found.basis == "Complete this form if you claim relief"
+
+
+def test_a_required_form_takes_no_predicate_and_no_basis() -> None:
+    with pytest.raises(InvalidManifestError, match="form 'ex/relief': a required form takes no"):
+        optional_form(required=True)
+    with pytest.raises(InvalidManifestError, match="form 'ex/relief': a required form takes no"):
+        optional_form(required=True, required_when=None)
+
+
+def test_an_optional_form_needs_a_predicate_and_a_basis() -> None:
+    with pytest.raises(InvalidManifestError, match="form 'ex/relief': .* needs a required_when"):
+        optional_form(required_when=None)
+    with pytest.raises(InvalidManifestError, match="form 'ex/relief': .* needs a basis"):
+        optional_form(basis=None)
+
+
+def test_a_predicate_is_an_identifier() -> None:
+    with pytest.raises(InvalidManifestError, match="required_when 'Applies'"):
+        optional_form(required_when="Applies")
+
+
+@pytest.mark.parametrize("predicate", ["ex/relief_amount"])
+def test_a_form_may_not_be_gated_by_its_own_export(predicate: str) -> None:
+    with pytest.raises(InvalidManifestError, match="is one of its own exports"):
+        optional_form(required_when=predicate)
+
+
+def test_fields_belong_to_a_form_with_instances_and_are_declared_once() -> None:
+    with pytest.raises(InvalidManifestError, match="fields belong to a form with instances"):
+        optional_form(fields=(optional(),))
+
+    found = optional_form(instances="ex/rows", fields=(optional("ex/amount"), optional("ex/count")))
+
+    assert [declared.name for declared in found.fields] == ["ex/amount", "ex/count"]
+    with pytest.raises(InvalidManifestError, match="field 'ex/amount' is declared twice"):
+        optional_form(instances="ex/rows", fields=(optional("ex/amount"), optional("ex/amount")))
+
+
+def with_forms(*forms: Form, inputs: dict[str, InputDeclaration] | None = None) -> Manifest:
+    default = Form(
+        required=True,
+        name="ex-on/return",
+        instances=None,
+        exports=("ex/levy",),
+        capabilities=(selection(),),
+    )
+    return Manifest(
+        jurisdiction=JurisdictionCode("EX-ON"),
+        version=1,
+        valid_from_tax_year=2025,
+        inputs=required_inputs(["ex/taxable_base", "ex/relief_applies"])
+        if inputs is None
+        else inputs,
+        forms=(default, *forms),
+    )
+
+
+def test_a_predicate_may_be_a_required_input() -> None:
+    assert with_forms(optional_form()).forms[1].required_when == "ex/relief_applies"
+
+
+def test_a_predicate_may_be_produced_by_a_selection() -> None:
+    answer = CapabilitySelection(
+        name="ex/answer", params={}, consumes={}, produces={"output": "ex/relief_applies"}
+    )
+    produced = optional_form(name="ex/other", exports=("ex/other_amount",), capabilities=(answer,))
+    inputs = required_inputs(["ex/taxable_base"])
+
+    assert with_forms(produced, optional_form(), inputs=inputs).forms[2].name == "ex/relief"
+
+
+def test_a_predicate_nothing_declares_or_produces_is_refused_naming_the_form() -> None:
+    with pytest.raises(InvalidManifestError, match="form 'ex/relief': required_when 'ex/nope'"):
+        with_forms(optional_form(required_when="ex/nope"))
+
+
+def test_a_predicate_that_is_an_optional_input_is_refused() -> None:
+    inputs = required_inputs(["ex/taxable_base"]) | {
+        "ex/relief_applies": optional("ex/relief_applies")
+    }
+
+    with pytest.raises(InvalidManifestError, match="'ex/relief_applies' is an optional input"):
+        with_forms(optional_form(), inputs=inputs)
+
+
+def test_an_input_must_be_declared_under_its_own_name() -> None:
+    with pytest.raises(InvalidManifestError, match="input 'ex/a' is declared as 'ex/b'"):
+        with_forms(inputs={"ex/a": InputDeclaration(name="ex/b", required=True)})
+
+
+def test_equal_manifests_with_declarations_hash_alike() -> None:
+    first = with_forms(optional_form())
+
+    assert first == with_forms(optional_form())
+    assert hash(first) == hash(with_forms(optional_form()))
+    assert first != with_forms(optional_form(basis="Complete this form if you owe"))
+
+
+def registry(*kinds: ArtifactKind[Any]) -> ArtifactRegistry:
+    found = ArtifactRegistry()
+    for kind in kinds:
+        found.register(kind.identifier, kind)
+    return found
+
+
+def test_the_artifacts_are_checked_for_defaults_fields_and_predicates() -> None:
+    applies = ArtifactKind("ex/relief_applies", int, non_negative=True)
+    amount = ArtifactKind("ex/relief_amount", Decimal)
+    rows = RecordListKind("ex/rows", fields=(AMOUNT, COUNT))
+    gated = optional_form(instances="ex/rows", fields=(optional("ex/amount"), optional("ex/count")))
+    inputs = required_inputs(["ex/relief_applies"]) | {"ex/amount": optional("ex/amount")}
+    known = registry(applies, amount, rows, AMOUNT, COUNT)
+
+    with_forms(gated, inputs=inputs).check_artifacts(known)
+
+
+def test_a_field_of_the_instances_kind_the_form_does_not_declare_is_refused() -> None:
+    gated = optional_form(instances="ex/rows", fields=(optional("ex/amount"),))
+    known = registry(ArtifactKind("ex/relief_applies", int, non_negative=True), ROWS)
+
+    with pytest.raises(InvalidManifestError, match="field 'ex/count' of 'ex/rows' is not declared"):
+        with_forms(gated, inputs=required_inputs(["ex/relief_applies"])).check_artifacts(known)
+
+
+def test_a_declared_field_the_instances_kind_does_not_have_is_refused() -> None:
+    extra = (optional("ex/amount"), optional("ex/count"), optional("ex/ghost"))
+    gated = optional_form(instances="ex/rows", fields=extra)
+    known = registry(ArtifactKind("ex/relief_applies", int, non_negative=True), ROWS)
+
+    with pytest.raises(InvalidManifestError, match="field 'ex/ghost' is not a field of 'ex/rows'"):
+        with_forms(gated, inputs=required_inputs(["ex/relief_applies"])).check_artifacts(known)
+
+
+def test_a_field_default_must_suit_the_field_kind() -> None:
+    bad = optional("ex/count", Default("1.5"))
+    gated = optional_form(instances="ex/rows", fields=(optional("ex/amount"), bad))
+    known = registry(ArtifactKind("ex/relief_applies", int, non_negative=True), ROWS)
+
+    with pytest.raises(InvalidManifestError, match="input 'ex/count': default .* whole number"):
+        with_forms(gated, inputs=required_inputs(["ex/relief_applies"])).check_artifacts(known)
+
+
+@pytest.mark.parametrize(
+    "kind",
+    [ArtifactKind("ex/relief_applies", Decimal), ArtifactKind("ex/relief_applies", int)],
+)
+def test_a_predicate_that_is_not_a_yes_no_count_is_refused(kind: ArtifactKind[Any]) -> None:
+    with pytest.raises(InvalidManifestError, match="required_when 'ex/relief_applies' is not a"):
+        with_forms(optional_form(), inputs=required_inputs(["ex/relief_applies"])).check_artifacts(
+            registry(kind)
+        )

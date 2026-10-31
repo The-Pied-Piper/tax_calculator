@@ -54,6 +54,7 @@ from tax_engine.jurisdictions.ca.catalog import (
     TRAVEL_INDIVIDUAL,
     TRAVEL_INDIVIDUALS,
 )
+from tests.manifest_support import required_inputs
 
 D = Decimal
 CENT = RoundTo(D("0.01"), RoundingMode.HALF_UP)
@@ -356,9 +357,10 @@ def service(dataset: ParameterDataset[Amount] | None = None) -> TaxComputationSe
         jurisdiction=code,
         version=1,
         valid_from_tax_year=2025,
-        inputs=frozenset({"ca/travel_individuals"}),
+        inputs=required_inputs(frozenset({"ca/travel_individuals"})),
         forms=(
             Form(
+                required=True,
                 name=code.namespace.identifier("return"),
                 instances=None,
                 exports=("ex/allocated_total",),

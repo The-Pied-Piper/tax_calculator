@@ -6,10 +6,24 @@
 # as ca/t777_relocation.<export>: line 41 totals line 39 over the copies.
 form:
   name: ca/t777_relocation
+  required: true
   instances: ca/t777_relocations
   exports:
     - ca/t777_relocation_deduction
     - ca/t777_relocation_carried_forward_out
+  fields:
+    - name: ca/t777_relocation_carried_forward
+      required: true
+    - name: ca/t777_relocation_transportation
+      required: true
+    - name: ca/t777_relocation_meals
+      required: true
+    - name: ca/t777_relocation_lodging
+      required: true
+    - name: ca/t777_relocation_tradesperson_income
+      required: true
+    - name: ca/t777_relocation_claim
+      required: true
 capabilities:
   # Line 37 "Add lines 33 to 36. Total eligible temporary relocation expenses": the carried forward
   # expenses, transportation, meals and temporary lodging of the relocation.

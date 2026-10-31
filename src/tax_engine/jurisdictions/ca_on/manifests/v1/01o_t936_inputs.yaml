@@ -2,17 +2,22 @@ inputs:
   # Form T936 (2025) Part 3 line 15 "Total investment expenses claimed in previous years after 1987:
   # Amount from line 16 in Part 3 of Form T936 for 2024 (if you did not complete Form T936 for 2024,
   # see note (1))": the caller's figure.
-  - ca/t936_investment_expenses_previous_years
+  - name: ca/t936_investment_expenses_previous_years
+    required: true
   # Form T936 Part 3 line 20 "Total investment income reported in previous years after 1987: Amount
   # from line 19 of Part 3 of Form T936 for 2024. (if you did not complete Form T936 for 2024, see
   # note (2))": the caller's figure.
-  - ca/t936_investment_income_previous_years
+  - name: ca/t936_investment_income_previous_years
+    required: true
   # Form T936 Part 3 line 17 "Amount from line 17218 of Form T2048 for 2024 to 2025": the 2024 part,
   # the caller's figure; the 2025 part is this return's Form T2048.
-  - ca/t936_t2048_line_17218_for_2024
+  - name: ca/t936_t2048_line_17218_for_2024
+    required: true
   # Form T936 Chart A line 15 (68140) "Enter the amount from box 21 of all 2025 T3 slips.": the
   # caller's figure, one total for all the slips.
-  - ca/t936_t3_box_21_capital_gains
+  - name: ca/t936_t3_box_21_capital_gains
+    required: true
   # Form T936 Chart A line 16 "Enter the amount from box 30 of all 2025 T3 slips.": the caller's
   # figure, one total for all the slips.
-  - ca/t936_t3_box_30_capital_gains
+  - name: ca/t936_t3_box_30_capital_gains
+    required: true

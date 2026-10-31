@@ -65,6 +65,7 @@ from tax_engine.jurisdictions.ca.catalog import (
     BUSINESS_VEHICLE_TOTAL_KILOMETRES,
     BUSINESS_VEHICLES,
 )
+from tests.manifest_support import required_inputs
 
 D = Decimal
 CENT = RoundTo(D("0.01"), RoundingMode.HALF_UP)
@@ -303,11 +304,14 @@ def service() -> TaxComputationService:
         jurisdiction=code,
         version=1,
         valid_from_tax_year=2025,
-        inputs=frozenset(
-            {VEHICLES.identifier, SALES_TAX_RATE.identifier, FISCAL_PERIOD_DAYS.identifier}
+        inputs=required_inputs(
+            frozenset(
+                {VEHICLES.identifier, SALES_TAX_RATE.identifier, FISCAL_PERIOD_DAYS.identifier}
+            )
         ),
         forms=(
             Form(
+                required=True,
                 name=code.namespace.identifier("return"),
                 instances=None,
                 exports=(MOTOR_VEHICLE_EXPENSES.identifier,),

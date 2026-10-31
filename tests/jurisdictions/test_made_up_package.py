@@ -32,7 +32,7 @@ def test_the_package_directory_is_its_root() -> None:
 def test_its_manifest_is_read_from_the_package() -> None:
     (manifest,) = YamlJurisdictionSource(PACKAGES.roots()).get_jurisdiction(EX_ON).manifests
 
-    assert manifest.inputs == frozenset({"ex-on/levy_base"})
+    assert manifest.inputs.keys() == frozenset({"ex-on/levy_base"})
     (default,) = manifest.forms
     assert default.name == "ex-on/return"
     assert default.instances is None

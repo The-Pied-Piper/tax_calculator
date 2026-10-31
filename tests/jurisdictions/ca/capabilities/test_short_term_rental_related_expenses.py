@@ -46,6 +46,7 @@ from tax_engine.jurisdictions.ca.catalog import (
     SHORT_TERM_RENTAL_RELATED_EXPENSES_TOTAL,
     SHORT_TERM_RENTAL_UNITS,
 )
+from tests.manifest_support import required_inputs
 
 D = Decimal
 
@@ -309,9 +310,10 @@ def service() -> TaxComputationService:
         jurisdiction=code,
         version=1,
         valid_from_tax_year=2025,
-        inputs=frozenset({"ca/short_term_rental_units"}),
+        inputs=required_inputs(frozenset({"ca/short_term_rental_units"})),
         forms=(
             Form(
+                required=True,
                 name=code.namespace.identifier("return"),
                 instances=None,
                 exports=("ca/short_term_rental_related_expenses_total",),

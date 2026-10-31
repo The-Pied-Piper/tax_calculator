@@ -27,6 +27,7 @@ from tax_engine.domain.form import FormComposition
 from tax_engine.domain.jurisdiction_code import JurisdictionCode
 from tax_engine.domain.manifest import Form, Manifest
 from tests.jurisdictions.ca_on.manifest_families import t746 as family
+from tests.jurisdictions.ca_on.manifest_support import input_names
 
 CA_ON = JurisdictionCode("CA-ON")
 MANIFESTS = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1"
@@ -121,10 +122,10 @@ def test_the_t746_parts_are_named_by_the_layout_rule_and_not_over_30_kb() -> Non
 
 
 def test_the_inputs_part_declares_the_list_and_the_six_entries_of_the_summary_form() -> None:
-    declared = yaml.safe_load(INPUTS_PART.read_text())["inputs"]
+    declared = input_names(yaml.safe_load(INPUTS_PART.read_text()))
 
     assert set(declared) == family.INPUTS
-    assert family.INPUTS <= manifest().inputs
+    assert family.INPUTS <= manifest().inputs.keys()
 
 
 def test_the_row_fields_are_the_row_form_s_inputs_and_not_the_return_s() -> None:
@@ -134,7 +135,7 @@ def test_the_row_fields_are_the_row_form_s_inputs_and_not_the_return_s() -> None
         "ca/t746_contributions_deducted",
     }
 
-    assert row_fields.isdisjoint(manifest().inputs)
+    assert row_fields.isdisjoint(manifest().inputs.keys())
     assert row_fields.isdisjoint(family.INPUTS)
 
 
@@ -147,14 +148,14 @@ def test_line_5_is_an_entered_input_and_no_step_reads_it() -> None:
         for name in ((value,) if isinstance(value, str) else value)
     }
 
-    assert "ca/t746_withdrawal_year" in manifest().inputs
+    assert "ca/t746_withdrawal_year" in manifest().inputs.keys()
     assert "ca/t746_withdrawal_year" not in read
     assert "ca/t746_contribution_year" not in read
 
 
 def test_the_computed_exports_of_the_forms_are_not_inputs_of_the_return() -> None:
     computed = {"ca/t746_unused_contributions_of_year", "ca/t746_deduction"}
-    assert computed.isdisjoint(manifest().inputs)
+    assert computed.isdisjoint(manifest().inputs.keys())
 
 
 # --- the selections ------------------------------------------------------------------------------

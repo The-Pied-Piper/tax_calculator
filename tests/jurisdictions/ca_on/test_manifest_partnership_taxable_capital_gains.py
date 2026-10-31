@@ -64,6 +64,7 @@ def test_the_part_declares_the_form_with_its_export_and_no_instances() -> None:
 
     assert declared == {
         "name": FORM,
+        "required": True,
         "exports": list(partnership_taxable_capital_gains.FORM_EXPORTS),
     }
 
@@ -90,7 +91,7 @@ def test_the_form_holds_no_selection_of_its_own() -> None:
 
 
 def test_the_one_input_is_a_manifest_input() -> None:
-    assert partnership_taxable_capital_gains.INPUTS <= manifest().inputs
+    assert partnership_taxable_capital_gains.INPUTS <= manifest().inputs.keys()
     assert len(partnership_taxable_capital_gains.INPUTS) == 1
 
 

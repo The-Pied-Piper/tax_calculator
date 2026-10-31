@@ -66,6 +66,7 @@ from tests.jurisdictions.ca.capabilities.short_term_rental_cca import (
     rounding,
     units,
 )
+from tests.manifest_support import required_inputs
 
 
 def capability(
@@ -397,9 +398,10 @@ def service() -> TaxComputationService:
         jurisdiction=code,
         version=1,
         valid_from_tax_year=2025,
-        inputs=frozenset({"ca/short_term_rental_cca_units"}),
+        inputs=required_inputs(frozenset({"ca/short_term_rental_cca_units"})),
         forms=(
             Form(
+                required=True,
                 name=code.namespace.identifier("return"),
                 instances=None,
                 exports=("ex/non_compliant_cca_by_class",),

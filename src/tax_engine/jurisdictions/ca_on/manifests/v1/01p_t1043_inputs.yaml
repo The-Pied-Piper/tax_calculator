@@ -4,25 +4,33 @@
 inputs:
   # Form T1043 line 1 "Enter the amount of the excess transfer shown on your T4A slip(s) and included in
   # your income for the above year(s)": the caller's figure, one total.
-  - ca/t1043_excess_transfer_on_t4a
+  - name: ca/t1043_excess_transfer_on_t4a
+    required: true
   # Form T1043 line 1 "or the excess amount shown on your RRSP, PRPP, or SPP receipt": the caller's figure.
-  - ca/t1043_excess_amount_on_receipt
+  - name: ca/t1043_excess_amount_on_receipt
+    required: true
   # Form T1043 line 2 "Enter the part of the amount from line 1 that you claimed as an RRSP deduction for
   # any previous year": the caller's figure.
-  - ca/t1043_claimed_as_rrsp_deduction
+  - name: ca/t1043_claimed_as_rrsp_deduction
+    required: true
   # Form T1043 line 3 "Enter the part of the amount from line 1 that you deducted using this form for any
   # previous year": the caller's figure.
-  - ca/t1043_deducted_using_form
+  - name: ca/t1043_deducted_using_form
+    required: true
   # Form T1043 line 6 "Enter the total of all RRSP, PRPP, SPP, and RRIF amounts that you included in your
   # income for the current tax year": the caller's figure.
-  - ca/t1043_plan_amounts_in_income
+  - name: ca/t1043_plan_amounts_in_income
+    required: true
   # Form T1043 line 7 "Enter the part of the amount from line 6 that you can deduct as a transfer after
   # the maturity of an RRSP, as an excess amount from a RRIF that was transferred to an annuity, or as an
   # unused contribution that you withdrew from an RRSP, a PRPP, or an SPP": the caller's figure.
-  - ca/t1043_part_deductible_elsewhere
+  - name: ca/t1043_part_deductible_elsewhere
+    required: true
   # Form T1043 "To claim the deduction, you have to meet both of the following conditions: You included
   # the excess amount that was transferred to your RRSP, PRPP, SPP, or RRIF in your income for the year
   # it was transferred" and "You are including amounts received from your RRSPs, PRPPs, SPP, or RRIFs
   # in your income for the year you are claiming this deduction": yes or no answers (1 or 0).
-  - ca/t1043_included_excess_in_income_for_year_transferred
-  - ca/t1043_including_plan_amounts_in_income_for_year_claimed
+  - name: ca/t1043_included_excess_in_income_for_year_transferred
+    required: true
+  - name: ca/t1043_including_plan_amounts_in_income_for_year_claimed
+    required: true

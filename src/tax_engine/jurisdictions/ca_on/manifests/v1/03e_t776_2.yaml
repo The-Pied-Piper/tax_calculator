@@ -1,0 +1,327 @@
+form:
+  name: ca/t776
+capabilities:
+  # T776 "Line 4: Subtotal (amount 3 plus line 9947)": line 9947 is computed from Area A.
+  - name: core/sum
+    consumes:
+      parts:
+        - ca/rental_net_income_after_coowner_expenses
+        - ca/rental_recaptured_cca
+    produces:
+      output: ca/rental_net_income_with_recapture
+  # T776 Area A Note 3 "If no property is left in the class and there is a positive amount in
+  # this column, deduct the amount from your income as a terminal loss under "Terminal loss" on
+  # line 9948. Recapture and terminal loss do not apply to a Class 10.1 property unless it is a
+  # DIEP": the terminal loss of each class of the Area A list, totalled.
+  - name: ca/terminal_loss
+    params:
+      class_rates: ca/cca_class_rates
+    consumes:
+      classes: ca/rental_cca_classes_adjusted
+    produces:
+      output: ca/rental_cca_table_terminal_loss
+  # T776 "Line 9948: Terminal loss (co-owners: enter your share of the amount)": a count of 1
+  # for a co-owner chooses the co-owner's share, checked to be at most the terminal loss of
+  # Area A, as entered; with a count of 0 line 9948 is the terminal loss of Area A.
+  - name: core/choose_by_count
+    consumes:
+      count: ca/rental_coowner_checked
+      when_none: ca/rental_cca_table_terminal_loss
+      when_any: ca/rental_coowner_terminal_loss_checked
+    produces:
+      output: ca/rental_terminal_loss
+  # T776 "Line 5: Subtotal (amount 4 minus line 9948)": line 9948 is computed from Area A.
+  - name: core/subtract
+    consumes:
+      amount: ca/rental_net_income_with_recapture
+      less: ca/rental_terminal_loss
+    produces:
+      output: ca/rental_net_income_after_terminal_loss
+  # T776 Part 1 "Fiscal period from Date (Year/Month/Day) to (Year/12/31)", the days of the
+  # rental's fiscal period (Guide T4036 Area A "Column 23"; Guide T4002 "You were asking?": "base
+  # your CCA claim on the number of days in your fiscal period compared to 365 days."): the days
+  # the caller enters, or the 365 of a full year when none are.
+  - name: ca/fiscal_period_days
+    params:
+      class_rates: ca/cca_class_rates
+    consumes:
+      entered: ca/rental_fiscal_period_days_entered
+    produces:
+      output: ca/rental_fiscal_period_days
+  # T776 Area A "Line ii: Total CCA claim for the year *: Total of column 23": the CCA claimed
+  # on each class of the Area A list, at most its maximum (column 19 multiplied by column 20),
+  # totalled. The most each class may claim is its column 21 less its column 22 (Chart B), each
+  # maximum prorated by the days of the fiscal period.
+  - name: ca/cca_claim_after_column_22_prorated
+    params:
+      class_rates: ca/cca_class_rates
+    consumes:
+      classes: ca/rental_cca_classes_adjusted
+      non_compliant: ca/short_term_rental_non_compliant_cca_by_class
+      fiscal_period_days: ca/rental_fiscal_period_days
+    produces:
+      output: ca/rental_cca_table_claim
+  # T776 Area A "* Sole proprietors and partnerships: Enter the total CCA claim for the year
+  # from amount ii on line 9936. Co-owners: Enter only your share of the total CCA claim for
+  # the year from amount ii on line 9936": a count of 1 for a co-owner chooses the co-owner's
+  # share, checked to be at most amount ii, as entered; with a count of 0 it is amount ii.
+  - name: core/choose_by_count
+    consumes:
+      count: ca/rental_coowner_checked
+      when_none: ca/rental_cca_table_claim
+      when_any: ca/rental_coowner_cca_claim_checked
+    produces:
+      output: ca/rental_cca_claim_share
+  # T776 "Line 9936: Total CCA claim for the year (amount ii from Area A minus any personal
+  # part of CCA, and any CCA for business-use-of home expenses)", first step: amount ii minus
+  # the personal part of CCA, a caller input, signed.
+  - name: core/subtract
+    consumes:
+      amount: ca/rental_cca_claim_share
+      less: ca/rental_cca_personal_part
+    produces:
+      output: ca/rental_cca_claim_less_personal_part
+  # T776 "Line 9936: Total CCA claim for the year (amount ii from Area A minus any personal
+  # part of CCA, and any CCA for business-use-of home expenses)", second step: that result
+  # minus the CCA for business-use-of-home expenses, a caller input, signed.
+  - name: core/subtract
+    consumes:
+      amount: ca/rental_cca_claim_less_personal_part
+      less: ca/rental_cca_business_use_of_home
+    produces:
+      output: ca/rental_cca_claim
+  # Guide T4036: "You cannot use CCA to create or increase a rental loss": amount 5 ("Line 5:
+  # Subtotal (amount 4 minus line 9948)"), or 0 when amount 5 is negative, is the income of this
+  # property before CCA that immediate expensing tests against. Owners: see
+  # 03z_t776_cca_limit_all_statements.yaml.
+  - name: core/sum_not_below_zero
+    consumes:
+      parts:
+        - ca/rental_net_income_after_terminal_loss
+    produces:
+      output: ca/rental_cca_limit
+  # T776 Area A "Column 24: UCC at the end of the year (column 7 minus column 23)": the class
+  # number and column 24 of each class of the Area A list, a product of the return for next
+  # year's column 2.
+  - name: ca/closing_ucc_after_column_22_prorated
+    params:
+      class_rates: ca/cca_class_rates
+    consumes:
+      classes: ca/rental_cca_classes_adjusted
+      non_compliant: ca/short_term_rental_non_compliant_cca_by_class
+      fiscal_period_days: ca/rental_fiscal_period_days
+    produces:
+      output: ca/rental_closing_ucc
+  # T776 Note 5 "the immediate expensing limit, which is equal to one of the following,
+  # whichever is applicable: $1.5 million, if you are not associated with any other eligible
+  # person or partnership (EPOP) in the tax year" and Area G "Line iii: Immediate expensing
+  # limit allocated to you: Multiply $1.5 million by the percentage assigned to you in column
+  # 3 (see note 11)": the printed $1.5 million, a dataset.
+  - name: core/credit_amount
+    params:
+      amount: ca/rental_immediate_expensing_cap
+    produces:
+      output: ca/rental_immediate_expensing_cap
+  # Income Tax Regulations 1104(3.5)(b): "where an eligible person or partnership has a taxation
+  # year that is less than 51 weeks": the 51 weeks, printed as 51 weeks of 7 days, 357 days, one
+  # figure for each form, read by the prorating step.
+  - name: core/credit_amount
+    params:
+      amount: ca/immediate_expensing_short_year_days
+    produces:
+      output: ca/immediate_expensing_short_year_days
+  # T776 Area G "The total of all percentages assigned under the agreement should not be more
+  # than 100%. If the total is more than 100%, then the associated group has an immediate
+  # expensing limit of zero." and Note 11 "If the total of column 3 is more than 100%, enter
+  # "0."": the printed 100%, a dataset, as the form prints a percentage (100 for 100%).
+  - name: core/credit_amount
+    params:
+      amount: ca/rental_epop_percentage_maximum
+    produces:
+      output: ca/rental_epop_percentage_maximum
+  # T776 Area G "Line iii: Immediate expensing limit allocated to you: Multiply $1.5 million
+  # by the percentage assigned to you in column 3 (see note 11)", first step: $1.5 million
+  # times the percentage assigned to you in column 3, a caller input as the form prints it (40
+  # for 40%).
+  - name: ca/apply_percentage
+    params:
+      rounding: ca/rental_immediate_expensing_rounding
+    consumes:
+      amount: ca/rental_immediate_expensing_cap
+      percentage: ca/rental_epop_percentage
+    produces:
+      output: ca/rental_immediate_expensing_share
+  # T776 Area G Note 11 "If the total of column 3 is more than 100%, enter "0."", first step:
+  # 100% less "Total of percentage assigned: Total of column 3", a caller input; negative when
+  # the total is more than 100%.
+  - name: core/subtract
+    consumes:
+      amount: ca/rental_epop_percentage_maximum
+      less: ca/rental_epop_percentage_total
+    produces:
+      output: ca/rental_epop_percentage_room
+  # T776 Area G "Line iii: Immediate expensing limit allocated to you: Multiply $1.5 million
+  # by the percentage assigned to you in column 3 (see note 11)" and Note 11 "If the total of
+  # column 3 is more than 100%, enter "0."": the multiple above when 100% less the total of
+  # column 3 is zero or positive, else 0.
+  - name: ca/choose_by_sign
+    consumes:
+      sign: ca/rental_epop_percentage_room
+      when_positive: []
+      when_zero: []
+      when_negative: []
+      when_non_positive: []
+      when_non_negative:
+        - ca/rental_immediate_expensing_share
+    produces:
+      output: ca/rental_immediate_expensing_allocated
+  # T776 Note 5 "$1.5 million, if you are not associated with any other eligible person or
+  # partnership (EPOP) in the tax year": the answer to a yes or no question, a count of 1 or 0,
+  # checked before the step that reads it. A count of 2 or more is refused, not capped.
+  - name: ca/yes_or_no_count
+    consumes:
+      count: ca/rental_epop_associated
+    produces:
+      output: ca/rental_epop_associated_checked
+  # T776 Note 5 "zero, if you are associated with one or more EPOPs and an agreement that assigns a
+  # percentage to one or more of the associated EPOPs was not filed with the minister in a
+  # prescribed form": the answer to a yes or no question, a count of 1 or 0, checked before the step
+  # that reads it. A count of 2 or more is refused, not capped.
+  - name: ca/yes_or_no_count
+    consumes:
+      count: ca/rental_epop_agreement_filed
+    produces:
+      output: ca/rental_epop_agreement_filed_checked
+  # T776 Note 5 "any amount allocated by the minister under subsection 1104(3.4) of the
+  # Regulations": the answer to a yes or no question, a count of 1 or 0, checked before the step
+  # that reads it. A count of 2 or more is refused, not capped.
+  - name: ca/yes_or_no_count
+    consumes:
+      count: ca/rental_minister_allocation_given
+    produces:
+      output: ca/rental_minister_allocation_given_checked
+  # T776 Note 5 "amount iii of Area G, if you are associated with one or more EPOPs in the tax
+  # year" and "zero, if you are associated with one or more EPOPs and an agreement that
+  # assigns a percentage to one or more of the associated EPOPs was not filed with the
+  # minister in a prescribed form": line iii times the count of agreements filed (a caller's 0
+  # or 1), so 0 when none was filed.
+  - name: core/times_count
+    consumes:
+      amount: ca/rental_immediate_expensing_allocated
+      count: ca/rental_epop_agreement_filed_checked
+    produces:
+      output: ca/rental_immediate_expensing_associated_limit
+  # T776 Note 5 "the immediate expensing limit, which is equal to one of the following,
+  # whichever is applicable": a count of 1 for associated with one or more EPOPs (a caller's 0
+  # or 1) chooses the limit above ("amount iii of Area G" or "zero"); with a count of 0 it is
+  # the $1.5 million ("if you are not associated with any other eligible person or partnership
+  # (EPOP) in the tax year").
+  - name: core/choose_by_count
+    consumes:
+      count: ca/rental_epop_associated_checked
+      when_none: ca/rental_immediate_expensing_cap
+      when_any: ca/rental_immediate_expensing_associated_limit
+    produces:
+      output: ca/rental_immediate_expensing_limit_before_minister
+  # T776 Note 5 "any amount allocated by the minister under subsection 1104(3.4) of the
+  # Regulations": a count of 1 (a caller's 0 or 1) chooses the amount allocated by the minister, as
+  # entered, in place of the limit before the days scaling; with a count of 0 the limit before the
+  # minister's amount stands. The amount allocated is the amount for the year, and the days scaling
+  # below applies to it as it does to the limit.
+  - name: core/choose_by_count
+    consumes:
+      count: ca/rental_minister_allocation_given_checked
+      when_none: ca/rental_immediate_expensing_limit_before_minister
+      when_any: ca/rental_minister_allocation
+    produces:
+      output: ca/rental_immediate_expensing_limit_before_proration
+  # Income Tax Regulations 1104(3.5)(b): "where an eligible person or partnership has a taxation
+  # year that is less than 51 weeks, its immediate expensing limit for the year is that proportion
+  # of its immediate expensing limit for the year determined without reference to this paragraph
+  # that the number of days in the year is of 365". The limit before the days scaling (the
+  # minister's amount included) times the days of the fiscal period over the 365 of a full year,
+  # rounded to the cent, for a fiscal period of fewer than 357 days (51 weeks of 7 days, the shared
+  # figure `ca/immediate_expensing_short_year_days`); any other fiscal period keeps the amount as it
+  # is. Guide T4036, "Immediate expensing incentive": "The limit is also prorated for tax years
+  # shorter than 365 days" is the guide's wording of the same rule, which the Regulations narrow to
+  # 51 weeks.
+  - name: ca/prorated_by_fiscal_period_days
+    params:
+      rounding: ca/rental_immediate_expensing_rounding
+      class_rates: ca/cca_class_rates
+    consumes:
+      amount: ca/rental_immediate_expensing_limit_before_proration
+      fiscal_period_days: ca/rental_fiscal_period_days
+      short_year_days: ca/immediate_expensing_short_year_days
+    produces:
+      output: ca/rental_immediate_expensing_limit
+  # T776 Note 5 "the immediate expensing limit, which is equal to one of the following, whichever is
+  # applicable", "any amount allocated by the minister under subsection 1104(3.4) of the
+  # Regulations", and Income Tax Regulations 1104(3.5)(b). The person's limit before the days
+  # scaling, the one limit the statements of the four forms share: the limit before the minister's
+  # amount, unscaled, or the amount allocated by the minister when there is one, which is also
+  # unscaled. The statements are compared on it because each statement's own fiscal period scales
+  # the limit above, and a person's statements may cover periods of different lengths.
+  - name: core/choose_by_count
+    consumes:
+      count: ca/rental_minister_allocation_given_checked
+      when_none: ca/rental_immediate_expensing_limit_before_minister
+      when_any: ca/rental_minister_allocation
+    produces:
+      output: ca/rental_immediate_expensing_limit_unprorated
+  # T776 "Line i: Total immediate expensing claim for the year: Total of column 9" and Note 5
+  # "The total immediate expensing amount for the tax year (total of column 9) is limited to
+  # the lesser of: the immediate expensing limit"; "the UCC of DIEPs in column 8"; "the amount
+  # of income, if any, earned from the source of income that is a property (before any CCA
+  # deductions) in which the relevant DIEP is used for the tax year": the total of column 9 of
+  # the Area A list, refused when above the limit or above the income before CCA (amount 5 not
+  # below zero).
+  - name: ca/immediate_expensing_claim
+    params:
+      class_rates: ca/cca_class_rates
+    consumes:
+      classes: ca/rental_cca_classes_adjusted
+      immediate_expensing_limit: ca/rental_immediate_expensing_limit
+      income_before_cca: ca/rental_cca_limit
+    produces:
+      output: ca/rental_immediate_expensing_claim
+  # T776 "Line 6: Net income (loss) (amount 5 minus line 9936)": line 9936 is computed above.
+  - name: core/subtract
+    consumes:
+      amount: ca/rental_net_income_after_terminal_loss
+      less: ca/rental_cca_claim
+    produces:
+      output: ca/rental_net_income_after_cca
+  # T776 "Line 9946: ... For partnerships, enter the result from amount 7 plus line 9974
+  # minus line 9943", first step: amount 7 (line 7, "Partners: your share of amount 6, or the
+  # amount from your T5013 slip, Statement of Partnership Income") plus line 9974 ("Partners:
+  # GST/HST rebate for partners received in the year"): amount 7 is in
+  # 03z_t776_partner_amount_7.yaml and line 9974 is a caller input.
+  - name: core/sum
+    consumes:
+      parts:
+        - ca/rental_partner_amount_7
+        - ca/rental_partner_gst_hst_rebate
+    produces:
+      output: ca/rental_partner_share_with_rebate
+  # T776 "Line 9946: ... For partnerships, enter the result from amount 7 plus line 9974
+  # minus line 9943", second step: that result minus line 9943 ("Partners: other expenses of
+  # the partner"), a caller input.
+  - name: core/subtract
+    consumes:
+      amount: ca/rental_partner_share_with_rebate
+      less: ca/rental_partner_other_expenses
+    produces:
+      output: ca/rental_partnership_net_income
+  # T776 "Line 9946: Your net income (loss): For sole proprietors or co-owners, enter the
+  # result from amount 6. For partnerships, enter the result from amount 7 plus line 9974
+  # minus line 9943. Enter this amount on line 12600 of your income tax and benefit return";
+  # T1 "Line 12600: Net". A count of 1 for a partner (a caller's 0 or 1) chooses the
+  # partnership figure, else amount 6.
+  - name: core/choose_by_count
+    consumes:
+      count: ca/rental_partner_checked
+      when_none: ca/rental_net_income_after_cca
+      when_any: ca/rental_partnership_net_income
+    produces:
+      output: ca/net_rental_income

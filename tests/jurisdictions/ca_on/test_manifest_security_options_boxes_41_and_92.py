@@ -67,6 +67,7 @@ def test_the_part_declares_the_form_with_its_export_and_no_instances() -> None:
 
     assert declared == {
         "name": FORM,
+        "required": True,
         "exports": list(security_options_boxes_41_and_92.FORM_EXPORTS),
     }
 
@@ -93,18 +94,18 @@ def test_the_form_holds_no_selection_of_its_own() -> None:
 
 
 def test_the_one_input_is_a_manifest_input() -> None:
-    assert security_options_boxes_41_and_92.INPUTS <= manifest().inputs
+    assert security_options_boxes_41_and_92.INPUTS <= manifest().inputs.keys()
     assert len(security_options_boxes_41_and_92.INPUTS) == 1
 
 
 def test_the_manifest_has_no_amt_named_box_input_any_more() -> None:
-    assert "ca/amt_t4_security_options_boxes_41_and_92" not in manifest().inputs
+    assert "ca/amt_t4_security_options_boxes_41_and_92" not in manifest().inputs.keys()
 
 
 def test_the_manifest_has_no_security_options_deductions_input_any_more() -> None:
     # Guide 5000-G line 24900 "Claim on line 24900 of your return the total of the amounts shown in
     # boxes 39, 41, 91, and 92 of your T4 slips": the line is the total of the T4 boxes, computed.
-    assert "ca/security_options_deductions" not in manifest().inputs
+    assert "ca/security_options_deductions" not in manifest().inputs.keys()
 
 
 def test_the_form_runs_once_and_derives_the_kind_of_its_export() -> None:

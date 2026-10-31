@@ -13,6 +13,7 @@
 # The return reads line 17 (T1 line 22900) in 05s_other_employment_expenses.yaml and no other export.
 form:
   name: ca/t777
+  required: true
   exports:
     - ca/t777_line_3
     - ca/t777_line_4

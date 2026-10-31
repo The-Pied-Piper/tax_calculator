@@ -6,6 +6,7 @@
 # return selects none of these steps.
 form:
   name: ca/t90
+  required: true
   exports:
     - ca/t90_exempt_working_income
     - ca/t90_ei_maternity_parental_ppip_benefits_checked

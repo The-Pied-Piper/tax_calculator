@@ -99,6 +99,7 @@ from tests.jurisdictions.ca.capabilities.foreign_business_tax_credit import (
     rounding,
     sheets_given,
 )
+from tests.manifest_support import required_inputs
 
 # (line, capability class, registered local id, trace line class)
 LINES: list[tuple[int, type[ForeignBusinessTaxCreditRows], str, type]] = [
@@ -732,9 +733,12 @@ def service(
         jurisdiction=code,
         version=1,
         valid_from_tax_year=2025,
-        inputs=frozenset({SHEETS.identifier, NET_INCOME.identifier, BASIC_TAX.identifier}),
+        inputs=required_inputs(
+            frozenset({SHEETS.identifier, NET_INCOME.identifier, BASIC_TAX.identifier})
+        ),
         forms=(
             Form(
+                required=True,
                 name=code.namespace.identifier("return"),
                 instances=None,
                 exports=(OUTPUTS[line].identifier,),

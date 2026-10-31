@@ -6,26 +6,35 @@
 inputs:
   # Form T746 lines 1 to 3, one record for each year of unused contributions ("fill out a separate Form
   # T746, lines 1 to 4 only, for each year"): the year, the total contributions and the part deducted.
-  - ca/t746_years
+  - name: ca/t746_years
+    required: true
   # Form T746 line 5 "Enter the year you or your spouse or common-law partner withdrew the unused RRSP,
   # PRPP, or SPP contributions": the caller's year (entered as printed; nothing on the form reads it).
-  - ca/t746_withdrawal_year
+  - name: ca/t746_withdrawal_year
+    required: true
   # Form T746 line 6 "Enter the amount shown in box 20 of your T4RSP slips": the caller's figure.
-  - ca/t746_t4rsp_box_20
+  - name: ca/t746_t4rsp_box_20
+    required: true
   # Form T746 line 7 "Enter the amount shown in box 22 of your T4RSP slips": the caller's figure.
-  - ca/t746_t4rsp_box_22
+  - name: ca/t746_t4rsp_box_22
+    required: true
   # Form T746 line 8 "Enter the amount shown in box 24 of your T4RIF slips": the caller's figure.
-  - ca/t746_t4rif_box_24
+  - name: ca/t746_t4rif_box_24
+    required: true
   # Form T746 line 9 "Enter the amount of lump sum PRPP withdrawals included in box 194 of your T4A slips":
   # the caller's figure.
-  - ca/t746_t4a_box_194
+  - name: ca/t746_t4a_box_194
+    required: true
   # Form T746 line 10 "Enter the amount shown in box 18 of your T4A slips only if this amount is a
   # withdrawal from your SPP": the caller's figure.
-  - ca/t746_t4a_box_18_spp
+  - name: ca/t746_t4a_box_18_spp
+    required: true
   # Form T746 "For you to claim the deduction, it has to be reasonable for the CRA to consider that one
   # or both of the following conditions apply": "you expected to be able to fully deduct your RRSP,
   # PRPP, or SPP contributions in the year you made them or the year before" and "you did not make
   # the contributions intending to withdraw them later and claim the deduction": yes or no answers
   # (1 or 0).
-  - ca/t746_expected_to_fully_deduct_contributions
-  - ca/t746_did_not_make_contributions_intending_to_withdraw
+  - name: ca/t746_expected_to_fully_deduct_contributions
+    required: true
+  - name: ca/t746_did_not_make_contributions_intending_to_withdraw
+    required: true

@@ -33,6 +33,11 @@ from tax_engine.jurisdictions.ca.catalog import (
     T1206_SHARE_RESERVE_ROWS,
 )
 from tests.jurisdictions.ca_on.manifest_families import t1206_share_dispositions as family
+from tests.jurisdictions.ca_on.manifest_support import (
+    input_names,
+    instance_fields,
+    required_entries,
+)
 
 CA_ON = JurisdictionCode("CA-ON")
 MANIFESTS = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1"
@@ -88,6 +93,7 @@ def test_the_dispositions_part_declares_the_form_with_no_instances_and_its_expor
 
     assert declared == {
         "name": family.DISPOSITIONS_FORM,
+        "required": True,
         "exports": list(family.DISPOSITIONS_EXPORTS),
     }
 
@@ -97,6 +103,8 @@ def test_the_reserve_part_declares_the_form_with_the_rows_as_its_instances_and_i
 
     assert declared == {
         "name": family.RESERVE_FORM,
+        "required": True,
+        "fields": required_entries(instance_fields(family.RESERVE_FORM)),
         "instances": "ca/t1206_share_reserve_rows",
         "exports": list(family.RESERVE_EXPORTS),
     }
@@ -162,19 +170,19 @@ def test_the_t1206_parts_are_named_by_the_layout_rule_and_not_over_30_kb() -> No
 
 
 def test_the_inputs_part_declares_the_four_starting_inputs_of_the_section() -> None:
-    declared = yaml.safe_load(INPUTS_PART.read_text())["inputs"]
+    declared = input_names(yaml.safe_load(INPUTS_PART.read_text()))
 
     assert set(declared) == family.INPUTS
-    assert family.INPUTS <= manifest().inputs
+    assert family.INPUTS <= manifest().inputs.keys()
 
 
 def test_the_age_flag_is_the_return_s_existing_input_and_is_not_declared_again() -> None:
-    assert AGE_FLAG in manifest().inputs
-    assert AGE_FLAG not in yaml.safe_load(INPUTS_PART.read_text())["inputs"]
+    assert AGE_FLAG in manifest().inputs.keys()
+    assert AGE_FLAG not in input_names(yaml.safe_load(INPUTS_PART.read_text()))
 
 
 def test_the_row_fields_are_the_reserve_form_s_inputs_and_not_the_return_s() -> None:
-    assert family.RESERVE_FIELDS.isdisjoint(manifest().inputs)
+    assert family.RESERVE_FIELDS.isdisjoint(manifest().inputs.keys())
     assert family.RESERVE_FIELDS.isdisjoint(family.INPUTS)
 
 

@@ -3,7 +3,8 @@ jurisdiction: EX-ON
 version: 1
 valid_from_tax_year: 2025
 inputs:
-  - ex-on/levy_base
+  - name: ex-on/levy_base
+    required: true
 outputs:
   - ex-on/levy
 capabilities:

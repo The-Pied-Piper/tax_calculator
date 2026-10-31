@@ -20,6 +20,7 @@ from tax_engine.domain.manifest import Form, Manifest
 from tax_engine.domain.record_list import RecordListKind
 from tax_engine.jurisdictions.ca_on.catalog import ON_BEN_RESIDENCES
 from tests.jurisdictions.ca_on.manifest_families import on_ben_residences
+from tests.jurisdictions.ca_on.manifest_support import instance_fields, required_entries
 
 CA_ON = JurisdictionCode("CA-ON")
 FORM = "ca-on/on_ben_residences"
@@ -55,6 +56,8 @@ def test_the_part_declares_the_form_with_its_instances_and_exports() -> None:
 
     assert declared == {
         "name": FORM,
+        "required": True,
+        "fields": required_entries(instance_fields(FORM)),
         "instances": ROWS,
         "exports": list(on_ben_residences.FORM_EXPORTS),
     }
@@ -70,7 +73,7 @@ def test_the_manifest_has_the_form_with_the_row_list_as_instances_and_no_row_lim
 
 
 def test_the_rows_are_the_manifest_input_in_place_of_the_row_fields() -> None:
-    inputs = manifest().inputs
+    inputs = manifest().inputs.keys()
 
     assert on_ben_residences.INPUTS <= inputs
     assert inputs.isdisjoint(on_ben_residences.FORM_INPUTS)

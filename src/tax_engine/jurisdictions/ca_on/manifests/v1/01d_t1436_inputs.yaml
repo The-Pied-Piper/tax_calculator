@@ -2,6 +2,8 @@ inputs:
   # Schedule 3 line 543, "minus any amounts reported on lines 543 and 544 of Schedule 3": the amount
   # the filer enters, read by Form T1436 (Capital Gains Worksheet) lines 2 and 3 (summed in
   # 05o_t1436_lines_1_to_7.yaml); a starting amount, not below zero.
-  - ca/schedule_3_line_543
+  - name: ca/schedule_3_line_543
+    required: true
   # Schedule 3 line 544, as line 543: the second of the two amounts the lines 2 and 3 read.
-  - ca/schedule_3_line_544
+  - name: ca/schedule_3_line_544
+    required: true

@@ -2,4 +2,5 @@ inputs:
   # Form T2048 Chart A line 15 "50% of income from the recovery of exploration and development
   # expenses (line 13000)": the part of T1 line 13000 "Other income" that is that recovery, the
   # caller's figure; the form ca/t2048 refuses a figure above line 13000 and takes 50% of it.
-  - ca/qbt_exploration_recovery_income
+  - name: ca/qbt_exploration_recovery_income
+    required: true

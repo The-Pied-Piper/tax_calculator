@@ -5,10 +5,18 @@
 # and line 1, the year, exported as entered (no step reads it).
 form:
   name: ca/t746_year
+  required: true
   instances: ca/t746_years
   exports:
     - ca/t746_unused_contributions_of_year
     - ca/t746_contribution_year
+  fields:
+    - name: ca/t746_contribution_year
+      required: true
+    - name: ca/t746_contributions
+      required: true
+    - name: ca/t746_contributions_deducted
+      required: true
 capabilities:
   # Line 3 "Enter the part of the amount from line 2 that you deducted or will be deducting": a part of
   # line 2, so at most line 2 (the form prints no bound of its own; refused above it, not capped).

@@ -80,7 +80,11 @@ def _selection(selections: Iterable[CapabilitySelection], output: str) -> Capabi
 def test_the_part_declares_the_form_ca_schedule_3_with_its_exports_and_no_instances() -> None:
     declared = yaml.safe_load(PART.read_text())["form"]
 
-    assert declared == {"name": "ca/schedule_3", "exports": list(schedule_3.FORM_EXPORTS)}
+    assert declared == {
+        "name": "ca/schedule_3",
+        "required": True,
+        "exports": list(schedule_3.FORM_EXPORTS),
+    }
 
 
 def test_the_life_event_checks_part_declares_the_form_ca_schedule_3_and_no_exports() -> None:
@@ -123,7 +127,7 @@ def test_the_form_runs_once_with_the_ten_inputs_and_derives_the_flag_kind() -> N
 
 
 def test_the_ten_inputs_are_the_manifest_inputs() -> None:
-    assert schedule_3.INPUTS <= manifest().inputs
+    assert schedule_3.INPUTS <= manifest().inputs.keys()
     assert len(schedule_3.INPUTS) == 10
 
 

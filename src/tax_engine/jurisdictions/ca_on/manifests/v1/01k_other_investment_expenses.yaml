@@ -16,5 +16,6 @@
 # own line (the form ca/t2048 does so in 06a_capital_gains_deduction_qbt.yaml).
 form:
   name: ca/other_investment_expenses
+  required: true
   exports:
     - ca/other_investment_expenses

@@ -28,6 +28,7 @@ from tax_engine.adapters.outbound.yaml_jurisdictions import YamlJurisdictionSour
 from tax_engine.domain.jurisdiction_code import JurisdictionCode
 from tax_engine.domain.manifest import CapabilitySelection, Manifest
 from tests.jurisdictions.ca_on.manifest_families import other_employment_expenses
+from tests.jurisdictions.ca_on.manifest_support import inputs_text
 
 CA_ON = JurisdictionCode("CA-ON")
 MANIFESTS = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1"
@@ -121,9 +122,9 @@ def test_the_return_reads_the_t777_line_17_only_through_its_total() -> None:
 
 
 def test_line_22900_is_computed_and_read_by_no_input_of_the_return() -> None:
-    assert LINE_22900 not in manifest().inputs
-    assert RC359_TOTAL not in manifest().inputs
-    assert LINE_22900 not in INPUTS_PART.read_text()
+    assert LINE_22900 not in manifest().inputs.keys()
+    assert RC359_TOTAL not in manifest().inputs.keys()
+    assert LINE_22900 not in inputs_text()
 
 
 def test_the_return_declares_no_output_for_line_22900() -> None:

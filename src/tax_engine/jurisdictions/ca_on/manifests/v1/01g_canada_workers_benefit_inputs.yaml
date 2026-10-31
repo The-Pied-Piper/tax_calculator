@@ -3,55 +3,73 @@ inputs:
   # a count of 1 or 0, with the eligible spouse conditions of Schedule 6 (cohabiting on December 31,
   # resident in Canada throughout the year, not a full-time student for more than 13 weeks unless
   # the eligible dependant, not confined to a prison for 90 days, not exempt as a foreign officer).
-  - ca/cwb_eligible_spouses
+  - name: ca/cwb_eligible_spouses
+    required: true
   # Schedule 6 line 38104 "Is your eligible spouse eligible for the DTC for themselves? If yes, your eligible
   # spouse must complete Steps 1 and 3 on a separate Schedule 6. 1 Yes or 2 No", the filer's own answer, a
   # count of 1 or 0; line 38 of Step 3 reads it (7.5% instead of 15%). The filer's own answer to line 38103
   # is the shared fact `ca/eligible_for_disability_amount` (the approval of Form T2201), not re-typed.
-  - ca/cwb_eligible_spouse_eligible_for_dtc
+  - name: ca/cwb_eligible_spouse_eligible_for_dtc
+    required: true
   # Schedule 6 line 38102 "Are you claiming the basic CWB? If yes, complete parts A and B, then, if
   # applicable, complete Step 2. 1 Yes or 2 No", the filer's own answer, a count of 1 or 0; line 41 of
   # Step 3 reads it ("If you completed Step 2, enter the amount from line 28. If not, enter "0"."). Step 2:
   # "If you had an eligible spouse, only one of you can claim the basic CWB".
-  - ca/cwb_claiming_basic
+  - name: ca/cwb_claiming_basic
+    required: true
   # Schedule 6 Step 4 "If you have an eligible spouse who is claiming the basic CWB for you, but you are
   # claiming your CWB disability supplement, enter "0" on line 46 and continue on line 47.": the filer's
   # own answer, a count of 1 or 0, 1 when the eligible spouse is claiming the basic CWB for the filer.
-  - ca/cwb_spouse_claiming_basic
+  - name: ca/cwb_spouse_claiming_basic
+    required: true
   # Schedule 6 Part A column 2 ("Your eligible spouse") lines 1, 2 and 3: "Employment income and
   # other employment income from line 10100 and line 10400 of the return", "Taxable scholarships,
   # fellowships, bursaries, and artists' project grants from line 13010 of the return" (38106) and
   # "Total self-employment income from lines 13500, 13700, 13900, 14100, and 14300 of the return
   # (excluding losses) (Note 2)", as entered for the spouse. The spouse's net income, UCCB and RDSP
   # figures of column 2 are the spouse facts of the other payments and LIFT, shared, not re-typed.
-  - ca/cwb_spouse_employment_income
-  - ca/cwb_spouse_taxable_scholarships
-  - ca/cwb_spouse_self_employment_income
+  - name: ca/cwb_spouse_employment_income
+    required: true
+  - name: ca/cwb_spouse_taxable_scholarships
+    required: true
+  - name: ca/cwb_spouse_self_employment_income
+    required: true
   # Schedule 6 line 38105 "Are you choosing to include tax-exempt income to calculate the CWB? (Note 1) 1 Yes
   # or 2 No": the filer's answer, 1 for yes and 0 for no, a count checked by `ca/yes_or_no_count`. Note 1 makes
   # the answer cover line 4 and line 8 of both columns; with no answer of yes the Form T90 figures are ignored.
-  - ca/cwb_include_tax_exempt_income
+  - name: ca/cwb_include_tax_exempt_income
+    required: true
   # Schedule 6 column 2 line 4 "Tax-exempt working income earned on a reserve" (form number 38107), the
   # eligible spouse's amount as entered (from line 10000 of Form T90 and the emergency volunteer allowance).
-  - ca/cwb_spouse_tax_exempt_working_income
+  - name: ca/cwb_spouse_tax_exempt_working_income
+    required: true
   # Schedule 6 column 2 line 8 "Total of net exempt income earned on a reserve" (form number 38109), the
   # eligible spouse's amount as entered (from line 10026 of Form T90, signed as it can be in brackets).
-  - ca/cwb_spouse_net_exempt_income
+  - name: ca/cwb_spouse_net_exempt_income
+    required: true
   # Schedule 6 line 44 and line 38120 "Total basic ACWB paid to you (box 10 of your RC210 slip)",
   # line 45 and line 38121 "Total basic ACWB paid to your spouse or common-law partner (box 10 of
   # their RC210 slip)" and line 47 and line 38122 "Total ACWB disability supplement paid to you (box
   # 11 of your RC210 slip)": the amounts of Step 4, which computes T1 line 41500.
-  - ca/acwb_paid_to_you
-  - ca/acwb_paid_to_spouse
-  - ca/acwb_disability_supplement_paid
+  - name: ca/acwb_paid_to_you
+    required: true
+  - name: ca/acwb_paid_to_spouse
+    required: true
+  - name: ca/acwb_disability_supplement_paid
+    required: true
   # Schedule 6's conditions: "You were, at the end of the year, 19 years of age or older, or you
   # resided with your spouse or common-law partner or your child", and "You cannot claim the CWB for
   # 2025 if any of the following conditions apply to you": a full-time student for more than 13
   # weeks (unless you had an eligible dependant), confined to a prison for at least 90 days, and
   # exempt from tax as an officer or a servant of another country. The residence in Canada
   # throughout the year is the answer of the Federal Worksheet for line 45200, the same fact.
-  - ca/aged_19_or_older_at_end_of_2025
-  - ca/resided_with_spouse_or_child_at_end_of_2025
-  - ca/full_time_student_for_more_than_13_weeks
-  - ca/confined_to_prison_for_90_days
-  - ca/exempt_as_foreign_officer_or_family
+  - name: ca/aged_19_or_older_at_end_of_2025
+    required: true
+  - name: ca/resided_with_spouse_or_child_at_end_of_2025
+    required: true
+  - name: ca/full_time_student_for_more_than_13_weeks
+    required: true
+  - name: ca/confined_to_prison_for_90_days
+    required: true
+  - name: ca/exempt_as_foreign_officer_or_family
+    required: true

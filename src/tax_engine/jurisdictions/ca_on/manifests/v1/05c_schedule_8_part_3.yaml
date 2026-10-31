@@ -7,6 +7,7 @@
 # nothing on the return reads.
 form:
   name: ca/schedule_8
+  required: true
   instances: ca/schedule_8_instances
   # The return carries at most one copy of Schedule 8, and not with Form RC381.
   max_instances: 1
@@ -21,6 +22,7 @@ form:
     - ca/cpp_part_5_line_88
     - ca/cpp_zero
     - ca/cpp_required_base_and_first_additional_contributions
+  fields: []
 capabilities:
   # Schedule 8 Part 3 line 9 "amount from line 8 multiplied by 83.1933% =", line 8 being the
   # total actual base and first additional contributions on the T4 slips (line 8 and line

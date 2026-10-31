@@ -48,6 +48,7 @@ from tax_engine.domain.parameters.rounding import (
 )
 from tax_engine.domain.trace import DividedByRateLine
 from tax_engine.jurisdictions.ca.capabilities.divided_by_rate import DividedByRate
+from tests.manifest_support import required_inputs
 
 D = Decimal
 CENT = RoundTo(D("0.01"), RoundingMode.HALF_UP)
@@ -365,9 +366,10 @@ def service(dataset: ParameterDataset[Rate] | None = None) -> TaxComputationServ
         jurisdiction=code,
         version=1,
         valid_from_tax_year=2025,
-        inputs=frozenset({"ex/dividend"}),
+        inputs=required_inputs(frozenset({"ex/dividend"})),
         forms=(
             Form(
+                required=True,
                 name=code.namespace.identifier("return"),
                 instances=None,
                 exports=("ex/out",),

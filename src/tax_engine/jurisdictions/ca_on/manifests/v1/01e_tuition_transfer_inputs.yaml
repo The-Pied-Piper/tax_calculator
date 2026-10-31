@@ -3,4 +3,5 @@ inputs:
   # claim this transfer from a student", so the number of students the transfer comes from is the
   # caller's count, a whole number of 0 or more, read by `core/per_unit_amount` (times $5,000) for
   # the bound of `ca/tuition_transferred_from_child`.
-  - ca/tuition_transfer_students
+  - name: ca/tuition_transfer_students
+    required: true

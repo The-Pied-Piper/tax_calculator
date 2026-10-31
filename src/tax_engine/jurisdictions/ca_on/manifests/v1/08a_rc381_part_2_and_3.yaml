@@ -15,6 +15,7 @@
 # with no copy of the form.
 form:
   name: ca/rc381
+  required: true
   instances: ca/rc381_instances
   # The return carries at most one copy of Form RC381, and not with Schedule 8.
   max_instances: 1
@@ -27,6 +28,7 @@ form:
     - ca/rc381_cpp_payable_on_self_employment
     - ca/rc381_cpp_base_contributions_on_self_employment_and_other_earnings
     - ca/rc381_cpp_deduction_on_self_employment_and_other_earnings
+  fields: []
 capabilities:
   # Part 2 "The number you enter on line A cannot be more than the number you enter on line
   # B.": line B is the QPP months, produced unchanged when it is at least line A's months and

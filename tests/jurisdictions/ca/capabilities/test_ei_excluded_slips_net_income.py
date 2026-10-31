@@ -42,6 +42,7 @@ from tax_engine.jurisdictions.ca.catalog import (
     EI_EXCLUDED_SLIPS,
     EI_EXCLUDED_SLIPS_NET_INCOME,
 )
+from tests.manifest_support import required_inputs
 
 D = Decimal
 
@@ -284,9 +285,10 @@ def service() -> TaxComputationService:
         jurisdiction=code,
         version=1,
         valid_from_tax_year=2025,
-        inputs=frozenset({"ca/ei_excluded_slips"}),
+        inputs=required_inputs(frozenset({"ca/ei_excluded_slips"})),
         forms=(
             Form(
+                required=True,
                 name=code.namespace.identifier("return"),
                 instances=None,
                 exports=("ca/ei_excluded_slips_net_income",),

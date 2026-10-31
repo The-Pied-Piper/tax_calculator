@@ -62,6 +62,6 @@ def test_the_rc381_lines_of_the_return_are_those_of_its_form(stem: str, tmp_path
     )
     # No blank is expected of the return's own lines: they are those of a return with no
     # Schedule 8, which the worked return of the same name does not claim.
-    worked = worked.with_blanks(manifest.inputs, frozenset(), artifacts)
+    worked = worked.with_blanks(frozenset(manifest.inputs), frozenset(), artifacts)
     worked.check_forms(manifest.forms, artifacts)
     check_against(worked, service)

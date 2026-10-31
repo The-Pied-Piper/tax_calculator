@@ -35,6 +35,7 @@ from tax_engine.domain.manifest import CapabilitySelection, Form, Manifest
 from tax_engine.domain.parameters.kind import ParameterKind
 from tax_engine.domain.trace import SignChosenDifferenceLine
 from tax_engine.jurisdictions.ca.capabilities.sign_chosen_difference import SignChosenDifference
+from tests.manifest_support import required_inputs
 
 D = Decimal
 
@@ -410,9 +411,10 @@ def service() -> TaxComputationService:
         jurisdiction=code,
         version=1,
         valid_from_tax_year=2025,
-        inputs=frozenset({"ex/sign_amount", "ex/reference", "ex/difference"}),
+        inputs=required_inputs(frozenset({"ex/sign_amount", "ex/reference", "ex/difference"})),
         forms=(
             Form(
+                required=True,
                 name=code.namespace.identifier("return"),
                 instances=None,
                 exports=("ex/out",),

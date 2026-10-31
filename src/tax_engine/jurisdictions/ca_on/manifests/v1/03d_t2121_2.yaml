@@ -1,0 +1,320 @@
+form:
+  name: ca/t2121
+capabilities:
+  # T2121 Part 5 "Your share of line 9369 or the amount from your T5013 slip, Statement of
+  # Partnership Income" (5A): a count of 1 for a partner chooses the amount from the T5013 slip,
+  # as entered; with a count of 0 it is line 9369.
+  - name: core/choose_by_count
+    consumes:
+      count: ca/fish_partner_checked
+      when_none: ca/fish_net_income_before_adjustments
+      when_any: ca/fish_partner_share
+    produces:
+      output: ca/fish_share_of_net_income
+  # T2121 Part 5 "Total: Amount 5A plus line 9974" (5B): amount 5A and line 9974 "GST/HST rebate
+  # for partners received in the year", a caller input.
+  - name: core/sum
+    consumes:
+      parts:
+        - ca/fish_share_of_net_income
+        - ca/fish_partner_gst_hst_rebate
+    produces:
+      output: ca/fish_partnership_total
+  # T2121 Part 6 "Total other amounts deductible from your share of the net partnership income
+  # (loss): Add amounts 6A to 6E (enter this amount on line 9943 of Part 5)." (6F): 6A to 6E,
+  # caller inputs.
+  - name: core/sum
+    consumes:
+      parts:
+        - ca/fish_partner_other_amount_a
+        - ca/fish_partner_other_amount_b
+        - ca/fish_partner_other_amount_c
+        - ca/fish_partner_other_amount_d
+        - ca/fish_partner_other_amount_e
+    produces:
+      output: ca/fish_partner_other_amounts_total
+  # T2121 Part 5 "Other amounts deductible from your share of net partnership income (loss)
+  # (amount 6F)" (line 9943).
+  - name: core/sum
+    consumes:
+      parts:
+        - ca/fish_partner_other_amounts_total
+    produces:
+      output: ca/fish_partner_other_amounts
+  # T2121 Part 5 "Net income (loss) after adjustments: Amount 5B minus line 9943" (5C): signed, a
+  # loss is negative.
+  - name: core/subtract
+    consumes:
+      amount: ca/fish_partnership_total
+      less: ca/fish_partner_other_amounts
+    produces:
+      output: ca/fish_net_income_after_adjustments
+  # T2121 Part 7 "Subtotal: Add amounts 7A to 7G." (7H): 7A "Heat", 7B "Electricity", 7C
+  # "Insurance", 7D "Maintenance", 7E "Mortgage interest", 7F "Property taxes" and 7G "Other
+  # expenses (specify)", caller inputs.
+  - name: core/sum
+    consumes:
+      parts:
+        - ca/fish_home_heat
+        - ca/fish_home_electricity
+        - ca/fish_home_insurance
+        - ca/fish_home_maintenance
+        - ca/fish_home_mortgage_interest
+        - ca/fish_home_property_taxes
+        - ca/fish_home_other_expenses
+    produces:
+      output: ca/fish_home_expenses_subtotal
+  # T2121 Part 7 "Subtotal: Amount 7H minus amount 7I" (7J): amount 7I "Personal-use part of the
+  # business-use-of-home expenses", a caller input.
+  - name: core/subtract
+    consumes:
+      amount: ca/fish_home_expenses_subtotal
+      less: ca/fish_home_personal_use_part
+    produces:
+      output: ca/fish_home_expenses_business_part
+  # T2121 Part 7 "Subtotal: Add amounts 7J to 7L." (7M): 7J, amount 7K (the CCA for the business
+  # part, a caller input) and 7L "Amount carried forward from previous year", a caller input.
+  - name: core/sum
+    consumes:
+      parts:
+        - ca/fish_home_expenses_business_part
+        - ca/fish_home_cca
+        - ca/fish_home_carried_forward
+    produces:
+      output: ca/fish_home_expenses_available
+  # T2121 Part 7 "Net income (loss) after adjustments (amount 5C) (if negative, enter "0")." (7N):
+  # amount 5C, or 0 when it is negative.
+  - name: core/sum_not_below_zero
+    consumes:
+      parts:
+        - ca/fish_net_income_after_adjustments
+    produces:
+      output: ca/fish_home_income_limit
+  # T2121 Part 7 "Business-use-of-home expenses available to carry forward: Amount 7M minus amount
+  # 7N (if negative, enter "0")" (7O): the claim left over, 0 when amount 7N is the larger.
+  - name: core/subtract_not_below_zero
+    consumes:
+      amount: ca/fish_home_expenses_available
+      less: ca/fish_home_income_limit
+    produces:
+      output: ca/fish_home_carry_forward
+  # T2121 Part 7 "Allowable claim: Amount 7M or 7N above, whichever is less (enter your share of
+  # this amount on line 9945 of Part 5)" (7P).
+  - name: core/lesser_of
+    consumes:
+      amounts:
+        - ca/fish_home_expenses_available
+        - ca/fish_home_income_limit
+    produces:
+      output: ca/fish_home_allowable_claim
+  # T2121 Part 5 "Business-use-of-home expenses (amount 7P)" (line 9945).
+  - name: core/sum
+    consumes:
+      parts:
+        - ca/fish_home_allowable_claim
+    produces:
+      output: ca/fish_home_expenses
+  # T2121 Part 5 "Your net income (loss): Amount 5C minus line 9945 (enter this amount on line
+  # 14300 of your income tax and benefit return)" (line 9946): T1 "Line 26: Fishing income" and
+  # "Line 14300: Net" are the same artifact, signed: a loss is negative.
+  - name: core/subtract
+    consumes:
+      amount: ca/fish_net_income_after_adjustments
+      less: ca/fish_home_expenses
+    produces:
+      output: ca/fishing_income
+  # T2121 Area A column 22 "UCC at the end of the year (col. 7 minus col. 21)": the class number
+  # and column 22 of each class of the Area A list, a product of the return for next year's
+  # column 1.
+  - name: ca/closing_ucc_prorated
+    params:
+      class_rates: ca/cca_class_rates
+    consumes:
+      classes: ca/fish_cca_classes_adjusted
+      fiscal_period_days: ca/fish_fiscal_period_days
+    produces:
+      output: ca/fish_closing_ucc
+  # T2121 Area G (page 6) "Immediate expensing limit allocated to your business: Multiply $1.5
+  # million by the percentage assigned to your business in column 3**" (amount iii) and Area A
+  # endnote 5 (page 7) "$1.5 million, if you are not associated with any other eligible person or
+  # partnership (EPOP) in the tax year": the printed $1.5 million, a dataset.
+  - name: core/credit_amount
+    params:
+      amount: ca/fish_immediate_expensing_cap
+    produces:
+      output: ca/fish_immediate_expensing_cap
+  # Income Tax Regulations 1104(3.5)(b): "where an eligible person or partnership has a taxation
+  # year that is less than 51 weeks": the 51 weeks, printed as 51 weeks of 7 days, 357 days, one
+  # figure for each form, read by the prorating step.
+  - name: core/credit_amount
+    params:
+      amount: ca/immediate_expensing_short_year_days
+    produces:
+      output: ca/immediate_expensing_short_year_days
+  # T2121 Area G (page 6) "The total of all percentages assigned under the agreement should not be
+  # more than 100%. If the total is more than 100%, then the associated group has an immediate
+  # expensing limit of zero." and "** If the total of column 3 is more than 100%, enter "0."": the
+  # printed 100%, a dataset, as the form prints a percentage (100 for 100%).
+  - name: core/credit_amount
+    params:
+      amount: ca/fish_epop_percentage_maximum
+    produces:
+      output: ca/fish_epop_percentage_maximum
+  # T2121 Area G (page 6) "Immediate expensing limit allocated to your business: Multiply $1.5
+  # million by the percentage assigned to your business in column 3**" (amount iii), first step:
+  # $1.5 million times the percentage assigned to your business in column 3, a caller input as the
+  # form prints it (40 for 40%).
+  - name: ca/apply_percentage
+    params:
+      rounding: ca/fish_immediate_expensing_rounding
+    consumes:
+      amount: ca/fish_immediate_expensing_cap
+      percentage: ca/fish_epop_percentage
+    produces:
+      output: ca/fish_immediate_expensing_share
+  # T2121 Area G (page 6) "** If the total of column 3 is more than 100%, enter "0."", first step:
+  # 100% less "Total of percentage assigned: Total of column 3", a caller input; negative when the
+  # total is more than 100%.
+  - name: core/subtract
+    consumes:
+      amount: ca/fish_epop_percentage_maximum
+      less: ca/fish_epop_percentage_total
+    produces:
+      output: ca/fish_epop_percentage_room
+  # T2121 Area G (page 6) "Immediate expensing limit allocated to your business" (amount iii) and
+  # "** If the total of column 3 is more than 100%, enter "0."": the multiple above when 100% less
+  # the total of column 3 is zero or positive, else 0.
+  - name: ca/choose_by_sign
+    consumes:
+      sign: ca/fish_epop_percentage_room
+      when_positive: []
+      when_zero: []
+      when_negative: []
+      when_non_positive: []
+      when_non_negative:
+        - ca/fish_immediate_expensing_share
+    produces:
+      output: ca/fish_immediate_expensing_allocated
+  # T2121 Area A endnote 5 "$1.5 million, if you are not associated with any other eligible person
+  # or partnership (EPOP) in the tax year": the answer to a yes or no question, a count of 1 or 0,
+  # checked before the step that reads it. A count of 2 or more is refused, not capped.
+  - name: ca/yes_or_no_count
+    consumes:
+      count: ca/fish_epop_associated
+    produces:
+      output: ca/fish_epop_associated_checked
+  # T2121 Area A endnote 5 "zero, if you are associated with one or more EPOPs and an agreement that
+  # assigns a percentage to one or more of the associated EPOPs was not filed with the minister in a
+  # prescribed form": the answer to a yes or no question, a count of 1 or 0, checked before the step
+  # that reads it. A count of 2 or more is refused, not capped.
+  - name: ca/yes_or_no_count
+    consumes:
+      count: ca/fish_epop_agreement_filed
+    produces:
+      output: ca/fish_epop_agreement_filed_checked
+  # T2121 Area A endnote 5 "any amount allocated by the minister under subsection 1104(3.4) of the
+  # Regulations": the answer to a yes or no question, a count of 1 or 0, checked before the step
+  # that reads it. A count of 2 or more is refused, not capped.
+  - name: ca/yes_or_no_count
+    consumes:
+      count: ca/fish_minister_allocation_given
+    produces:
+      output: ca/fish_minister_allocation_given_checked
+  # T2121 Area A endnote 5 (page 7) "amount iii of Area G, if you are associated with one or more
+  # EPOPs in the tax year" and "zero, if you are associated with one or more EPOPs and an agreement
+  # that assigns a percentage to one or more of the associated EPOPs was not filed with the
+  # minister in a prescribed form": amount iii times the count of agreements filed (a caller's 0
+  # or 1), so 0 when none was filed.
+  - name: core/times_count
+    consumes:
+      amount: ca/fish_immediate_expensing_allocated
+      count: ca/fish_epop_agreement_filed_checked
+    produces:
+      output: ca/fish_immediate_expensing_associated_limit
+  # T2121 Area A endnote 5 (page 7) "the immediate expensing limit, which is equal to one of the
+  # following, whichever is applicable": a count of 1 for associated with one or more EPOPs (a
+  # caller's 0 or 1) chooses the limit above ("amount iii of Area G" or "zero"); with a count of 0
+  # it is the $1.5 million ("if you are not associated with any other eligible person or
+  # partnership (EPOP) in the tax year").
+  - name: core/choose_by_count
+    consumes:
+      count: ca/fish_epop_associated_checked
+      when_none: ca/fish_immediate_expensing_cap
+      when_any: ca/fish_immediate_expensing_associated_limit
+    produces:
+      output: ca/fish_immediate_expensing_limit_before_minister
+  # T2121 Note 5 "any amount allocated by the minister under subsection 1104(3.4) of the
+  # Regulations": a count of 1 (a caller's 0 or 1) chooses the amount allocated by the minister, as
+  # entered, in place of the limit before the days scaling; with a count of 0 the limit before the
+  # minister's amount stands. The amount allocated is the amount for the year, and the days scaling
+  # below applies to it as it does to the limit.
+  - name: core/choose_by_count
+    consumes:
+      count: ca/fish_minister_allocation_given_checked
+      when_none: ca/fish_immediate_expensing_limit_before_minister
+      when_any: ca/fish_minister_allocation
+    produces:
+      output: ca/fish_immediate_expensing_limit_before_proration
+  # Income Tax Regulations 1104(3.5)(b): "where an eligible person or partnership has a taxation
+  # year that is less than 51 weeks, its immediate expensing limit for the year is that proportion
+  # of its immediate expensing limit for the year determined without reference to this paragraph
+  # that the number of days in the year is of 365". The limit before the days scaling (the
+  # minister's amount included) times the days of the fiscal period over the 365 of a full year,
+  # rounded to the cent, for a fiscal period of fewer than 357 days (51 weeks of 7 days, the shared
+  # figure `ca/immediate_expensing_short_year_days`); any other fiscal period keeps the amount as it
+  # is. Guide T4002, "Immediate expensing incentive": "The limit is also prorated for tax years
+  # shorter than 365 days" is the guide's wording of the same rule, which the Regulations narrow to
+  # 51 weeks.
+  - name: ca/prorated_by_fiscal_period_days
+    params:
+      rounding: ca/fish_immediate_expensing_rounding
+      class_rates: ca/cca_class_rates
+    consumes:
+      amount: ca/fish_immediate_expensing_limit_before_proration
+      fiscal_period_days: ca/fish_fiscal_period_days
+      short_year_days: ca/immediate_expensing_short_year_days
+    produces:
+      output: ca/fish_immediate_expensing_limit
+  # T2121 Area A endnote 5 "the immediate expensing limit, which is equal to one of the following,
+  # whichever is applicable", "any amount allocated by the minister under subsection 1104(3.4) of
+  # the Regulations", and Income Tax Regulations 1104(3.5)(b). The person's limit before the days
+  # scaling, the one limit the statements of the four forms share: the limit before the minister's
+  # amount, unscaled, or the amount allocated by the minister when there is one, which is also
+  # unscaled. The statements are compared on it because each statement's own fiscal period scales
+  # the limit above, and a person's statements may cover periods of different lengths.
+  - name: core/choose_by_count
+    consumes:
+      count: ca/fish_minister_allocation_given_checked
+      when_none: ca/fish_immediate_expensing_limit_before_minister
+      when_any: ca/fish_minister_allocation
+    produces:
+      output: ca/fish_immediate_expensing_limit_unprorated
+  # T2121 Area A endnote 5 (page 7) "the amount of income, if any, earned from the source of income
+  # that is a business (before any CCA deductions) in which the relevant DIEP is used for the tax
+  # year": line 9369 "Net income (loss) before adjustments" (before the limit of a boat mainly for
+  # personal use) plus line 9936, the CCA it deducted
+  # (page 2), not below zero. Guide T4002 (page 61) names line 9369 as "Net income (loss) before
+  # adjustments" for this form. The recapture on line 9600 is already in gross income and the
+  # terminal loss on line 9270 an expense.
+  - name: core/sum_not_below_zero
+    consumes:
+      parts:
+        - ca/fish_net_income_before_boat_limit
+        - ca/fish_cca_claim
+    produces:
+      output: ca/fish_income_before_cca
+  # T2121 Area A (page 4) "Total immediate expensing claim for the year: Total of column 9" (line
+  # i) and endnote 5 (page 7) "The total immediate expensing amount for the tax year (total of
+  # column 9) is limited to the lesser of: the immediate expensing limit"; "the UCC of DIEPs in
+  # column 8"; "the amount of income, if any, earned from the source of income that is a business
+  # (before any CCA deductions) in which the relevant DIEP is used for the tax year": the total of
+  # column 9 of the Area A list, refused when above the limit or above the income before CCA.
+  - name: ca/immediate_expensing_claim
+    params:
+      class_rates: ca/cca_class_rates
+    consumes:
+      classes: ca/fish_cca_classes_adjusted
+      immediate_expensing_limit: ca/fish_immediate_expensing_limit
+      income_before_cca: ca/fish_income_before_cca
+    produces:
+      output: ca/fish_immediate_expensing_claim

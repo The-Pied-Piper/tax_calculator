@@ -110,6 +110,7 @@ from tax_engine.jurisdictions.ca_on.trace import (
     PooledProvincialForeignTaxCreditLine,
     ProvincialForeignTaxCreditLine,
 )
+from tests.manifest_support import required_inputs
 
 D = Decimal
 CENT = RoundTo(D("0.01"), RoundingMode.HALF_UP)
@@ -1308,19 +1309,22 @@ def service(dataset: ParameterDataset[RoundingOnly] | None = None) -> TaxComputa
         jurisdiction=code,
         version=1,
         valid_from_tax_year=2025,
-        inputs=frozenset(
-            {
-                "ca/foreign_tax_credit_sheets",
-                "ex/net_income",
-                "ex/provincial_tax",
-                "ex/minimum_tax_applies",
-                "ex/non_business_tax_two_thirds",
-                "ex/business_tax_paid",
-                "ex/special_foreign_tax_credit",
-            }
+        inputs=required_inputs(
+            frozenset(
+                {
+                    "ca/foreign_tax_credit_sheets",
+                    "ex/net_income",
+                    "ex/provincial_tax",
+                    "ex/minimum_tax_applies",
+                    "ex/non_business_tax_two_thirds",
+                    "ex/business_tax_paid",
+                    "ex/special_foreign_tax_credit",
+                }
+            )
         ),
         forms=(
             Form(
+                required=True,
                 name=code.namespace.identifier("return"),
                 instances=None,
                 exports=("ex/provincial_credit",),

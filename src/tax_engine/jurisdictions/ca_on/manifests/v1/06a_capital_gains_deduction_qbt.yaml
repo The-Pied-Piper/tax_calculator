@@ -15,6 +15,7 @@
 # 06a_t1436_lines_1_to_7_t2048.yaml (11).
 form:
   name: ca/t2048
+  required: true
   instances: ca/t2048_dispositions
   min_instances: 0
   exports:
@@ -28,6 +29,25 @@ form:
     - ca/qbt_net_investment_loss_reduction
     - ca/qbt_capital_gains_deduction
     - ca/qbt_election_is_qbt_in_order
+  fields:
+    - name: ca/qbt_election_eligible_amount
+      required: true
+    - name: ca/qbt_percentage_allocated
+      required: true
+    - name: ca/qbt_prior_years_claims
+      required: true
+    - name: ca/qbt_capital_gains
+      required: true
+    - name: ca/qbt_2024_reserve
+      required: true
+    - name: ca/qbt_2025_reserve
+      required: true
+    - name: ca/qbt_deduction_claimed
+      required: true
+    - name: ca/qbt_election_is_qbt
+      required: true
+    - name: ca/qbt_gains_are_qsbcs_or_qffp
+      required: true
 capabilities:
   # Form T2048 Part 2 line 2 "Percentage allocated to you": a maximum of 100%, a dataset. The
   # form prints no maximum: the refusal above 100 is a choice, not a form rule.

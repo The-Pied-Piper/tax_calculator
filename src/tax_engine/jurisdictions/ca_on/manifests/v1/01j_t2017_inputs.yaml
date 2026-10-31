@@ -5,38 +5,56 @@
 # record for each disposition; each row form runs once for each record).
 inputs:
   # Form T2017 line 1 "Amount of 2024 reserve for dispositions of QFFP (lines 66844 and 67055 of Form T2017 for 2024)".
-  - ca/t2017_line_1
+  - name: ca/t2017_line_1
+    required: true
   # Form T2017 line 7 "Amount of 2024 reserve for dispositions of QSBCS (lines 66850 and 67056 of Form T2017 for 2024)".
-  - ca/t2017_line_7
+  - name: ca/t2017_line_7
+    required: true
   # Form T2017 line 16 "Amount of 2024 reserve for dispositions of family farm or fishing property to your child (lines 66920 and 67057 of Form T2017 for 2024)".
-  - ca/t2017_line_16
+  - name: ca/t2017_line_16
+    required: true
   # Form T2017 line 20 "Amount of 2024 reserve for dispositions of property under a QBT (lines 66935 and 66839 of Form T2017 for 2024)".
-  - ca/t2017_line_20
+  - name: ca/t2017_line_20
+    required: true
   # Form T2017 line 23 "Amount of 2024 reserve for dispositions of property under a QCC (other than QFFP and QSBCS) after 2023".
-  - ca/t2017_line_23
+  - name: ca/t2017_line_23
+    required: true
   # Form T2017 line 26 "Amount of 2024 reserve for dispositions of property after 2020, other than dispositions listed on lines 66843, 66883, 66910, and 66930 (lines 66990 and 67058 of Form T2017 for 2024)".
-  - ca/t2017_lines_66990_and_67058_for_2024
+  - name: ca/t2017_lines_66990_and_67058_for_2024
+    required: true
   # Form T2017 line 14 "Enter the amount of the most recent reserves claimed on line 66850." (entered as printed; nothing on the form reads it).
-  - ca/t2017_line_14
+  - name: ca/t2017_line_14
+    required: true
   # Form T2017 line 30 "Amount of 2024 reserve for dispositions before November 13, 1981 (as reported in 2024)".
-  - ca/t2017_line_30
+  - name: ca/t2017_line_30
+    required: true
   # The dispositions with a reserve on Form T2017 line 2 (the record list of the row form).
-  - ca/t2017_line_2_reserve_rows
+  - name: ca/t2017_line_2_reserve_rows
+    required: true
   # The dispositions with a reserve on Form T2017 line 3 (the record list of the row form).
-  - ca/t2017_line_3_reserve_rows
+  - name: ca/t2017_line_3_reserve_rows
+    required: true
   # The dispositions with a reserve on Form T2017 line 4 (the record list of the row form).
-  - ca/t2017_line_4_reserve_rows
+  - name: ca/t2017_line_4_reserve_rows
+    required: true
   # The dispositions with a reserve on Form T2017 line 8 (the record list of the row form).
-  - ca/t2017_line_8_reserve_rows
+  - name: ca/t2017_line_8_reserve_rows
+    required: true
   # The dispositions with a reserve on Form T2017 line 9 (the record list of the row form).
-  - ca/t2017_line_9_reserve_rows
+  - name: ca/t2017_line_9_reserve_rows
+    required: true
   # The dispositions with a reserve on Form T2017 line 10 (the record list of the row form).
-  - ca/t2017_line_10_reserve_rows
+  - name: ca/t2017_line_10_reserve_rows
+    required: true
   # The dispositions with a reserve on Form T2017 line 17 (the record list of the row form).
-  - ca/t2017_line_17_reserve_rows
+  - name: ca/t2017_line_17_reserve_rows
+    required: true
   # The dispositions with a reserve on Form T2017 line 21 (the record list of the row form).
-  - ca/t2017_line_21_reserve_rows
+  - name: ca/t2017_line_21_reserve_rows
+    required: true
   # The dispositions with a reserve on Form T2017 line 24 (the record list of the row form).
-  - ca/t2017_line_24_reserve_rows
+  - name: ca/t2017_line_24_reserve_rows
+    required: true
   # The dispositions with a reserve on Form T2017 line 27 (the record list of the row form).
-  - ca/t2017_line_27_reserve_rows
+  - name: ca/t2017_line_27_reserve_rows
+    required: true

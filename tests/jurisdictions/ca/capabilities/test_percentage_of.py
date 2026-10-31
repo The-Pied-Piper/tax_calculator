@@ -44,6 +44,7 @@ from tax_engine.domain.parameters.rounding import (
 )
 from tax_engine.domain.parameters.rounding_only import ROUNDING_ONLY, RoundingOnly
 from tax_engine.jurisdictions.ca.trace import PercentageOfLine
+from tests.manifest_support import required_inputs
 
 D = Decimal
 CENT_HALF_UP = RoundTo(D("0.01"), RoundingMode.HALF_UP)
@@ -273,9 +274,10 @@ def service(dataset: ParameterDataset[RoundingOnly] | None = None) -> TaxComputa
         jurisdiction=code,
         version=1,
         valid_from_tax_year=2025,
-        inputs=frozenset({"ex/part_gross", "ex/all_gross"}),
+        inputs=required_inputs(frozenset({"ex/part_gross", "ex/all_gross"})),
         forms=(
             Form(
+                required=True,
                 name=code.namespace.identifier("return"),
                 instances=None,
                 exports=("ex/gross_share_percent",),

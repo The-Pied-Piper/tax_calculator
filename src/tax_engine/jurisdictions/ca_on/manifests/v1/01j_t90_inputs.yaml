@@ -1,41 +1,57 @@
 inputs:
   # Form T90 (2025) "Income Exempt from Tax under the Indian Act", line 1 "Employment income (box 71 of
   # your T4 slip(s))": the caller's figure, one total for all the T4 slips.
-  - ca/t90_t4_box_71_employment_income
+  - name: ca/t90_t4_box_71_employment_income
+    required: true
   # Form T90 line 2 "Other employment income such as tips, net research grants, and income maintenance
   # insurance plans": the caller's figure.
-  - ca/t90_other_employment_income
+  - name: ca/t90_other_employment_income
+    required: true
   # Form T90 line 3 "Net self-employment income (excluding losses)": the caller's figure.
-  - ca/t90_net_self_employment_income
+  - name: ca/t90_net_self_employment_income
+    required: true
   # Form T90 line 5 "Canada pension plan (CPP) or Quebec pension plan (QPP) benefits": the caller's
   # figure.
-  - ca/t90_cpp_qpp_benefits
+  - name: ca/t90_cpp_qpp_benefits
+    required: true
   # Form T90 line 6 "Registered retirement savings plan (RRSP) or Registered retirement income fund (RRIF)
   # income relating to exempt pension transfers from a registered pension plan": the caller's figure.
-  - ca/t90_rrsp_rrif_pension_transfer_income
+  - name: ca/t90_rrsp_rrif_pension_transfer_income
+    required: true
   # Form T90 line 7 "Federal, provincial, or territorial government COVID-19 payments received in the year
   # (from your T4A or T4E slip) (1)": the caller's figure.
-  - ca/t90_covid_19_payments
+  - name: ca/t90_covid_19_payments
+    required: true
   # Form T90 line 8 "Other pensions and superannuation": the caller's figure.
-  - ca/t90_other_pensions_and_superannuation
+  - name: ca/t90_other_pensions_and_superannuation
+    required: true
   # Form T90 line 9 "Employment Insurance (EI), Provincial parental insurance plan (PPIP), and other
   # benefits (box 18 of your T4E slip)": the caller's figure.
-  - ca/t90_ei_ppip_and_other_benefits
+  - name: ca/t90_ei_ppip_and_other_benefits
+    required: true
   # Form T90 line 10019 "EI maternity and parental benefits and PPIP benefits included on line 9": the
   # caller's figure, checked against line 9.
-  - ca/t90_ei_maternity_parental_ppip_benefits
+  - name: ca/t90_ei_maternity_parental_ppip_benefits
+    required: true
   # Form T90 line 10 "Interest, dividends, and other investment income": the caller's figure.
-  - ca/t90_interest_dividends_investment_income
+  - name: ca/t90_interest_dividends_investment_income
+    required: true
   # Form T90 line 11 "Net rental income (excluding losses)": the caller's figure.
-  - ca/t90_net_rental_income
+  - name: ca/t90_net_rental_income
+    required: true
   # Form T90 line 12 "Social assistance payments received from a First Nation or band council": the
   # caller's figure.
-  - ca/t90_social_assistance_payments
+  - name: ca/t90_social_assistance_payments
+    required: true
   # Form T90 line 13 "Other sources of exempt income": the caller's figure.
-  - ca/t90_other_exempt_income
+  - name: ca/t90_other_exempt_income
+    required: true
   # Form T90 line 15 "Net rental losses": the caller's figure.
-  - ca/t90_net_rental_losses
+  - name: ca/t90_net_rental_losses
+    required: true
   # Form T90 line 17 "Net self-employment losses": the caller's figure.
-  - ca/t90_net_self_employment_losses
+  - name: ca/t90_net_self_employment_losses
+    required: true
   # Form T90 line 19 "Deductions relating to exempt income above (2)": the caller's figure.
-  - ca/t90_deductions_relating_to_exempt_income
+  - name: ca/t90_deductions_relating_to_exempt_income
+    required: true

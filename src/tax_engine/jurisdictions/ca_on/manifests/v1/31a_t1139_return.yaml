@@ -13,6 +13,7 @@
 # each statement and each Form T1139's amount G or L counts alone and a loss counts 0.
 form:
   name: ca/t1139_return
+  required: true
   exports:
     - ca/t1139_business_income_on_return
     - ca/t1139_professional_income_on_return

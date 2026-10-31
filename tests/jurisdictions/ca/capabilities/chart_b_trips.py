@@ -41,6 +41,7 @@ from tax_engine.jurisdictions.ca.catalog import (
     TRIP_TRAVEL_EXPENSES,
     TRIP_ZONE,
 )
+from tests.manifest_support import required_inputs
 
 D = Decimal
 ZONE_A = 1
@@ -130,9 +131,10 @@ def service(identifier: str) -> TaxComputationService:
         jurisdiction=code,
         version=1,
         valid_from_tax_year=2025,
-        inputs=frozenset({"ca/travel_trips"}),
+        inputs=required_inputs(frozenset({"ca/travel_trips"})),
         forms=(
             Form(
+                required=True,
                 name=code.namespace.identifier("return"),
                 instances=None,
                 exports=("ex/zone_total",),

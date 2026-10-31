@@ -42,6 +42,7 @@ from tax_engine.jurisdictions.ca.catalog import (
     RENTAL_PROPERTY_SHORT_TERM_RENTS,
     RENTAL_PROPERTY_UNITS,
 )
+from tests.manifest_support import required_inputs
 
 D = Decimal
 
@@ -289,9 +290,10 @@ def service() -> TaxComputationService:
         jurisdiction=code,
         version=1,
         valid_from_tax_year=2025,
-        inputs=frozenset({"ca/rental_properties"}),
+        inputs=required_inputs(frozenset({"ca/rental_properties"})),
         forms=(
             Form(
+                required=True,
                 name=code.namespace.identifier("return"),
                 instances=None,
                 exports=("ca/rental_gross_rents",),

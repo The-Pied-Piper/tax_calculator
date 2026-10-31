@@ -30,9 +30,17 @@ from tax_engine.jurisdictions.ca.catalog import (
     T776_STATEMENTS,
 )
 from tests.jurisdictions.ca_on.manifest_families import t776
+from tests.jurisdictions.ca_on.manifest_support import (
+    INPUTS_PARTS,
+    capabilities_of,
+    instance_fields,
+    required_entries,
+)
 
 CA_ON = JurisdictionCode("CA-ON")
 PART = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1" / "03e_t776.yaml"
+# The part is split in two to stay under 30 KB: the second holds the later steps.
+PART_2 = PART.with_name("03e_t776_2.yaml")
 INCOME_PART = PART.with_name("03_income.yaml")
 INPUTS_PART = PART.with_name("01_inputs.yaml")
 CHECKS_PART = PART.with_name("03e_t776_checks.yaml")
@@ -174,6 +182,8 @@ def test_the_t776_part_declares_the_form_ca_t776_with_its_instances_and_exports(
 
     assert declared == {
         "name": "ca/t776",
+        "required": True,
+        "fields": required_entries(instance_fields("ca/t776")),
         "instances": "ca/t776_statements",
         "exports": list(t776.FORM_EXPORTS),
     }
@@ -239,13 +249,14 @@ def test_the_return_selects_no_t776_step_of_its_own_but_the_total_of_line_9946()
 
 def test_the_t776_part_is_not_over_30_kb_and_the_other_parts_hold_no_t776_step() -> None:
     assert PART.stat().st_size <= 30 * 1024
+    assert PART_2.stat().st_size <= 30 * 1024
     assert CHECKS_PART.stat().st_size <= 30 * 1024
     assert ADDITIONS_PART.stat().st_size <= 30 * 1024
     assert SLIP_CHECKS_PART.stat().st_size <= 30 * 1024
     assert CCA_POOL_PART.stat().st_size <= 30 * 1024
     assert AMOUNT_7_PART.stat().st_size <= 30 * 1024
     assert AREAS_B_C_PART.stat().st_size <= 30 * 1024
-    for other in (INCOME_PART, INPUTS_PART):
+    for other in INPUTS_PARTS:
         text = other.read_text()
         assert "ca/rental_" not in text, other.name
         assert "ca/short_term_rental" not in text, other.name
@@ -255,7 +266,7 @@ def test_the_t776_part_is_not_over_30_kb_and_the_other_parts_hold_no_t776_step()
 
 
 def test_the_instances_are_the_one_input_of_the_manifest_in_place_of_the_t776_inputs() -> None:
-    inputs = manifest().inputs
+    inputs = manifest().inputs.keys()
 
     assert t776.INPUTS <= inputs
     assert inputs.isdisjoint(t776.FORM_INPUTS)
@@ -412,7 +423,7 @@ def test_the_areas_b_and_c_part_declares_only_the_form_ca_t776_and_the_two_total
 
 
 def test_the_proceeds_step_reads_the_checked_list_and_produces_the_adjusted_one() -> None:
-    steps = yaml.safe_load(PART.read_text())["capabilities"]
+    steps = capabilities_of(PART, PART_2)
     (proceeds,) = [step for step in steps if step["name"] == "ca/cca_vehicle_proceeds"]
 
     assert proceeds["consumes"] == {

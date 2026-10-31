@@ -10,6 +10,7 @@
 # in each place and counts the statements; the form exports the box.
 form:
   name: ca/t2043
+  required: true
   exports:
     - ca/fuel_charge_credit_farmers
     - ca/fuel_charge_chart_b_gross_income_on

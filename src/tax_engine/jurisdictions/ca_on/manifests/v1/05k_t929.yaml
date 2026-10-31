@@ -11,6 +11,7 @@
 # text is the caller's to apply: each figure entered is the amount the filer takes as eligible.
 form:
   name: ca/t929
+  required: true
   instances: ca/t929_instances
   # The return carries at most one copy of Form T929.
   max_instances: 1
@@ -23,6 +24,7 @@ form:
     - ca/t929_line_10
     - ca/t929_line_11
     - ca/disability_supports_deduction
+  fields: []
 capabilities:
   # Form T929 Step 1 line 3 "Subtract line 2 from line 1. This amount is your net disability supports
   # expenses": line 1 "Enter the total of all amounts in column 2" less line 2 "Enter the total of all

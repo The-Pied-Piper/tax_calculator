@@ -11,6 +11,7 @@
 # ca/t746.t746_deduction.
 form:
   name: ca/t746
+  required: true
   exports:
     - ca/t746_deduction
     - ca/t746_withdrawal_year

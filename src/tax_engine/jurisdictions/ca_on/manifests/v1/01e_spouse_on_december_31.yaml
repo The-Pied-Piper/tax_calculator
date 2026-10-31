@@ -19,6 +19,7 @@
 # 0, as Schedule ON428-A says to complete Part A as if single.
 form:
   name: ca/spouse_on_december_31
+  required: true
   exports:
     - ca/spouse_or_common_law_partner_on_december_31_checked
 capabilities:

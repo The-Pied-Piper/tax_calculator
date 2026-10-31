@@ -72,6 +72,12 @@ from tax_engine.jurisdictions.ca.catalog import (
 )
 from tests.jurisdictions.ca_on.end_to_end.support import D, run, service
 from tests.jurisdictions.ca_on.manifest_families import t2048
+from tests.jurisdictions.ca_on.manifest_support import (
+    inputs_text,
+    instance_fields,
+    lists,
+    required_entries,
+)
 
 CA_ON = JurisdictionCode("CA-ON")
 ROOTS = tax_engine.registrations.JURISDICTIONS.roots()
@@ -85,7 +91,6 @@ COPIES_PART = PART.with_name("06a_capital_gains_deduction_qbt_copies.yaml")
 T1436_PART = PART.with_name("06a_t1436_lines_1_to_7_t2048.yaml")
 LINE_1_PART = PART.with_name("06a_t2048_part_2_line_1_maximum.yaml")
 INCOME_PART = PART.with_name("06_taxable_income.yaml")
-INPUTS_PART = PART.with_name("01_inputs.yaml")
 # Chart A line 15's input is declared in a part of its own: 01_inputs.yaml is at its size cap.
 RECOVERY_INPUT_PART = PART.with_name("01o_exploration_recovery_income.yaml")
 VALUED_EXPORTS = (
@@ -124,6 +129,8 @@ def test_the_t2048_part_declares_the_form_ca_t2048_with_its_instances_minimum_an
     # No `max_instances`: any number of dispositions is accepted.
     assert declared == {
         "name": "ca/t2048",
+        "required": True,
+        "fields": required_entries(instance_fields("ca/t2048")),
         "instances": "ca/t2048_dispositions",
         "min_instances": 0,
         "exports": list(t2048.FORM_EXPORTS),
@@ -152,13 +159,13 @@ def test_the_t2048_parts_are_not_over_30_kb() -> None:
 
 
 def test_the_other_parts_hold_no_t2048_input_and_the_dispositions_input_is_declared() -> None:
-    inputs_text = INPUTS_PART.read_text() + RECOVERY_INPUT_PART.read_text()
+    inputs_text_ = inputs_text() + RECOVERY_INPUT_PART.read_text()
 
     for identifier in t2048.INPUTS:
-        assert f"- {identifier}\n" in inputs_text, identifier
+        assert f"- name: {identifier}\n" in inputs_text_, identifier
     for identifier in t2048.FORM_INPUTS:
-        assert f"- {identifier}\n" not in inputs_text, identifier
-        assert f"- {identifier}\n" not in INCOME_PART.read_text(), identifier
+        assert not lists(inputs_text_, identifier), identifier
+        assert not lists(INCOME_PART.read_text(), identifier), identifier
 
 
 def test_the_return_part_holds_the_nine_record_totals_of_the_form_exports() -> None:
@@ -224,7 +231,7 @@ def test_the_return_declares_the_outputs_it_reads_or_outputs_and_not_the_claim()
 
 
 def test_the_dispositions_are_the_one_input_of_the_manifest_in_place_of_the_t2048_inputs() -> None:
-    inputs = manifest().inputs
+    inputs = manifest().inputs.keys()
 
     assert t2048.INPUTS <= inputs
     assert inputs.isdisjoint(t2048.FORM_INPUTS)
@@ -301,7 +308,7 @@ def test_the_form_reads_its_fields_the_other_export_its_earlier_runs_and_shared_
     assert t2048.FORM_INPUTS <= external
     assert t2048.IMPORTS <= external
     assert t2048.EARLIER <= external
-    assert external - t2048.FORM_INPUTS - t2048.IMPORTS - t2048.EARLIER <= manifest().inputs
+    assert external - t2048.FORM_INPUTS - t2048.IMPORTS - t2048.EARLIER <= manifest().inputs.keys()
 
 
 def test_the_return_wiring_is_nine_record_totals_over_the_form_derived_kinds() -> None:

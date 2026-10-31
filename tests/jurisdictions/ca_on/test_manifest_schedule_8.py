@@ -33,6 +33,7 @@ from tests.jurisdictions.ca_on.manifest_families import (
     deductions_schedule_8_part_5_other_earnings,
     schedule_8,
 )
+from tests.jurisdictions.ca_on.manifest_support import instance_fields, required_entries
 
 CA_ON = JurisdictionCode("CA-ON")
 PARTS = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1"
@@ -95,6 +96,8 @@ def test_the_first_part_declares_the_form_with_its_instances_limits_and_exports(
 
     assert declared == {
         "name": "ca/schedule_8",
+        "required": True,
+        "fields": required_entries(instance_fields("ca/schedule_8")),
         "instances": "ca/schedule_8_instances",
         "max_instances": 1,
         "min_instances": 0,
@@ -156,7 +159,7 @@ def test_each_part_is_not_over_30_kb_and_the_return_parts_hold_no_schedule_8_lin
 
 
 def test_the_instances_are_an_input_of_the_manifest() -> None:
-    assert schedule_8.INPUTS <= manifest().inputs
+    assert schedule_8.INPUTS <= manifest().inputs.keys()
 
 
 def test_the_instances_kind_is_a_record_list_with_no_fields() -> None:

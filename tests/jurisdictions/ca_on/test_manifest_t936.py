@@ -31,6 +31,7 @@ from tax_engine.domain.manifest import Form, Manifest
 from tax_engine.domain.record_list import RecordListKind
 from tests.jurisdictions.ca_on.manifest_families import capital_gains_deduction_t657, t2048
 from tests.jurisdictions.ca_on.manifest_families import t936 as family
+from tests.jurisdictions.ca_on.manifest_support import input_names, inputs_text, lists
 
 CA_ON = JurisdictionCode("CA-ON")
 MANIFESTS = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1"
@@ -169,25 +170,25 @@ def test_the_t936_parts_are_named_by_the_layout_rule_and_not_over_30_kb() -> Non
 
 
 def test_the_inputs_part_declares_the_five_amounts_of_the_form() -> None:
-    declared = yaml.safe_load(INPUTS_PART.read_text())["inputs"]
+    declared = input_names(yaml.safe_load(INPUTS_PART.read_text()))
 
     assert set(declared) == family.INPUTS
     assert len(declared) == 5
-    assert family.INPUTS <= manifest().inputs
+    assert family.INPUTS <= manifest().inputs.keys()
 
 
 def test_the_form_s_exports_are_not_inputs_of_the_return() -> None:
-    assert family.EXPORTS.isdisjoint(manifest().inputs)
+    assert family.EXPORTS.isdisjoint(manifest().inputs.keys())
     assert family.EXPORTS.isdisjoint(family.INPUTS)
 
 
 def test_the_two_t657_amounts_are_no_longer_inputs_of_the_return() -> None:
-    inputs = manifest().inputs
-    text = ALL_INPUTS_PART.read_text()
+    inputs = manifest().inputs.keys()
+    text = inputs_text()
 
     for kind in T657_LINES.values():
         assert kind not in inputs, kind
-        assert f"- {kind}\n" not in text, kind
+        assert not lists(text, kind), kind
         assert kind not in capital_gains_deduction_t657.INPUTS, kind
 
 
@@ -517,7 +518,7 @@ def test_the_form_reads_the_manifest_inputs_and_other_forms_exports_only() -> No
     assert family.IMPORTS <= external
     # Everything else the form starts from is an input of the return (the five of the form among
     # them), never an artifact the return computes.
-    assert external - family.IMPORTS <= manifest().inputs
+    assert external - family.IMPORTS <= manifest().inputs.keys()
 
 
 # --- the composed form ---------------------------------------------------------------------------

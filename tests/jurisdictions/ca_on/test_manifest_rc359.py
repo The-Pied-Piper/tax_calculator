@@ -33,6 +33,12 @@ from tax_engine.jurisdictions.ca.catalog import (
     SPECIAL_TAXES,
 )
 from tests.jurisdictions.ca_on.manifest_families import rc359
+from tests.jurisdictions.ca_on.manifest_support import (
+    inputs_text,
+    instance_fields,
+    lists,
+    required_entries,
+)
 
 CA_ON = JurisdictionCode("CA-ON")
 PART = Path(tax_engine.jurisdictions.ca_on.__file__).parent / "manifests" / "v1" / "11a_rc359.yaml"
@@ -66,6 +72,8 @@ def test_the_rc359_part_declares_the_form_ca_rc359_with_its_instances_and_export
 
     assert declared == {
         "name": "ca/rc359",
+        "required": True,
+        "fields": required_entries(instance_fields("ca/rc359")),
         "instances": "ca/rc359_employers",
         "exports": list(rc359.FORM_EXPORTS),
     }
@@ -123,16 +131,16 @@ def test_the_special_taxes_sum_takes_the_rc359_total_as_its_last_part() -> None:
 
 def test_the_rc359_part_is_not_over_30_kb_and_the_other_parts_hold_no_rc359_input() -> None:
     assert PART.stat().st_size <= 30 * 1024
-    text = INPUTS_PART.read_text()
+    text = inputs_text()
     for identifier in rc359.FORM_INPUTS:
-        assert f"- {identifier}\n" not in text, identifier
+        assert not lists(text, identifier), identifier
 
 
 # --- the instances input -------------------------------------------------------------------------
 
 
 def test_the_employers_are_the_one_input_of_the_manifest_in_place_of_the_rc359_inputs() -> None:
-    inputs = manifest().inputs
+    inputs = manifest().inputs.keys()
 
     assert rc359.INPUTS <= inputs
     assert inputs.isdisjoint(rc359.FORM_INPUTS)

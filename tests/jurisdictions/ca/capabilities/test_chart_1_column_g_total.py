@@ -51,6 +51,7 @@ from tax_engine.jurisdictions.ca.catalog import (
     T657_CHART_1_ROWS,
 )
 from tax_engine.jurisdictions.ca.trace import NetCapitalLossesRowLine
+from tests.manifest_support import required_inputs
 
 D = Decimal
 
@@ -360,9 +361,10 @@ def service() -> TaxComputationService:
         jurisdiction=code,
         version=1,
         valid_from_tax_year=2025,
-        inputs=frozenset({"ca/t657_chart_1_rows"}),
+        inputs=required_inputs(frozenset({"ca/t657_chart_1_rows"})),
         forms=(
             Form(
+                required=True,
                 name=code.namespace.identifier("return"),
                 instances=None,
                 exports=("ex/column_g_total",),

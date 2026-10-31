@@ -5,6 +5,7 @@
 # both answers are yes), which 05_deductions.yaml reads as ca/t1043.t1043_deduction.
 form:
   name: ca/t1043
+  required: true
   exports:
     - ca/t1043_deduction
 capabilities:

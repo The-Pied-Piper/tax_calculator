@@ -14,6 +14,7 @@
 # are still steps of the shared T1 part, and move into this form when that part is split.
 form:
   name: ca/schedule_3
+  required: true
   exports:
     - ca/flipped_property
     - ca/principal_residence_designation_box

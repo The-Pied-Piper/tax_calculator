@@ -76,6 +76,7 @@ from tax_engine.jurisdictions.ca.catalog import (
     CCA_ZEPV_PROCEEDS,
 )
 from tax_engine.jurisdictions.ca.trace import CcaVehicleProceedsLine, CcaZepvProceedsLine
+from tests.manifest_support import required_inputs
 
 D = Decimal
 CENT = RoundTo(D("0.01"), RoundingMode.HALF_UP)
@@ -332,9 +333,10 @@ def service() -> TaxComputationService:
         jurisdiction=code,
         version=1,
         valid_from_tax_year=2025,
-        inputs=frozenset({CLASSES.identifier, SALES_TAX_RATE.identifier}),
+        inputs=required_inputs(frozenset({CLASSES.identifier, SALES_TAX_RATE.identifier})),
         forms=(
             Form(
+                required=True,
                 name=code.namespace.identifier("return"),
                 instances=None,
                 exports=(ADJUSTED.identifier,),

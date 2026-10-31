@@ -5,10 +5,20 @@
 # totals in 05s_other_employment_expenses.yaml. The line 5 rate is a dataset of the form.
 form:
   name: ca/rc359
+  required: true
   instances: ca/rc359_employers
   exports:
     - ca/rc359_excess_epsp_amount
     - ca/rc359_tax_on_excess_epsp
+  fields:
+    - name: ca/rc359_epsp_contributions
+      required: true
+    - name: ca/rc359_employment_income
+      required: true
+    - name: ca/rc359_other_employment_income
+      required: true
+    - name: ca/rc359_province
+      required: true
 capabilities:
   # Form RC359 line 4 "Line 2 minus line 3": the employment income less the security options and
   # other employment income. No floor is printed, so the figure may be negative.
