@@ -137,10 +137,6 @@ capabilities:
   - name: ca/yes_or_no_count
     consumes:
       count: ca/t657_chart_2016_uses_d_instead
-    # T657 Step 3: "To determine which charts you need to complete, answer the questions below by
-    # ticking yes or no." A question left unanswered is passed on as blank.
-    blank:
-      count: pass_on
     produces:
       output: ca/t657_chart_2016_uses_d_instead_checked
   # Chart 2017 uses the (2017-1) calculation, Form T657 Chart 2017 Part 1: the answer to a yes
@@ -149,10 +145,6 @@ capabilities:
   - name: ca/yes_or_no_count
     consumes:
       count: ca/t657_chart_2017_uses_d_instead
-    # T657 Step 3: "To determine which charts you need to complete, answer the questions below by
-    # ticking yes or no." A question left unanswered is passed on as blank.
-    blank:
-      count: pass_on
     produces:
       output: ca/t657_chart_2017_uses_d_instead_checked
   # Chart 2018 uses the (2018-1) calculation, Form T657 Chart 2018 Part 1: the answer to a yes
@@ -161,10 +153,6 @@ capabilities:
   - name: ca/yes_or_no_count
     consumes:
       count: ca/t657_chart_2018_uses_d_instead
-    # T657 Step 3: "To determine which charts you need to complete, answer the questions below by
-    # ticking yes or no." A question left unanswered is passed on as blank.
-    blank:
-      count: pass_on
     produces:
       output: ca/t657_chart_2018_uses_d_instead_checked
   # Chart 2019 uses the (2019-1) calculation, Form T657 Chart 2019 Part 1: the answer to a yes
@@ -173,10 +161,6 @@ capabilities:
   - name: ca/yes_or_no_count
     consumes:
       count: ca/t657_chart_2019_uses_d_instead
-    # T657 Step 3: "To determine which charts you need to complete, answer the questions below by
-    # ticking yes or no." A question left unanswered is passed on as blank.
-    blank:
-      count: pass_on
     produces:
       output: ca/t657_chart_2019_uses_d_instead_checked
   # Chart 2020 uses the (2020-1) calculation, Form T657 Chart 2020 Part 1: the answer to a yes
@@ -185,10 +169,6 @@ capabilities:
   - name: ca/yes_or_no_count
     consumes:
       count: ca/t657_chart_2020_uses_d_instead
-    # T657 Step 3: "To determine which charts you need to complete, answer the questions below by
-    # ticking yes or no." A question left unanswered is passed on as blank.
-    blank:
-      count: pass_on
     produces:
       output: ca/t657_chart_2020_uses_d_instead_checked
   # Chart 2021 uses the (2021-1) calculation, Form T657 Chart 2021 Part 1: the answer to a yes
@@ -197,10 +177,6 @@ capabilities:
   - name: ca/yes_or_no_count
     consumes:
       count: ca/t657_chart_2021_uses_d_instead
-    # T657 Step 3: "To determine which charts you need to complete, answer the questions below by
-    # ticking yes or no." A question left unanswered is passed on as blank.
-    blank:
-      count: pass_on
     produces:
       output: ca/t657_chart_2021_uses_d_instead_checked
   # Chart 2022 uses the (2022-1) calculation, Form T657 Chart 2022 Part 1: the answer to a yes
@@ -209,10 +185,6 @@ capabilities:
   - name: ca/yes_or_no_count
     consumes:
       count: ca/t657_chart_2022_uses_d_instead
-    # T657 Step 3: "To determine which charts you need to complete, answer the questions below by
-    # ticking yes or no." A question left unanswered is passed on as blank.
-    blank:
-      count: pass_on
     produces:
       output: ca/t657_chart_2022_uses_d_instead_checked
   # Chart 2023 uses the (2023-1) calculation, Form T657 Chart 2023 Part 1: the answer to a yes
@@ -221,10 +193,6 @@ capabilities:
   - name: ca/yes_or_no_count
     consumes:
       count: ca/t657_chart_2023_uses_d_instead
-    # T657 Step 3: "To determine which charts you need to complete, answer the questions below by
-    # ticking yes or no." A question left unanswered is passed on as blank.
-    blank:
-      count: pass_on
     produces:
       output: ca/t657_chart_2023_uses_d_instead_checked
   # Maximum participation period of your FHSAs ended in a prior year, Schedule 15 Step 2: the
