@@ -225,6 +225,7 @@ STEPS = {
         name="ca/yes_or_no_count",
         params={},
         consumes={"count": "ca/cpp_part_4_completed"},
+        blank={"count": "pass_on"},
         produces={"output": "ca/cpp_part_4_completed_yes_or_no_checked"},
     ),
     # Schedule 8 Part 5 completed, the answer to a yes or no question, a count of 1 or 0,
@@ -233,6 +234,7 @@ STEPS = {
         name="ca/yes_or_no_count",
         params={},
         consumes={"count": "ca/cpp_part_5_completed"},
+        blank={"count": "pass_on"},
         produces={"output": "ca/cpp_part_5_completed_yes_or_no_checked"},
     ),
 }

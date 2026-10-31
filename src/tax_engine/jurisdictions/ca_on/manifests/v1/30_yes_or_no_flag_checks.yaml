@@ -212,6 +212,10 @@ capabilities:
   - name: ca/yes_or_no_count
     consumes:
       count: ca/cpp_part_4_completed
+    # Schedule 8 "Parts you have to complete": "Part 4 - ... If not, leave this part blank." The
+    # answer left blank is passed on as blank.
+    blank:
+      count: pass_on
     produces:
       output: ca/cpp_part_4_completed_yes_or_no_checked
   # Schedule 8 Part 5 completed, the answer to a yes or no question, a count of 1 or 0, checked
@@ -224,5 +228,9 @@ capabilities:
   - name: ca/yes_or_no_count
     consumes:
       count: ca/cpp_part_5_completed
+    # Schedule 8 "Parts you have to complete": "Part 5 - ... If not, leave this part blank." The
+    # answer left blank is passed on as blank.
+    blank:
+      count: pass_on
     produces:
       output: ca/cpp_part_5_completed_yes_or_no_checked
