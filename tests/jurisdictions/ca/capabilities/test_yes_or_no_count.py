@@ -18,16 +18,19 @@ from typing import Any, assert_type, cast
 import pytest
 
 import tax_engine.jurisdictions.ca.capabilities as ca_capabilities
+from tax_engine.adapters.inbound.trace_english import EnglishTraceRenderer
 from tax_engine.domain.artifact import Artifact, ArtifactKind
+from tax_engine.domain.blank import BLANK, PASS_ON
 from tax_engine.domain.capability import CapabilityRegistry
 from tax_engine.domain.errors import (
+    BlankNotAllowedError,
     DomainError,
     InputAboveBoundError,
     InputBelowBoundError,
     InvalidCapabilityError,
     MissingArtifactError,
 )
-from tax_engine.domain.trace import YesOrNoCountLine
+from tax_engine.domain.trace import BlankPassedOnLine, YesOrNoCountLine
 from tax_engine.jurisdictions.ca.capabilities.yes_or_no_count import YesOrNoCount
 
 COUNT = ArtifactKind("ex/yes_or_no", int)
@@ -212,3 +215,49 @@ def test_trace_amount_is_the_count() -> None:
 def test_trace_holds_no_text() -> None:
     for line in capability().compute(inputs(1)).trace:
         assert not any(isinstance(getattr(line, f.name), str) for f in fields(line))
+
+
+# --- a blank answer ---------------------------------------------------------------------------
+
+
+def test_declares_that_only_the_count_may_be_blank() -> None:
+    assert YesOrNoCount.BLANK_ALLOWED == frozenset({"count"})
+
+
+def test_a_blank_count_is_refused_without_a_blank_rule() -> None:
+    with pytest.raises(BlankNotAllowedError, match="may not be blank"):
+        capability().run((Artifact(COUNT, BLANK),))
+
+
+def test_a_blank_count_passes_on_as_a_blank_output() -> None:
+    result = capability().with_blank_rules({"count": PASS_ON}).run((Artifact(COUNT, BLANK),))
+
+    assert result.outputs == (Artifact(OUTPUT, BLANK),)
+    assert result.trace == (BlankPassedOnLine(OUTPUT, (COUNT,)),)
+
+
+def test_the_blank_trace_says_which_line_was_left_blank() -> None:
+    result = capability().with_blank_rules({"count": PASS_ON}).run((Artifact(COUNT, BLANK),))
+
+    assert EnglishTraceRenderer().render_all(result.trace) == (
+        "yes_or_no_checked: blank because yes_or_no was blank",
+    )
+
+
+@pytest.mark.parametrize("count", [0, 1])
+def test_a_filled_count_is_unchanged_when_blank_is_passed_on(count: int) -> None:
+    result = capability().with_blank_rules({"count": PASS_ON}).run(inputs(count))
+
+    assert result.outputs == (Artifact(OUTPUT, count),)
+    assert result.trace == (YesOrNoCountLine(output=OUTPUT, count_kind=COUNT, count=count),)
+
+
+def test_a_filled_count_above_one_is_still_refused_when_blank_is_passed_on() -> None:
+    with pytest.raises(InputAboveBoundError, match="above a yes or no answer of 1"):
+        capability().with_blank_rules({"count": PASS_ON}).run(inputs(2))
+
+
+def test_a_fallback_for_the_count_is_accepted_by_the_base() -> None:
+    result = capability().with_blank_rules({"count": 0}).run((Artifact(COUNT, BLANK),))
+
+    assert result.outputs == (Artifact(OUTPUT, 0),)
